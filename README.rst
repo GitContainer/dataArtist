@@ -157,7 +157,7 @@ a reference image.
 .. |screenshot| image:: https://cloud.githubusercontent.com/assets/350050/15406631/806a7a8a-1dc4-11e6-9e76-709cd482857f.png
 .. |screenshotpsf| image:: https://cloud.githubusercontent.com/assets/350050/15404653/bd2e51b6-1dbb-11e6-8282-2ea539f0286d.png
 .. |screenshotcorrection| image:: https://cloud.githubusercontent.com/assets/350050/15404785/53d4c992-1dbc-11e6-93b7-c6108ab9a2b0.png
-.. _Download for Windows 7-10: https://github.com/radjkarl/dataArtist/releases/tag/v0.1-alpha
+.. _Download for Windows 7-10: https://github.com/radjkarl/dataArtist/releases/
 .. _USER manual: https://github.com/radjkarl/dataArtist/raw/master/dataArtist/media/USER_MANUAL.pdf
 .. _DEVELOPERS manual: http://radjkarl.github.io/dataArtist/
 .. _Releases: https://github.com/radjkarl/dataArtist/releases

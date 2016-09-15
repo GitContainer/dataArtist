@@ -10,5 +10,7 @@ class Reload(Tool):
     
     def activate(self):
         if not self.display.reader:
-            raise Exception('no input data to reload')
-        self.display.updateInput()
+            print('no input data to reload, updating view...')
+            self.display.widget.updateView()
+        else:
+            self.display.updateInput()

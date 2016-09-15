@@ -8,10 +8,11 @@ from PlotStyle import PlotStyle
 from dataArtist.figures.image.tools.view.Axes import Axes
 from dataArtist.figures.image.tools.view.LockView import LockView
 from dataArtist.figures.image.tools.general.Reload import Reload
+from ToImage import ToImage
 
 # from LinkView import LinkView
 from Table import Table
 
 color = 'blue'
 show = True
-tools = (Reload, LockView,Axes,Legend, PlotStyle,ErrorBar)
+tools = (Reload, LockView,Axes,Legend, PlotStyle,ErrorBar, ToImage)

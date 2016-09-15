@@ -8,8 +8,9 @@ from Overlay import Overlay
 from Transform import Transform
 from IsColor import IsColor
 from SwitchBetweenGridAndStackedView import SwitchBetweenGridAndStackedView
-
+from ToPlot import ToPlot
 color = 'blue'
 show = True
 tools = ( LockView, Colorbar, Axes, TimeLine,
-          Transform, IsColor, Overlay,SwitchBetweenGridAndStackedView)
+          Transform, IsColor, Overlay,
+          SwitchBetweenGridAndStackedView, ToPlot)

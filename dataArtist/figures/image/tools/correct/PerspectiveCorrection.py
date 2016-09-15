@@ -1,6 +1,6 @@
 import numpy as np
 import pyqtgraph_karl as pg
- 
+import cv2
 #from imgProcessor.QuadDetection import QuadDetection, ObjectNotFound
 from imgProcessor.features.QuadDetection import QuadDetection
 
@@ -29,6 +29,7 @@ class PerspectiveCorrection(Tool):
         self.quadROI = None
         self.outDisplay = None
         self.outDisplayViewFactor = None
+        self._refPn = []
         
         self._cLayerLines = None
 
@@ -46,7 +47,7 @@ class PerspectiveCorrection(Tool):
             'name':'Reference',
             'type':'list',
             'value':'Object profile',
-            'limits':['Object profile','Reference image']})
+            'limits':['Object profile','Reference image', 'Reference points']})
         #HOMOGRAPHY THROUGH QUAD 
         self.pManual = self.pRef.addChild({
             'name':'Manual object detection',
@@ -83,10 +84,10 @@ class PerspectiveCorrection(Tool):
 
 
         self.pCalcOutSize = pa.addChild({
-            'name':'Calculate output size',
-            'type':'bool',
-            'value':True,
-            'tip':''})
+            'name':'Output size',
+            'type':'list',
+            'value':'Calculate',
+            'limits':['Calculate', 'Current Size', 'Manual']})
         self.pOutWidth = self.pCalcOutSize.addChild({
             'name':'Image width [px]',
             'type':'int',
@@ -99,10 +100,7 @@ class PerspectiveCorrection(Tool):
             'value':600,
             'visible':False
             })
-        self.pCalcOutSize.sigValueChanged.connect(
-                lambda p,v:[self.pCalcAR.show(v), 
-                            self.pOutWidth.show(not v),
-                            self.pOutHeight.show(not v) ])
+        self.pCalcOutSize.sigValueChanged.connect(self._pCalcOutSizeChanged)
 
         self.pCalcAR = pa.addChild({
             'name':'Calculate aspect ratio',
@@ -148,6 +146,12 @@ class PerspectiveCorrection(Tool):
             'type':'bool',
             'value':True})
 
+
+    def _pCalcOutSizeChanged(self, p,v):
+        self.pCalcAR.show(v == 'Calculate') 
+        self.pOutWidth.show(v == 'Manual')
+        self.pOutHeight.show(v == 'Manual')
+ 
  
     def _setRefImg(self, display, layernumber, layername):
         '''
@@ -178,11 +182,39 @@ class PerspectiveCorrection(Tool):
             self.quadROI.hide()
 
 
+
+    def _createRefPn(self):
+        w = self.display.widget
+
+        r = w.view.vb.viewRange()  
+        p = ((r[0][0]+r[0][1])/2, (r[1][0]+r[1][1])/2)
+        s = [(r[0][1]-r[0][0])*0.1, (r[1][1]-r[1][0])*0.1]
+
+        pos = np.array( [ [p[0]-s[0],p[1]+s[1]],
+                          [p[0]-s[0],p[1]-s[1]],
+                          [p[0]+s[0],p[1]-s[1]] ] )
+
+        rFrom = pg.PolyLineROI(pos, pen=(255, 0, 0), movable=False)
+        rTo = pg.PolyLineROI(pos+(5,5), pen=(0, 255, 0), movable=False)
+        w.view.vb.addItem(rFrom)     
+        w.view.vb.addItem(rTo)     
+        return (rFrom, rTo)
+        
+
+
+
     def _pRefChanged(self, param, val):
-        v = val == 'Reference image'
-        self.pManual.show(not v)
-        self.pRefImgChoose.show(v)
-   
+        self.pManual.show(val == 'Object profile')
+        self.pRefImgChoose.show(val == 'Reference image')
+        #self.pCalcAR.show(val != 'Reference points')
+        vv = val == 'Reference points'
+        if vv:
+            if not len(self._refPn):
+                self._refPn = self._createRefPn()
+            [r.show() for r in self._refPn]
+        else:
+            [r.hide() for r in self._refPn]
+        self.pCorrViewFactor.show(not vv)
 #    
 #     def _pSnapChanged(self, param, val):
 #         w = self.display.widget
@@ -257,9 +289,12 @@ class PerspectiveCorrection(Tool):
     def _prepare(self):
         w = self.display.widget
         img = w.image[w.currentIndex]
-
+        v = self.pRef.value()
+        if v ==   'Reference points':
+            self.pc = None
+            return #do in self.process  
         #HOMOGRAPHY THROUGH REFERENCE IMAGE
-        if self.pRef.value() == 'Reference image':
+        elif v == 'Reference image':
             ref = self._refImg
         else:
             #HOMOGRAPHY THROUGH QUAD
@@ -281,18 +316,21 @@ class PerspectiveCorrection(Tool):
             self.quadROI.show()
         try:    
             c = self.calFileTool.currentCameraMatrix()
-        except TypeError:
+        except AttributeError:
             c = None
         #height/width:
         if self.pCalcAR.value():
-            w,h = None,None
+            w,h = None,None 
         else:
-            w = self.pObjWidth.value()
-            if w == 0:
-                w = None
-            h = self.pObjHeight.value()
-            if h == 0:
-                h = None
+            if self.pCalcOutSize.value() == 'Current Size':
+                w,h = img.shape[:2]
+            else:
+                w = self.pObjWidth.value()
+                if w == 0:
+                    w = None
+                h = self.pObjHeight.value()
+                if h == 0:
+                    h = None
         #output size:
         size = None
         if not self.pCalcOutSize.value():
@@ -313,16 +351,31 @@ class PerspectiveCorrection(Tool):
         w = self.display.widget
         img = w.image
         out = []
-        r = self.pRef.value() == 'Reference image'
-        e = self.pExecOn.value()
+        v = self.pRef.value()
         
-        for n,i in enumerate(img):
-            if (e == 'all images' 
-                or (e=='current image' and n == w.currentIndex)
-                or (e=='last image' and n == len(img)-1) ):
-                
-                if not (r and n == self._refImg_from_own_display):
-                    out.append(self.pc.correct(i))           
+        if v ==   'Reference points':
+            r0,r1 = self._refPn
+            pts0 = np.array([(h['pos'].y(),h['pos'].x())  
+                                    for h in r0.handles]) + r0.pos()
+            pts1 = np.array([(h['pos'].y(),h['pos'].x())  
+                                    for h in r1.handles]) + r1.pos()
+            M = cv2.getAffineTransform(pts0.astype(np.float32),pts1.astype(np.float32))
+            for n,i in enumerate(img):
+                out.append( 
+                    #TODO: allow different image shapes
+                    cv2.warpAffine(i,M, w.image.shape[1:3],
+                                 borderValue=0) )
+                print out[-1].shape
+        else:
+            r = v == 'Reference image'
+            e = self.pExecOn.value()
+            for n,i in enumerate(img):
+                if (e == 'all images' 
+                    or (e=='current image' and n == w.currentIndex)
+                    or (e=='last image' and n == len(img)-1) ):
+                    
+                    if not (r and n == self._refImg_from_own_display):
+                        out.append(self.pc.correct(i))           
         return out
      
      

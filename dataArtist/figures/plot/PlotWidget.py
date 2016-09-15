@@ -165,7 +165,6 @@ class PlotWidget(DisplayWidget, pgPlotWidget, PyqtgraphgDisplayBase):
             #this should word, but doesn't 
 #             if isinstance(data,_PlotData):
             #working but uncool workaround:
-            print data,999
             if data.__class__.__name__.endswith('_PlotData'):
             
                 p = data

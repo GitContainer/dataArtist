@@ -94,6 +94,7 @@ class ImageWidget(DisplayWidget, ImageView, PyqtgraphgDisplayBase):
         if l == 3:
             if s[-1] in (3,4):
                 return 1
+            return s[0]
         if l == 4:
             if s[-1] in (3,4):
                 return s[0]

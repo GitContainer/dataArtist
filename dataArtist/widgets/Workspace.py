@@ -440,17 +440,18 @@ class Workspace(QtGui.QWidget):
                 display.widget.toolbars = sorted(t, key=findBar)
         
         #add new toolbars:
-        for bar in display.widget.toolbars:
-            if bar.isSelected():
-#                 p = bar.position
-                self.gui.addToolBar(QtCore.Qt.TopToolBarArea, bar)
-                if bar.hasBreak:
-                    self.gui.insertToolBarBreak(bar)
-#             if (# not self.gui.menu_toolbars.a_show.isChecked() 
-#                 not bar.isSelected() ):
-#                 bar.hide()
-#             else:
-                bar.show()
+        if display.widget:
+            for bar in display.widget.toolbars:
+                if bar.isSelected():
+    #                 p = bar.position
+                    self.gui.addToolBar(QtCore.Qt.TopToolBarArea, bar)
+                    if bar.hasBreak:
+                        self.gui.insertToolBarBreak(bar)
+    #             if (# not self.gui.menu_toolbars.a_show.isChecked() 
+    #                 not bar.isSelected() ):
+    #                 bar.hide()
+    #             else:
+                    bar.show()
 
 
     def addShowToolBarAction(self, menu):
