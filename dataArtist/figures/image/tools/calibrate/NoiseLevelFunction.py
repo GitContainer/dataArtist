@@ -1,3 +1,4 @@
+from __future__ import print_function
 import pyqtgraph_karl as pg
 
 from imgProcessor.camera import NoiseLevelFunction as NLF
@@ -121,11 +122,12 @@ class NoiseLevelFunction(Tool):
         
         x, fn, y_avg, y_vals, w_vals, self.fitParams,i = NLF.estimateFromImages(
                                             imgs1, imgs2, mn_mx=mn_mx)
-        print 'fitparams: %s' %self.fitParams
+        print('fitparams: %s' %self.fitParams)
         return x, fn, y_avg, y_vals, w_vals,i
 
 
-    def _done(self, (x, fn, y_avg, y_vals, w_vals,i)):
+    def _done(self, xxx_todo_changeme):
+        (x, fn, y_avg, y_vals, w_vals,i) = xxx_todo_changeme
         if self.pPlotResult.value():
             if self.outDisplay is None or self.outDisplay.isClosed():
                 self.outDisplay = self.display.workspace.addDisplay( 

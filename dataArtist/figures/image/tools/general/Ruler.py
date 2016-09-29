@@ -1,3 +1,5 @@
+from __future__ import division
+
 import numpy as np
 import pyqtgraph_karl as pg
 from pyqtgraph_karl.Qt import QtGui, QtCore
@@ -229,7 +231,7 @@ class _ScaleEditor(QtGui.QWidget):
         
         l2 =  float(self.editor.text())
         
-        scale = l2 / l1
+        scale = old_div(l2, l1)
         self.tool.scale = scale
         self.textItem.setText('~ %s (scale:%s)' %(l2, scale))
 

@@ -1,5 +1,6 @@
+from __future__ import absolute_import
 #<<<importStar
-import MatplotlibSurface
-import SurfaceView
-import tools
+from . import MatplotlibSurface
+from . import SurfaceView
+from . import tools
 #>>>importStar

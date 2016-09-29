@@ -1,3 +1,4 @@
+from builtins import range
 from dataArtist.widgets.Tool import Tool
 from dataArtist.figures.image.tools.globals.CalibrationFile import CalibrationFile
 
@@ -216,7 +217,7 @@ current layer: only the current image is taken - no average, no STE removal
 #             c = 1
 
 
-        r = range(*c)
+        r = list(range(*c))
 
 #         for i in range(0,len(im),c):
 #             if ste:

@@ -1,3 +1,5 @@
+from __future__ import division
+
 import numpy as np
 from scipy.ndimage import median_filter
   
@@ -48,7 +50,7 @@ class ChasePixel(Tool):
         '''
         fill the pMask parameter with the names of all color layers in this display
         '''
-        self.pMask.setLimits(self.display.widget.cItems.keys())
+        self.pMask.setLimits(list(self.display.widget.cItems.keys()))
 
 
     def activate(self):  
@@ -99,7 +101,7 @@ class ChasePixel(Tool):
             yvals_bg = [] 
             for layer,y in zip(bg, yvals):
                 bg_px = layer[indices][:self.pMaxPlots.value()]
-                yvals_bg.append(y/bg_px)
+                yvals_bg.append(y / bg_px)
             yvals_bg = np.array(yvals_bg).T
             
             plots = []

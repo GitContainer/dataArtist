@@ -1,3 +1,4 @@
+from __future__ import print_function
 import numpy as np
 import fancywidgets.pyqtgraphBased.parametertree.parameterTypes as pTypes
 
@@ -42,9 +43,9 @@ class Array2DReader(ReaderBase):
                 p.pDelimiter.setValue(d)
                 p.pFindDelimiter.setValue(False)
                 break
-            except Exception, err:
+            except Exception as err:
                 if not f:
-                    print err
+                    print(err)
         if p.pTransposed.value():
             arr = arr.T
         labels = None

@@ -1,3 +1,4 @@
+from builtins import range
 import numpy as np
 from imgProcessor.transform.imgAverage import imgAverage
 from imgProcessor.features.SingleTimeEffectDetection import SingleTimeEffectDetection
@@ -113,7 +114,8 @@ class ZDenoise(Tool):
         return out, indices, names
     
     
-    def _done(self, (out,indices, names)):
+    def _done(self, xxx_todo_changeme):
+        (out,indices, names) = xxx_todo_changeme
         d = self.handleOutput(out, title='Z denoised', names=names)
         #CHANGES LAYER
         if self.pSTEremoval.value() and self.pChangesLayer.value() and indices.any():

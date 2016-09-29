@@ -1,3 +1,5 @@
+from __future__ import division
+
 import numpy as np
 from collections import OrderedDict
 
@@ -45,7 +47,7 @@ class RAWimage(ReaderBase):
             arr = arr.reshape(s0,s1) #, order='F'
         except ValueError:
             #array shape doesn't match actual size
-            s1 = arr.shape[0]/s0
+            s1 = arr.shape[0] // s0
             arr = arr.reshape(s0,s1)
             
         arr = self.toFloat(arr) 
@@ -66,7 +68,7 @@ class _Preferences(GroupParameter):
                 'name':'Image type',
                 'type':'list',
                 'value':'16-bit Unsigned',
-                'limits':STR_TO_DTYPE.keys()})
+                'limits':list(STR_TO_DTYPE.keys())})
         self.pLittleEndian = self.addChild({
                 'name':'Little-endian byte order',
                 'type':'bool',

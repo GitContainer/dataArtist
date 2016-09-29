@@ -1,10 +1,11 @@
-from LensDistortion import LensDistortion
-from RelativeSharpness import RelativeSharpness
-from FlatField import FlatField
-from DarkCurrent import DarkCurrent
-from NoiseLevelFunction import NoiseLevelFunction
-from PointSpreadFunction import PointSpreadFunction
-from DeconvolutionBalance import DeconvolutionBalance
+from __future__ import absolute_import
+from .LensDistortion import LensDistortion
+from .RelativeSharpness import RelativeSharpness
+from .FlatField import FlatField
+from .DarkCurrent import DarkCurrent
+from .NoiseLevelFunction import NoiseLevelFunction
+from .PointSpreadFunction import PointSpreadFunction
+from .DeconvolutionBalance import DeconvolutionBalance
 
 tools = ( RelativeSharpness, NoiseLevelFunction, 
           DarkCurrent, FlatField, PointSpreadFunction, 

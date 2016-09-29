@@ -1,3 +1,4 @@
+from __future__ import print_function
 import weakref
 
 import pyqtgraph_karl as pg
@@ -81,13 +82,13 @@ class Workspace(QtGui.QWidget):
 
         if boolean:
             col = 'black' if pg.getConfigOption('background')=='k' else 'white'
-            for d in docks.values():
+            for d in list(docks.values()):
                 d.hideTitleBar() 
             for c in containers:
                 if  isinstance(c, QtGui.QSplitter):
                     c.setStyleSheet("QSplitter::handle{background-color: %s;}" %col)
         else:
-            for d in docks.values():
+            for d in list(docks.values()):
                 d.showTitleBar() 
             for c in containers:
                 if  isinstance(c, QtGui.QSplitter):
@@ -101,7 +102,7 @@ class Workspace(QtGui.QWidget):
         l['vertSplitter'] = self.vert_splitter.sizes()
         #DISPLAYS
         d = self.displaydict()
-        for number, display in d.iteritems():
+        for number, display in d.items():
             d[number] = (display.name(), len(display.axes))
             l['display_%i' %number] = display.saveState()
         l['displays'] = d # ={name:(name,nDim)}
@@ -143,7 +144,7 @@ class Workspace(QtGui.QWidget):
         currN = state['currentDisplay']
         for d in self.displays():
             d.close()
-        for number, (name, nDim) in state['displays'].iteritems():
+        for number, (name, nDim) in state['displays'].items():
             d = self.addDisplay(number=number, axes=nDim)
             self.changeToolBars(d)
             d.setName(name)
@@ -153,7 +154,7 @@ class Workspace(QtGui.QWidget):
         #TABLES   
         for t in self.tables():
             t.close()
-        for name, content in state['tables'].iteritems():
+        for name, content in state['tables'].items():
             dt = self.addTableDock(name=name)
             dt.widgets[0].importTable(content)   
 #             p = session.getSavedFile(*path+('tables', '%s.csv' %n) )
@@ -161,7 +162,7 @@ class Workspace(QtGui.QWidget):
         #NOTEPADS
         for t in self.notepads():
             t.close()
-        for name, content in state['notepads'].iteritems():
+        for name, content in state['notepads'].items():
             dt = self.addTextDock(name=name)
             dt.widgets[0].text.setHtml(content
 #                                        session.getSavedContent(*path+(
@@ -208,7 +209,7 @@ class Workspace(QtGui.QWidget):
         '''
         return a list of displays within this workspace
         '''
-        return WeakList([d for d in self.area_middle.docks.values() 
+        return WeakList([d for d in list(self.area_middle.docks.values()) 
                 if isinstance(d, DisplayDock)])
 
 
@@ -216,7 +217,7 @@ class Workspace(QtGui.QWidget):
         '''
         return a list of tables within this workspace
         '''
-        return [d for d in self.area_middle.docks.values() 
+        return [d for d in list(self.area_middle.docks.values()) 
                 if isinstance(d, DockTable)]
 
 
@@ -224,7 +225,7 @@ class Workspace(QtGui.QWidget):
         '''
         return a list of notepads within this workspace
         '''
-        return [d for d in self.area_middle.docks.values() 
+        return [d for d in list(self.area_middle.docks.values()) 
                         if isinstance(d, DockTextEditor)]
 
 
@@ -274,7 +275,7 @@ class Workspace(QtGui.QWidget):
 
     def close(self):
         self.setInactive()
-        for widget in self.area_middle.docks.values():
+        for widget in list(self.area_middle.docks.values()):
             widget.close()
         QtGui.QWidget.close(self)
             

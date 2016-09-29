@@ -1,3 +1,6 @@
+from __future__ import division
+from __future__ import print_function
+
 import numpy as np
 from pyqtgraph_karl.Qt import QtGui, QtCore
 
@@ -160,7 +163,8 @@ True: Images are taken every time the first layer is updated
         #TODO: as general method in WidgetBase?
         vb = self.display.widget.view.vb
         r = vb.viewRange()  
-        s = ((r[0][0]+r[0][1])/1.1, (r[1][0]+r[1][1])/1.1)
+        s = ((r[0][0]+r[0][1]) / 1.1, 
+             (r[1][0]+r[1][1]) / 1.1)
         p = [(r[0][1]-r[0][0])*0.1, (r[1][1]-r[1][0])*0.1]
         return p,s
 
@@ -263,7 +267,7 @@ True: Images are taken every time the first layer is updated
             #READ IMAGE STACK
                 #check conditions:
             if len(self.display.filenames) < 10:
-                print 'having less than 10 images can result in erroneous results'
+                print('having less than 10 images can result in erroneous results')
 
             img = w.image
             img_loaded = True
@@ -278,7 +282,7 @@ True: Images are taken every time the first layer is updated
                 try:
                     #MANUAL ADDING POINTS
                     if self._rois:
-                        print self._rois[n].points()
+                        print(self._rois[n].points())
                         self.camera.addPoints(self._rois[n].points())
                         self.camera.setImgShape(i.shape)
                     else:
@@ -288,8 +292,8 @@ True: Images are taken every time the first layer is updated
                         out.append(self.camera.drawChessboard(
                                 False if img_loaded else None))
                         found_indices.append(n)
-                except NothingFound, errm:
-                    print 'Layer %s: ' %n, errm
+                except NothingFound as errm:
+                    print('Layer %s: ' %n, errm)
             if d:
                 if img_loaded:
                     w.addColorLayer(np.array(out), name='chessboard')#, indices=found_indices) 
@@ -302,7 +306,7 @@ True: Images are taken every time the first layer is updated
     def _end(self):     
         self.setChecked(False)    
         i = self.camera.findCount
-        print 'found chessboard of %s images' %i
+        print('found chessboard of %s images' %i)
         if i:
             #show calibration in window:
             t = self.display.workspace.addTextDock('Camera calibration').widgets[-1]
@@ -324,9 +328,9 @@ True: Images are taken every time the first layer is updated
         add a new image and draw chessboard on it till there are enough images
         '''
         if self.pLiveActivateTrigger.value():
-            print 'click'
+            print('click')
         if not self.camera:
-            print 'activate first'
+            print('activate first')
         try:
             image = self.display.widget.image
             found = self.camera.addImgStream(image)
@@ -334,7 +338,7 @@ True: Images are taken every time the first layer is updated
                 chessboard = self.camera.drawChessboard(img=False)
                 self.cItem.setLayer(chessboard)
             if found:
-                print 'found %s chessboards' %self.camera.findCount  
+                print('found %s chessboards' %self.camera.findCount)  
         except EnoughImages:
             self.deactivate()
             self._end()

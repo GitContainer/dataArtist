@@ -4,6 +4,7 @@ This module is still in development
 a base class for all 3d display widgets
 ... or alternatively use something provided by pyqtgraph
 '''
+from builtins import object
 
 import pyqtgraph_karl.opengl as gl
 import pyqtgraph_karl as pg

@@ -1,3 +1,5 @@
+from __future__ import print_function
+from builtins import range
 from pyqtgraph_karl import PolyLineROI
 import numpy as np
 from fancytools.math.gridPointsFromEdges import gridPointsFromEdges
@@ -90,8 +92,8 @@ if __name__ == '__main__':
     v = w1.addViewBox(row=1, col=0, lockAspect=True)
 
     g = UnregGridROI([4,5])
-    print g.edges()
-    print g.points()
+    print(g.edges())
+    print(g.points())
 
     v.addItem(g)
 

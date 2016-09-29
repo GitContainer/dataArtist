@@ -1,3 +1,4 @@
+from __future__ import print_function
 import traceback
 import importlib
 from pyqtgraph_karl.Qt import QtGui, QtCore 
@@ -206,7 +207,7 @@ class _ToolBar(QtGui.QToolBar):
                     else:
                         self.width += 27 #px
                 except Exception:
-                    print "ERROR loading toolbutton: ", traceback.print_exc()
+                    print("ERROR loading toolbutton: ", traceback.print_exc())
             self._toolsCreated = True
    
     

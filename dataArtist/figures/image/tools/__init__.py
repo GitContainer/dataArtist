@@ -1,13 +1,14 @@
-import correct
-import calibrate
-import draw
-import filter
-import general
+from __future__ import absolute_import
+from . import correct
+from . import calibrate
+from . import draw
+from . import filter
+from . import general
 #import inDevelopment
-import input
-import measurement
-import stack
-import view
+from . import input
+from . import measurement
+from . import stack
+from . import view
 
 # sequence = (general,view, measurement, correct
 

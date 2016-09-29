@@ -1,3 +1,6 @@
+from builtins import zip
+from builtins import range
+from builtins import object
 import numpy as np
 import weakref
 from pyqtgraph_karl import PlotWidget as pgPlotWidget
@@ -178,7 +181,7 @@ class PlotWidget(DisplayWidget, pgPlotWidget, PyqtgraphgDisplayBase):
                     y = data[:,1]
                 else:
                     y = data
-                    x = range(len(data))
+                    x = list(range(len(data)))
                 
                 p = _PlotData(plotItem)
             plotItem.setData(x,y)

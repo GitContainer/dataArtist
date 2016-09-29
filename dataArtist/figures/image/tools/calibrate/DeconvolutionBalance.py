@@ -1,3 +1,4 @@
+from __future__ import print_function
 import numpy as np
 
 
@@ -103,11 +104,12 @@ class DeconvolutionBalance(Tool):
         return out, ['Balance=%s' %v for v in vals]
 
 
-    def _done(self, (out, names)):
+    def _done(self, xxx_todo_changeme):
+        (out, names) = xxx_todo_changeme
         d = self._outDisplay = self.handleOutput(out, names=names)
         self.pUpdate.show()
         d.pTitleFromLayer.setValue(True)
-        print 'Now find the best balance value and click on update calibration'
+        print('Now find the best balance value and click on update calibration')
         
         
     def updateCalibration(self):

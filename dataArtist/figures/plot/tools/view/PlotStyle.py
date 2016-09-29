@@ -1,3 +1,4 @@
+from builtins import str
 import pyqtgraph_karl as pg
 from pyqtgraph_karl.Qt import QtGui, QtCore
 
@@ -20,7 +21,7 @@ STYLE2ENUM = {'SolidLine':QtCore.Qt.SolidLine,
          #'CustomDashLine': QtCore.Qt.CustomDashLine,
          }
 ENUM2STYLE = {}
-for key, val in STYLE2ENUM.iteritems():
+for key, val in STYLE2ENUM.items():
     ENUM2STYLE[val] = key
 
 
@@ -54,7 +55,7 @@ class PlotStyle(Tool):
                 'index':(0,0),
                 'type':'list',
                 'value': 'SolidLine',
-                'limits':ENUM2STYLE.values()}) 
+                'limits':list(ENUM2STYLE.values())}) 
         p.sigValueChanged.connect(self._pAllChanged)
 
         p = pLine.addChild({
@@ -85,8 +86,8 @@ class PlotStyle(Tool):
         p = pSymbol.addChild({
                 'name':'Type',
                 'type':'list',
-                'limits':PLOT_SYMBOLS.keys(),
-                'value':PLOT_SYMBOLS.keys()[0],
+                'limits':list(PLOT_SYMBOLS.keys()),
+                'value':list(PLOT_SYMBOLS.keys())[0],
                 'index':(1,0)}) 
         p.sigValueChanged.connect(self._pAllChanged)
 
@@ -164,7 +165,7 @@ class PlotStyle(Tool):
                     'type':'list',
                     #set current color as first option:
                     'value': ENUM2STYLE[pen.style()],
-                    'limits':ENUM2STYLE.values(),
+                    'limits':list(ENUM2STYLE.values()),
                     'itemPen':(item,pen)}) 
             p.sigValueChanged.connect(self._setLineStyle)
             
@@ -206,7 +207,7 @@ class PlotStyle(Tool):
             p = pSymbol.addChild({
                     'name':'Type',
                     'type':'list',
-                    'limits':PLOT_SYMBOLS.keys(),
+                    'limits':list(PLOT_SYMBOLS.keys()),
                     'item':item,
                     #set current symbol as first option:
                     'value':item.opts['symbol']}) 

@@ -1,3 +1,6 @@
+from __future__ import division
+from __future__ import print_function
+
 import numpy as np
 from operator import itemgetter 
 
@@ -127,7 +130,7 @@ class PlotReader(ReaderBase):
             #PRINT FIRST 10 LINES:
             if prefs.pPrintFirstLines.value():
                 startPos = f.tell()
-                print '=========='
+                print('==========')
                 for line in f.readlines( min(self.nLines,10) ):
                     
                     #TODO: do the check for \n only once 
@@ -135,13 +138,13 @@ class PlotReader(ReaderBase):
                     #print line[-2:]
                     #if line[-2:] == '\n':
                     #    line = line[:-2]
-                    print '[%s]: %s' %(self.n_line, line)
-                    print '--> %s\n' %str(col_filter(line.split(separator)))
+                    print('[%s]: %s' %(self.n_line, line))
+                    print('--> %s\n' %str(col_filter(line.split(separator))))
                 f.seek(startPos)
-                print '=========='
+                print('==========')
             
             #CREATE DATA ARRAY:
-            shape = self.nLines/step
+            shape = self.nLines//step
             if n_col == 0:
                 raise Exception('no columns given')
             elif n_col > 1:
@@ -174,7 +177,7 @@ class PlotReader(ReaderBase):
                     break
                 step_len += l
             data = data[:i]
-            print '%s lines were corrupted' %n_defective_lines
+            print('%s lines were corrupted' %n_defective_lines)
 
             #SPLIT ARRAY IF NEEDED:
             if (has_x_col and n_col > 2) or (not has_x_col and n_col > 1):
@@ -205,14 +208,14 @@ class PlotReader(ReaderBase):
         for line in f.readlines( min(self.nLines, 50) ):
             for n,s in enumerate(separators.values()):
                 numberOfSeparator[n] += line.count(s)
-        sep = separators.keys()[numberOfSeparator.index(max(numberOfSeparator))]
-        print "--> separator set to '%s'" %sep
+        sep = list(separators.keys())[numberOfSeparator.index(max(numberOfSeparator))]
+        print("--> separator set to '%s'" %sep)
         f.seek(last_pos) # go back  
         return sep 
 
     def status(self):
         #read lines over all lines
-        return float(self.n_line) / self.nLines
+        return old_div(float(self.n_line), self.nLines)
 
 
 
@@ -236,7 +239,7 @@ class _CSVPreferences(pTypes.GroupParameter):
             'name':"Data type",
             'type':'list',
             'value':"32 bit float",
-            'limits':self.dtypes.keys()})
+            'limits':list(self.dtypes.keys())})
 
         self.pFindSeparator = self.addChild({
             'name':"Find Separator Character",
@@ -250,7 +253,7 @@ class _CSVPreferences(pTypes.GroupParameter):
             'type':'list',
             'value':'COMMA',
             'visible':False,
-            'limits':self.separators.keys(),
+            'limits':list(self.separators.keys()),
             'tip':'''the sign, that separates the values in one line e.g. '\t' for a tab'''} )
 
         self.pPrintFirstLines = self.addChild({

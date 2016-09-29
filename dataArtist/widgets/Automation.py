@@ -1,3 +1,5 @@
+from __future__ import division
+
 from pyqtgraph_karl.Qt import QtGui, QtCore
 import numpy as np
 import traceback
@@ -12,10 +14,16 @@ import dataArtist
 from dataArtist.widgets.ParameterMenu import ParameterMenu
 from dataArtist.widgets.Tool import Tool
 
+import platform
 
 #---CONSTANTS------------------------------
 #GET ALL PYTHON BUILD-INs:
-import __builtin__
+try:
+    __builtin__
+except NameError:
+    import builtins
+    __builtin__ = builtins
+    
 from fancywidgets.pyQtBased.CircleWidget import CircleWidget
 BUILTINS_DICT = {}
 for b in dir(__builtin__):
@@ -143,8 +151,8 @@ class Automation(QtGui.QWidget):
         state['active'] = self.btn_show.isChecked()
         state['collect'] = self.btn_collect.isChecked()
         #l['runOnNewInput'] = self.btn_run_new.isChecked()
-        state['runOn'] = unicode(self.cb_run_on.currentText())
-        state['tabTitles'] = [unicode(self.tabs.tabText(tab)) for tab in self.tabs]
+        state['runOn'] = str(self.cb_run_on.currentText())
+        state['tabTitles'] = [str(self.tabs.tabText(tab)) for tab in self.tabs]
         #SCRIPTS
         ss = state['scripts'] = []
         for tab in self.tabs:
@@ -191,7 +199,7 @@ class Automation(QtGui.QWidget):
         self.btn_collect.setChecked(self._collect)
         #add chosen widget to active script:  
         fn = lambda widget: self.tabs.currentWidget().addTool(widget)
-        for tool in self.display.widget.tools.itervalues():
+        for tool in self.display.widget.tools.values():
             #TOOLS:
             tool.returnToolOnClick(self._collect, fn)
             #TOOL-PARAMETERS:
@@ -265,7 +273,7 @@ class Automation(QtGui.QWidget):
             # move splitter:
                 # smallest possible size of batchTab 
             if l:
-                a = (l[i] - minSize) / len(l)
+                a = old_div((l[i] - minSize), len(l))
                 for n,y in enumerate(l):
                     if n != i:
                         l[n] = y+a
@@ -345,14 +353,14 @@ class ScriptTab(CodeEditor):
         CodeEditor.__init__(self, automation.display.workspace.gui.dialogs)
         #THREAD to run the script within:
         self.thread = _Thread(self, automation, refreshrate)
-        self.editor.setToolTip('''This is a Python 2.7 console.
+        self.editor.setToolTip('''This is a Python {} console.
 it accepts ...
 * all built-in functions, like 'dir'
 * already imported modules, like 'np', for numpy
 * special dataArtist functions, like 'new', 'd' ...
 
 Click on 'Globals' in the right click menu for more information.
-''')
+'''.format(platform.python_version()))
 
 
         self.addGlobals({'d':'Access the current display', 
@@ -452,8 +460,8 @@ class _Thread(QtCore.QThread):
         self._globals.update({#'wait':self.wait,
                               'timed':self._getAndRegisterTimer,
                               'new': self._addActiveWidget})
-        k = self._globals.keys()
-        for b in BUILTINS_DICT.keys():
+        k = list(self._globals.keys())
+        for b in list(BUILTINS_DICT.keys()):
             k.remove(b)
 
         self._widgetUpdateTimer = QtCore.QTimer()
@@ -528,7 +536,7 @@ class _Thread(QtCore.QThread):
                 
         self._widgetUpdateTimer.start()
         try:
-            c = compile(unicode(self.scriptTab.editor.toPlainText()), '<string>', 'exec')
+            c = compile(str(self.scriptTab.editor.toPlainText()), '<string>', 'exec')
             exec(c, self._globals)
         except Exception:
             traceback.print_exc()

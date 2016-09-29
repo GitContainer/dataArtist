@@ -1,3 +1,4 @@
+from __future__ import print_function
 import numpy as np
 
 from imgProcessor.measure.SNR.SNR import SNR
@@ -118,7 +119,7 @@ class SignalToNoise(Tool):
         if self.pMethod.value() == 'Bedrich2016':
             msg += ', averaging: %s, background exclusion: %s' %(
                 self.pAverage.value(), self.pExBg.value())
-        print msg
+        print(msg)
                 
 
     def activate(self):

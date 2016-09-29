@@ -1,3 +1,6 @@
+from __future__ import division
+from __future__ import print_function
+
 import numpy as np
 from pyqtgraph_karl import PolyLineROI
 
@@ -117,7 +120,7 @@ class PointSpreadFunction(Tool):
         w = self.display.widget
 #         s = w.image.shape[1:3]
         r = self.display.widget.view.vb.viewRange()  
-        p = ((r[0][0]+r[0][1])/2, (r[1][0]+r[1][1])/2)
+        p = (old_div((r[0][0]+r[0][1]),2), old_div((r[1][0]+r[1][1]),2))
         s = [(r[0][1]-r[0][0])*0.1, (r[1][1]-r[1][0])*0.1]
         
         #if w.image.ndim == 3:
@@ -156,7 +159,7 @@ class PointSpreadFunction(Tool):
 
     def activate(self):
         if self.quadROI is None:
-            print 'need to set boundaries first'
+            print('need to set boundaries first')
             return self._createROI()
         
         p = self.quadROI.pos()

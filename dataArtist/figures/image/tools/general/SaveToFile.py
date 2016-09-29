@@ -1,3 +1,6 @@
+from __future__ import division
+from __future__ import print_function
+
 import cv2
 from pyqtgraph_karl.Qt import QtGui
 import numpy as np
@@ -58,7 +61,7 @@ TIFF files (*.tiff *.tif)"""
             'name': 'Type',
             'type': 'list',
             'value':'normal image',
-            'limits':self.engine.keys(),
+            'limits':list(self.engine.keys()),
             'tip':'''normal image: export the original image array
 rendered: export the current display view'''})
         
@@ -173,7 +176,7 @@ rendered: export the current display view'''})
             h = size.height()
         else:
             w,h = self.display.widget.image.shape[1:3]
-        self.aspectRatio = h / float(w)
+        self.aspectRatio = h/w
         self.pWidth.setValue(w, blockSignal=self._pWidthChanged) 
         self.pHeight.setValue(h, blockSignal=self._pHeightChanged)
 
@@ -198,7 +201,7 @@ rendered: export the current display view'''})
             self._menu.aboutToShow.disconnect(self._updateOutputSize)
         except: pass
         if self.pAspectRatio.value():
-            self.pWidth.setValue(int(round(value/self.aspectRatio)), 
+            self.pWidth.setValue(int(round(value / self.aspectRatio)), 
                                  blockSignal=self._pWidthChanged)
         
 
@@ -261,7 +264,7 @@ rendered: export the current display view'''})
             else:
                 w = QtGui.QPixmap.grabWidget(d)
             w.save(path2)
-            print 'Saved image under %s' %path2
+            print('Saved image under %s' %path2)
         
         if self.pExportAll.value():
             #EACH LAYER SEPARATE
@@ -289,7 +292,7 @@ rendered: export the current display view'''})
         if not self.pExportAll.value():
             image = image[w.currentIndex]
         method(path, image)
-        print 'Saved image under %s' %path
+        print('Saved image under %s' %path)
 
 
     def _export(self, fn):
@@ -297,7 +300,7 @@ rendered: export the current display view'''})
             if self.pResize.value():
                 img = resize(img, (self.pWidth.value(), self.pHeight.value()))
             fn(path, img)
-            print 'Saved image under %s' %path
+            print('Saved image under %s' %path)
         w = self.display.widget            
         image = w.image
         path = self.pPath.value()

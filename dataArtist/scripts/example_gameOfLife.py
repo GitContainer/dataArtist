@@ -1,3 +1,4 @@
+from builtins import range
 #This example shows the Conways GAME OF LIFE  
 #==========================================
 

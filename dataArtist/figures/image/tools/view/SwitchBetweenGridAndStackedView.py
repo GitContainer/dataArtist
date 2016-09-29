@@ -1,3 +1,5 @@
+from __future__ import print_function
+from builtins import zip
 from dataArtist.widgets.Tool import Tool
 from pyqtgraph_karl.graphicsItems.ImageItem import ImageItem
 from imgProcessor.transformations import toGray, isColor
@@ -90,7 +92,7 @@ class SwitchBetweenGridAndStackedView(Tool):
 
             if isColor(img):
                 #TODO: I dont know why it returns an error on color ...find out
-                print 'only works on grayscale images at the moment'
+                print('only works on grayscale images at the moment')
                 img = toGray(img)
             
             item = ImageItem(img)

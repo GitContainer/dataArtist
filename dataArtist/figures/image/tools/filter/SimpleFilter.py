@@ -38,7 +38,7 @@ class SimpleFilter(Tool):
         self.pType = pa.addChild({
             'name':'Type',
             'type':'list',
-            'limits':self.FILTER.keys(),
+            'limits':list(self.FILTER.keys()),
             'value':'median'})                             
         
         self.pSeparate = pa.addChild({

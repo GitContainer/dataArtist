@@ -1,3 +1,5 @@
+from __future__ import division
+
 import pyqtgraph_karl as pg
 from pyqtgraph_karl.Qt import QtGui
 
@@ -42,9 +44,9 @@ class Slice(Tool):
 
         #position slice within current view:
         r = self.display.widget.view.vb.viewRange()
-        avy =   (r[1][0]+r[1][1])/2
+        avy =   (r[1][0]+r[1][1]) / 2
         xmin,xmax = r[0][0], r[0][1]
-        avx = (xmin+xmax)/2
+        avx = (xmin+xmax) / 2
         p = [[avx-0.5*(avx-xmin),avy],[avx+0.5*(xmax-avx),avy]]
 
         self._ROIs.append(

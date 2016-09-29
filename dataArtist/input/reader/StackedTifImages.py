@@ -1,10 +1,13 @@
+from __future__ import absolute_import
+from builtins import str
+from builtins import range
 import tifffile as tff
 
 from imgProcessor.transformations import transpose
 import cv2
 
 #OWN
-from ImageWithOpenCV import ImageWithOpenCV
+from .ImageWithOpenCV import ImageWithOpenCV
         
         
         

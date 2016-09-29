@@ -1,3 +1,6 @@
+from __future__ import division
+from builtins import zip
+from past.utils import old_div
 
 from pyqtgraph_karl.widgets.MatplotlibWidget import MatplotlibWidget
 
@@ -130,7 +133,7 @@ class MatplotlibSurface(MatplotlibWidget):
             s = self.surface
             s.clear()
             for d in self.data:
-                n = d.shape[0]/50 # plot max 50x50 planes
+                n = old_div(d.shape[0],50) # plot max 50x50 planes
                 if n < 1:
                     n = 1
                 data = d.transpose(2,0,1)

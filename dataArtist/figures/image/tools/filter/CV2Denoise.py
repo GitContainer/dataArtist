@@ -1,3 +1,5 @@
+from __future__ import division
+
 from scipy.ndimage.filters import median_filter
 import numpy as np
 import cv2
@@ -206,7 +208,7 @@ class CV2Denoise(Tool):
                 med = median_filter(image[0], 3)
                 mn = np.min(med)
                 image -= mn # set min to 0
-                scale = np.max(med) / 255.0
+                scale = np.max(med) / 255
                 image /= scale
                 image = np.clip(image, 0,255)
                 image = image.astype(np.uint8)

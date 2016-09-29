@@ -1,3 +1,5 @@
+from __future__ import print_function
+
 import time
 import inspect
 import weakref
@@ -11,6 +13,9 @@ from fancywidgets.pyqtgraphBased.parametertree.parameterTypes \
 
 from fancytools.os.PathStr import PathStr
 from fancytools.fcollections.removeDuplicates import removeDuplicates
+
+
+from six import string_types
 
 #METADATA reader:
 # from hachoir_core.error import HachoirError
@@ -88,7 +93,7 @@ class DisplayDock(Dock):
                 names = [None]*len(data)
             else:
                 names = []
-        elif isinstance(names, basestring):
+        elif isinstance(names, string_types):
             names = [names]
             one_layer = True
 
@@ -554,7 +559,7 @@ class DisplayDock(Dock):
         #WIDGET
         layer = self.widget.addLayer(name=name, data=data, **kwargs)
         if not self.widget.moveLayerToNewImage is None:
-            print 'Move this layer to new display'
+            print('Move this layer to new display')
             #couldn't add new layer to stack: create a new display to show it            
             self.workspace.addDisplay(
                 origin=self,
@@ -713,7 +718,7 @@ class DisplayDock(Dock):
         ff = self.filenames
         for f in list(fnames):
             if f in ff:
-                print "file '%s' already in display '%s'" %(f, self.name())
+                print("file '%s' already in display '%s'" %(f, self.name()))
                 #fnames.remove(f)
         if fnames:
             if not self.reader:
@@ -840,7 +845,7 @@ class _DisplayFigureList(ListParameter):
         '''
         return the first widget in the list
         '''
-        return self._name_to_figure[self._name_to_figure.keys()[0]]
+        return self._name_to_figure[list(self._name_to_figure.keys())[0]]
      
 
     def getWidgetList(self):
@@ -855,8 +860,8 @@ class _DisplayFigureList(ListParameter):
                     self._name_to_figure[name] = cls
                     icons.append( getattr(cls, 'icon', None) )                    
             else:
-                print "%s doens't have needed attribute 'dimensions'" %cls.__name__
-        return self._name_to_figure.keys(), icons
+                print("%s doens't have needed attribute 'dimensions'" %cls.__name__)
+        return list(self._name_to_figure.keys()), icons
       
 
 

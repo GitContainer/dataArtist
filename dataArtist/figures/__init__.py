@@ -1,2 +1,3 @@
-from image.ImageWidget import ImageWidget
-from plot.PlotWidget import PlotWidget
+from __future__ import absolute_import
+from .image.ImageWidget import ImageWidget
+from .plot.PlotWidget import PlotWidget

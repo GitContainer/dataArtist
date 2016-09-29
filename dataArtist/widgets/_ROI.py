@@ -1,3 +1,4 @@
+from builtins import str
 import pyqtgraph_karl as pg
 
 from dataArtist.widgets.Tool import Tool
@@ -153,7 +154,7 @@ class ROIArea(pg.ROI):
 
 
     def roiName(self):
-        return unicode(self.text.textItem.toPlainText())
+        return str(self.text.textItem.toPlainText())
 
 
     def setName(self, name):

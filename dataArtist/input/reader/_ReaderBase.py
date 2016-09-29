@@ -1,3 +1,4 @@
+from __future__ import print_function
 import numpy as np
 
 from pyqtgraph_karl.Qt import QtCore, QtGui
@@ -140,8 +141,8 @@ class ReaderBase(QtCore.QThread):
                         label_list.append(labels)
                         fname_list.append(f)                 
       
-                except (IOError, ValueError), errmsg:
-                    print 'Error while opening %s: %s' %(f,errmsg)
+                except (IOError, ValueError) as errmsg:
+                    print('Error while opening %s: %s' %(f,errmsg))
                     label_list.append(None)
                     data_list.append(None)
                     fname_list.append(f)

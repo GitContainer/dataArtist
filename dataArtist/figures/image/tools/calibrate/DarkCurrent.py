@@ -114,7 +114,8 @@ class DarkCurrent(ImageTool):
         return inter, slope
 
 
-    def _doneAsFunction(self, (inter, slope)):
+    def _doneAsFunction(self, xxx_todo_changeme):
+        (inter, slope) = xxx_todo_changeme
         self._inter, self._slope = inter, slope
         
         self.outDisplay = self.handleOutput(
@@ -130,7 +131,8 @@ class DarkCurrent(ImageTool):
         return exposuretimes, imgs
 
 
-    def _doneAverage(self, (exposuretimes, imgs)):
+    def _doneAverage(self, xxx_todo_changeme1):
+        (exposuretimes, imgs) = xxx_todo_changeme1
         self.outDisplay = self.handleOutput(imgs, title='Averaged dark current')
         self.outDisplay.stack.values = np.array(exposuretimes)
         self.pUpdate.show()

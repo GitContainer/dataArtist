@@ -1,3 +1,6 @@
+from __future__ import division
+from __future__ import print_function
+
 import numpy as np
 
 #OWN
@@ -83,7 +86,8 @@ class HistogramROI(ROITool):
         
         #take middle of current position
         r = self.display.widget.view.vb.viewRange()  
-        p = ((r[0][0]+r[0][1])/2, (r[1][0]+r[1][1])/2)
+        p = ((r[0][0]+r[0][1]) / 2, 
+             (r[1][0]+r[1][1]) / 2)
         
         #CREATE NEW ROI:
         roi = ROI(self, 
@@ -164,6 +168,6 @@ class _HistogramROIArea(ROIArea):
                 #TODO: take mean of the bin edges
                 plot.setData(y=hist, x=bin_edges[:-1])
     
-            except (IndexError, ValueError),err:
+            except (IndexError, ValueError) as err:
                 # out out bounds
-                print err
+                print(err)

@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+from __future__ import print_function
 
 import sys 
 import os
@@ -35,8 +36,8 @@ from dataArtist.widgets.StatusBar import StatusBar
 if '-exec' in sys.argv:
     try:
         exec(sys.argv[-1])
-    except Exception, err:
-        raw_input('-exec failed! --> %s' %err)
+    except Exception as err:
+        input('-exec failed! --> %s' %err)
     sys.exit()
 ##########
 
@@ -465,7 +466,7 @@ class Gui(MultiWorkspaceWindow):
         # one or more files/folders are dropped
         for url in urls:
             if url.isLocalFile():
-                path = PathStr(url.toLocalFile().toLocal8Bit().data())
+                path = PathStr(url.toLocalFile())
                 if path.exists():
                     _appendRecursive(path)
         return l
@@ -477,7 +478,7 @@ class Gui(MultiWorkspaceWindow):
         
         #HTML CONTENT        
         if m.hasHtml():
-            (paths, data) = html2data(unicode(m.html()))
+            (paths, data) = html2data(str(m.html()))
             self.currentWorkspace().addFiles(paths)
             #raise NotImplementedError('direct import of data (like tables) from a browser is not implemented at the moment')
         
@@ -502,7 +503,7 @@ class Gui(MultiWorkspaceWindow):
         
         #TEXT/TABLES
         if m.hasText():
-            txt = unicode(m.text())
+            txt = str(m.text())
             if self.txtIsTable(txt):
                 self.currentWorkspace().addTableDock(text=txt)
             else:

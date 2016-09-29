@@ -1,3 +1,6 @@
+from __future__ import division
+from __future__ import print_function
+
 import numpy as np
 
 from pyqtgraph_karl.functions import mkPen, mkBrush
@@ -61,14 +64,14 @@ class Selection(Tool):
             'type': 'list',
             'value':'-',
             'limits':['-']})
-        self.pMask.items.keys()[0].widget.showPopup = self._updatePMask
+        list(self.pMask.items.keys())[0].widget.showPopup = self._updatePMask
 
 
     def _updatePMask(self):
         l = ['-']
         l.extend([p.name() for p in self.pa.childs[3:]])
         self.pMask.setLimits(l)
-        i = self.pMask.items.keys()[0].widget
+        i = list(self.pMask.items.keys())[0].widget
         i.__class__.showPopup(i)
 
 
@@ -315,12 +318,12 @@ class Selection(Tool):
             a = p.painterPath()
             name = self.pa.childs[n+3].name()
             if mask is None or i == n:
-                print '%s. %s - Area:%s | Length: %s' %(
-                        n+1, name, a.calcArea(), a.length())
+                print('%s. %s - Area:%s | Length: %s' %(
+                        n+1, name, a.calcArea(), a.length()))
             else:
                 ia = QPainterPath(mask.intersected(a)).calcArea()
-                print '%s. %s - Area:(%s, area intersection: %s, relative %s) | Length:%s' %(
-                        n+1, name, a.calcArea(), ia, ia/ma, a.length())
+                print('%s. %s - Area:(%s, area intersection: %s, relative %s) | Length:%s' %(
+                        n+1, name, a.calcArea(), ia, ia/ma, a.length()))
 
 
     def _addIso(self, p, state):
@@ -333,7 +336,7 @@ class Selection(Tool):
 
         hist = w.ui.histogram
         mn,mx = hist.getLevels()
-        lev = (mn+mx)/2
+        lev = (mn+mx) / 2
  
         # Isocurve drawing
         iso = _IsoCurve(level=lev,**state)
@@ -374,7 +377,8 @@ class Selection(Tool):
         w = self.display.widget
         r = w.view.vb.viewRange()  
         if not 'pos' in state:
-            state['pos'] = ((r[0][0]+r[0][1])/2, (r[1][0]+r[1][1])/2)
+            state['pos'] = ((r[0][0]+r[0][1]) / 2, 
+                            (r[1][0]+r[1][1]) / 2)
             state['size'] = [(r[0][1]-r[0][0])*0.2, (r[1][1]-r[1][0])*0.2]
             state['angle'] = 0.0
         path = cls(**state)

@@ -1,7 +1,10 @@
+from __future__ import division
+from __future__ import print_function
+
 import numpy as np
 
 from imgProcessor.transform.equalizeImage import equalizeImage
-from imgProcessor.signal import scaleSignal
+from imgProcessor.imgSignal import scaleSignal
 
 from dataArtist.widgets.Tool import Tool
 
@@ -37,7 +40,7 @@ class ScaleHistogram(Tool):
             'name': 'Method',
             'type': 'list',
             'value':'Scale signal +/-3std',
-            'limits':self._methods.keys()}) 
+            'limits':list(self._methods.keys())}) 
         
         self.pRefImgChoose = self.pMethod.addChild({
                 'name':'Reference image',
@@ -80,6 +83,6 @@ class ScaleHistogram(Tool):
                 out = fn(i)
                 if isinstance(out,np.ndarray):
                     img[n] = out
-            except Exception, err:
+            except Exception as err:
                 print("couldn't scale image: %s" %err)
         self.display.changeLayer(img, 'Equalized', levels=levels)

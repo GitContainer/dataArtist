@@ -1,3 +1,5 @@
+from __future__ import division
+
 import cv2
 import numpy as np
 
@@ -188,7 +190,7 @@ class ImageWidget(DisplayWidget, ImageView, PyqtgraphgDisplayBase):
                                color=color,
                                alpha=alpha
                                ) 
-        name = incrementName(self.cItems.keys(), name)
+        name = incrementName(list(self.cItems.keys()), name)
         self.cItems[name] = cItem
         self.view.addItem(cItem)
         self.sigOverlayAdded.emit(cItem, name, tip)
@@ -197,7 +199,7 @@ class ImageWidget(DisplayWidget, ImageView, PyqtgraphgDisplayBase):
 
     def removeColorLayer(self, nameOrItem):
         if isinstance(nameOrItem, ColorLayerItem):
-            for name, item in self.cItems.iteritems():
+            for name, item in self.cItems.items():
                 if item == nameOrItem:
                     break
         else:
@@ -214,7 +216,7 @@ class ImageWidget(DisplayWidget, ImageView, PyqtgraphgDisplayBase):
         viewBox that contain the image and the histogram accordingly 
         '''
         vb = self.ui.histogram.vb
-        vb.setFixedWidth(vb.width() * (9.0/ptSize) )
+        vb.setFixedWidth(vb.width() * (9.0 / ptSize) )
         self.ui.histogram.axis.setFontSize(ptSize)
 
 

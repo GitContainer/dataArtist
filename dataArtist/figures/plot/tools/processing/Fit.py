@@ -1,3 +1,5 @@
+from __future__ import division
+
 import numpy as np
 from pyqtgraph_karl.Qt import QtGui, QtCore
 
@@ -138,8 +140,8 @@ class _Poisson(object):
     @staticmethod
     def function(x, lamb, offsX, offsY, scaleX, scaleY):
         # poisson function, parameter lamb is the fit parameter
-        x = (x - offsX)/scaleX
-        y = (lamb**x/factorial(x)) * np.exp(-lamb)
+        x = (x - offsX) / scaleX
+        y = (lamb**x / factorial(x)) * np.exp(-lamb)
         return scaleY*y + offsY
 
 

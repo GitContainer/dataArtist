@@ -1,3 +1,4 @@
+from builtins import str
 from pyqtgraph_karl.functions import mkPen
 from pyqtgraph_karl.Qt import QtCore, QtGui
 

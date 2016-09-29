@@ -1,10 +1,14 @@
+from __future__ import division
+from __future__ import absolute_import
+
+
 import pyqtgraph_karl as pg
 import numpy as np
 from math import cos, sin, pi
 import cv2
 from pyqtgraph_karl.Qt import QtCore
 
-from PseudoSquareROI import PseudoSquareROI
+from .PseudoSquareROI import PseudoSquareROI
 from dataArtist.items.QPainterPath import QPainterPath
 
 
@@ -239,7 +243,7 @@ class GridROI(pg.ROI):
 
 
     def _setCellSize(self, size):
-        size_cell = (size - (self.opts['grid']-1)*self.opts['gap']) / self.opts['grid'] 
+        size_cell = (size - (self.opts['grid']-1)*self.opts['gap']) / self.opts['grid']
         for c in self.cells:
             c.setSize(size_cell)
             for line in c.subgrid:
@@ -353,7 +357,7 @@ class SubLine(pg.ROI):
         j =  self.j
         s = self.state
         cs = self.cell.state
-        p=self.pos = (s['pos'][j]-cs['pos'][j])/cs['size'][j]
+        p=self.pos = (s['pos'][j]-cs['pos'][j]) / cs['size'][j]
         t=self.thickness = s['size'][j] / cs['size'][j]
         return t,p
 

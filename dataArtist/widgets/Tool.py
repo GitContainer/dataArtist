@@ -1,3 +1,4 @@
+from __future__ import print_function
 import os
 import traceback
 
@@ -56,7 +57,7 @@ class _ProcessThread(QtCore.QThread):
         try:
             out = self.runfn()
         except Exception:
-            print 'tool activation aborted: %s' %traceback.format_exc()
+            print('tool activation aborted: %s' %traceback.format_exc())
             return self.progressBar.cancel.click()
         self.sigDone.emit(out)
         

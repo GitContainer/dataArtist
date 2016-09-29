@@ -1,3 +1,4 @@
+from __future__ import print_function
 #===================
 #DISPLAY
 #===================
@@ -35,7 +36,7 @@ d.workspace.gui
 #BUILTINS
 #===================
 # you can use all built-in functions of python, like
-print dir, help, range
+print(dir, help, range)
 
 #===================
 #EXTRA MODULES

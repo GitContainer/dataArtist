@@ -1,3 +1,5 @@
+from __future__ import print_function
+from builtins import str
 import numpy as np
 from pyqtgraph_karl.Qt import QtGui
 
@@ -136,7 +138,7 @@ class CalibrationFile(GlobalTool):
                     data=[data],title='Calibration: %s' %name,
                     names=[date])
             else:
-                print data
+                print(data)
 
 
     def getCurrentCoeff(self, name):
@@ -450,7 +452,7 @@ class CalibrationFile(GlobalTool):
             c = self.calibrations[self._curIndex]
             c.saveToFile(path) 
             self.pModified.setValue(False)
-            print 'camera calibration saved'
+            print('camera calibration saved')
 
 
     def _autosave(self):

@@ -1,10 +1,13 @@
+from __future__ import division
+from builtins import range
+from past.utils import old_div
 # this example animates a mandelbrot for us! yeah.
 # this is the basic function for it:
 def mandelbrot(LowX, HighX, LowY, HighY, stepx, stepy, maxiter):
     "creates a numeric array of the mandelbrot function"
     #if maxiter > 11: maxiter = 11  #for your own protection
-    xx = np.arange(LowX, HighX, (HighX-LowX)/stepx)
-    yy = np.arange(HighY, LowY, (LowY-HighY)/stepy) * 1.0j
+    xx = np.arange(LowX, HighX, old_div((HighX-LowX),stepx))
+    yy = np.arange(HighY, LowY, old_div((LowY-HighY),stepy)) * 1.0j
     #somtimes these arrays are too big by one element???
     xx = xx[:stepx]
     yy = yy[:stepy]

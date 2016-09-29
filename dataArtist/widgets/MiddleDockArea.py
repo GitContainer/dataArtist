@@ -1,3 +1,5 @@
+from builtins import str
+from builtins import range
 from fancywidgets.pyqtgraphBased.DockArea import DockArea
 
 from pyqtgraph_karl.Qt import QtGui
@@ -16,7 +18,7 @@ class MiddleDockArea(DockArea):
         
         ftypes = sorted(SUPPORTED_FTYPES)
         #split in chunks of 4:         
-        ftypes = [ftypes[i:i+4] for i in xrange(0,len(ftypes), 4)]
+        ftypes = [ftypes[i:i+4] for i in range(0,len(ftypes), 4)]
         #format ftypes:
         t = '<ul>'
         for f in ftypes:

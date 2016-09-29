@@ -52,14 +52,14 @@ class ZoomTo(Tool):
             if img.ndim == 3:
                 img = img[w.currentIndex]
         elif obj == 'current color layer':
-            img = w.cItems.values()[0].image
+            img = list(w.cItems.values())[0].image
         
         s = 'img %s %s' %(self.pCriterion.value(), self.pValue.value())
         indices = eval(s)
         self.positions = np.nonzero(indices)
         self.n = 0
                     
-        self.control = _ControlWidget(self.previous, self.next)
+        self.control = _ControlWidget(self.previous, self.__next__)
         self.control.show()
 
 
@@ -69,7 +69,7 @@ class ZoomTo(Tool):
             self._goToPosition()
 
 
-    def next(self):
+    def __next__(self):
         if self.n < len(self.positions[0]) -1:
             self.n += 1
             self._goToPosition()

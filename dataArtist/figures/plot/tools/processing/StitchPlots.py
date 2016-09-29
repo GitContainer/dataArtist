@@ -1,3 +1,4 @@
+from builtins import zip
 from pyqtgraph_karl.Qt import QtGui
 import numpy as np
 

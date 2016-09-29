@@ -1,3 +1,4 @@
+from builtins import range
 # create a 2d array filled with 
 # random values:
 arr = np.random.normal(size=(200, 200))

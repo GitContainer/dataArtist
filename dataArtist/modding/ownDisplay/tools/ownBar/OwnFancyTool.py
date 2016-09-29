@@ -1,3 +1,4 @@
+from __future__ import print_function
 from dataArtist.widgets.Tool import Tool
 
 
@@ -13,8 +14,8 @@ class OwnFancyTool(Tool):
 
 
     def activate(self):
-        print 'activate'
+        print('activate')
 
 
     def deactivate(self):
-        print 'deactivate'
+        print('deactivate')

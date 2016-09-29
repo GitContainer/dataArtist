@@ -1,7 +1,7 @@
 import numpy as np
 from pyqtgraph.Qt import QtGui
 from dataArtist.widgets.Tool import Tool
-from imgProcessor.signal import signalRange
+from imgProcessor.imgSignal import signalRange
 
 
 

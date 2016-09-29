@@ -1,6 +1,7 @@
 '''
 Widgets handling all dataArtist preferences
 '''
+from builtins import str
 
 from pyqtgraph_karl.Qt import QtGui, QtCore
 import pyqtgraph_karl
@@ -114,7 +115,7 @@ class PreferencesCommunication(QtGui.QWidget):
         gl.addWidget(self.sb_timeout, 2,1)
 
         gl.addWidget(QtGui.QLabel('<b>....listen to queues named:</b>'), 3,0)
-        for n, (queue, action) in enumerate(rab.listenTo.iteritems()):
+        for n, (queue, action) in enumerate(rab.listenTo.items()):
             gl.addWidget(QtGui.QLabel(queue), 4+n,0)
             gl.addWidget(QtGui.QLabel(action.__doc__), 4+n,1)
  
@@ -151,7 +152,7 @@ class PreferencesCommunication(QtGui.QWidget):
         if checked:
             try:
                 self.rabbitMQServer.start()
-            except Exception, err:
+            except Exception as err:
                 #maybe rabbitMQ is not installed
                 self._errm = QtGui.QErrorMessage() #needs to assign to self, otherwise garbage collected
                 self._errm.showMessage(str(err))

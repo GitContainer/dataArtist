@@ -1,3 +1,4 @@
+from __future__ import print_function
 from imgProcessor.camera.flatField.flatFieldFromCalibration import flatFieldFromCalibration
 from imgProcessor.camera.flatField.FlatFieldFromImgFit import FlatFieldFromImgFit
 
@@ -110,7 +111,7 @@ class FlatField(ImageTool):
                 out, bglevel = ff.flatFieldFromFit()[:2] 
         else:
             out, bglevel = ff.flatFieldFromFit()[:2]
-        print 'background level = %s' %bglevel
+        print('background level = %s' %bglevel)
         return out
     
 
@@ -120,7 +121,7 @@ class FlatField(ImageTool):
 
         if self.pMethod.value() == 'from calibration images':
             if self._bg is None:
-                print 'assume images are already background corrected'
+                print('assume images are already background corrected')
                 bgimg = 0
             else:
                 bgimg = self._bg.widget.image

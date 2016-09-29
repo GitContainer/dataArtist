@@ -1,3 +1,5 @@
+from builtins import zip
+from builtins import range
 
 import numpy as np
 
@@ -104,7 +106,7 @@ class FreehandItem(GraphicsObject):
     def elements(self):
         c = self.path.elementCount()-1
         elem = np.empty( (c,2) ) 
-        for i in xrange(c):
+        for i in range(c):
             e = self.path.elementAt(i)
             elem[i] = e.x,e.y
         return elem
@@ -121,7 +123,7 @@ class FreehandItem(GraphicsObject):
             
         elif self.pathEdit is not None:
             #x0,y0 = self.pathEdit.pos()
-            for i,h in zip(range(self.path.elementCount()-1), self.pathEdit.getHandles()):
+            for i,h in zip(list(range(self.path.elementCount()-1)), self.pathEdit.getHandles()):
                 e = self.path.elementAt(i)
                 x,y = h.pos()
                 

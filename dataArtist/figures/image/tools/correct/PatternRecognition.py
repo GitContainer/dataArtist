@@ -1,3 +1,4 @@
+from __future__ import print_function
 import numpy as np
  
 from imgProcessor.transform.PerspectiveTransformation import PerspectiveTransformation 
@@ -77,7 +78,7 @@ class PatternRecognition(Tool):
             self.setChecked(False)
             raise Exception('choose an reference image first')
         
-        print('EXECUTE ', self.__class__.__name__)
+        print(('EXECUTE ', self.__class__.__name__))
         p = PerspectiveTransformation(self._refImg)
         if self.pOperation.value() == 'fit':
             method = p.fitImg
@@ -93,13 +94,14 @@ class PatternRecognition(Tool):
                     #PROCESS:
                     try:
                         i = method(i.copy())
-                    except Exception, errm:
-                        print(self.__class__.__name__ + 'Error: ', errm)
+                    except Exception as errm:
+                        print((self.__class__.__name__ + 'Error: ', errm))
                 out[n] = i
         return out, n
 
 
-    def _done(self, (out, index)):
+    def _done(self, xxx_todo_changeme):
+        (out, index) = xxx_todo_changeme
         self.handleOutput(out, title='PerspectiveFit', 
                                changes='PerspectiveFit', 
                                index=index)    

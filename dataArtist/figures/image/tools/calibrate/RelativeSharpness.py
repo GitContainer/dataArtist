@@ -42,7 +42,7 @@ class RelativeSharpness(Tool):
             'name': 'method',
             'type': 'list',
             'value':'tenengrad',
-            'limits': self._method.keys()}) 
+            'limits': list(self._method.keys())}) 
 
 
     def activate(self):

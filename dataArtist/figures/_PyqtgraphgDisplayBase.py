@@ -1,3 +1,4 @@
+from builtins import object
 class PyqtgraphgDisplayBase(object):
     '''
     Base class for display widgets inherited from pyqtgraph widgets, like imageView

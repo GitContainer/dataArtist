@@ -1,3 +1,5 @@
+from __future__ import division
+
 import pyqtgraph_karl as pg
 import numpy as np
 from pyqtgraph_karl.Qt import QtGui, QtCore
@@ -61,7 +63,7 @@ class ColorLayerItem(pg.ImageItem):
 
     def setQColor(self, qcolor):
         self.color = qcolor.rgb()
-        self.setAlpha(float(qcolor.alpha())/255)
+        self.setAlpha(qcolor.alpha()/255)
       
 
     def setLayer(self, layer, index=None):
@@ -102,7 +104,7 @@ class ColorLayerItem(pg.ImageItem):
         a = self.alpha
         if im.dtype == bool:
             mn = False
-            mx = True/ a
+            mx = True / a
         else:
             mn = np.min(im) 
             mx = np.max(im)
@@ -140,7 +142,7 @@ class ColorLayerItem(pg.ImageItem):
             if self.histogramPos == mn:
                 x = 0
             else:
-                x = (self.histogramPos-mn) / (mx-mn)
+                x = old_div((self.histogramPos-mn), (mx-mn))
             self.color = self.histogram.gradient.getColor(x).rgb()
             self.updateLayer()
         else:

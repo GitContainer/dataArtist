@@ -1,3 +1,5 @@
+from __future__ import division
+
 import pyqtgraph_karl as pg
 from pyqtgraph_karl.Qt import QtGui
 #OWN
@@ -53,7 +55,7 @@ class Drill(Tool):
 
         #take middle of current position
         r = self.display.widget.view.vb.viewRange()  
-        p = ((r[0][0]+r[0][1])/2, (r[1][0]+r[1][1])/2)
+        p = (old_div((r[0][0]+r[0][1]),2), old_div((r[1][0]+r[1][1]),2))
 
         self._POIS.append(
                 _POI(self, name, 

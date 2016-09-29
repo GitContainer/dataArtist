@@ -1,3 +1,4 @@
+from builtins import zip
 import pyqtgraph_karl as pg
 from pyqtgraph_karl.Qt import QtGui
 

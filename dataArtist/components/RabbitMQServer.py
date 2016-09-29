@@ -1,4 +1,7 @@
-import puka
+from __future__ import division
+from __future__ import print_function
+
+import pika
 from pyqtgraph_karl.Qt import QtCore, QtGui
 
 
@@ -42,14 +45,16 @@ class RabbitMQServer(object):
         Check all self.listentO keys
            and execute connected method
         '''
-        for promise, action in self.promises.items():
-            msg_result = self.client.wait(promise, timeout=self.opts['timeout']/1000.0)#wait for 10ms
+        for promise, action in list(self.promises.items()):
+            msg_result = self.client.wait(promise, 
+                                          #wait for 10ms
+                                          timeout=self.opts['timeout']/1000)
             if msg_result:
                 #MESSAGE RECEIVED
                 b = msg_result['body']
                 if self.opts['corfirmPosts']:
                     #PRINT CONFIRMATION
-                    print " [R] %s -> '%s'" % (msg_result['routing_key'], b)
+                    print(" [R] %s -> '%s'" % (msg_result['routing_key'], b))
                 if b == 'STOP':
                     #stop listening to that channel:
                     self.promises.pop(promise)
@@ -58,7 +63,7 @@ class RabbitMQServer(object):
             
        
     def configure(self):
-        self.client = puka.Client("amqp://%s/" %self.opts['host'])
+        self.client = pika.BlockingConnection("amqp://%s/" %self.opts['host'])
         try:
             promise = self.client.connect()
         except Exception: 
@@ -66,7 +71,7 @@ class RabbitMQServer(object):
         self.client.wait(promise)
 
         self.promises = {}
-        for name, action in self.listenTo.iteritems():
+        for name, action in self.listenTo.items():
             #INITITALIZE ALL QUEUES
             promise = self.client.queue_declare(queue=name)
             self.client.wait(promise)

@@ -1,3 +1,5 @@
+from builtins import zip
+from builtins import object
 import weakref
 
 from dataArtist.widgets import  Toolbars
@@ -24,7 +26,7 @@ class DisplayWidget(object):
         state['toolbars'] = [t.isSelected() for t in self.toolbars]
         #tools
         state['tools'] = t = {}
-        for name, tool in self.tools.iteritems():
+        for name, tool in self.tools.items():
             t[name] = tool.saveState()
         return state
         
@@ -35,7 +37,7 @@ class DisplayWidget(object):
             t.setSelected(sel)
         #tools
         t = state['tools']
-        for name, tool in self.tools.iteritems():
+        for name, tool in self.tools.items():
             try:
                 tool.restoreState(t[name])
             except KeyError:

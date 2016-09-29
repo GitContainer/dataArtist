@@ -1,3 +1,8 @@
+from __future__ import division
+from __future__ import print_function
+
+from six import string_types
+
 import pyqtgraph_karl as pg
 
 from fancywidgets.pyqtgraphBased.parametertree import Parameter
@@ -42,7 +47,7 @@ class AxesContainer(list):
      
      
     def append(self, axis, orientation='bottom'):
-        if isinstance(axis, basestring):
+        if isinstance(axis, string_types):
             #create axis if only a name is given:
             axis = Axis(self._getAxisName(), axis, orientation)
         self.p.addChild(axis.p)
@@ -59,7 +64,7 @@ class AxesContainer(list):
         #prepare index
         if index is None:
             #copy all axes
-            index = range(len(self))
+            index = list(range(len(self)))
             #except of the stack axis - we will add it at the end anyway
             #index.pop(self.index(self.stackAxis))
         elif not type(index) in (tuple, list):
@@ -165,9 +170,9 @@ class Axis(pg.AxisItem):
             #scale axis between 0 - 100
             bounds = self._linkedView().childrenBoundingRect()
             if self.orientation in ['right', 'left']:
-                self.pScale.setValue(100/bounds.height())
+                self.pScale.setValue(100 / bounds.height())
             else:
-                self.pScale.setValue(100/bounds.width())
+                self.pScale.setValue(100 / bounds.width())
         else:
             self.pScale.setValue(1)
             
@@ -275,8 +280,8 @@ class StackAxis(Axis):
                                      {'name':name})
                                 )*scale+offset
                     return val
-                except Exception, err:
-                    print err
+                except Exception as err:
+                    print(err)
 
 
     #TODO: clean following messy defs  
@@ -304,8 +309,8 @@ class StackAxis(Axis):
                             )*scale+offset
                 
                 ch.setValue(val)
-            except Exception, err:
-                print err
+            except Exception as err:
+                print(err)
 
 
     def _setPStackValues(self):

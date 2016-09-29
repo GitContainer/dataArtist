@@ -1,3 +1,5 @@
+from __future__ import division
+
 import cv2
 import numpy as np
 from  pyqtgraph_karl.Qt import QtCore
@@ -49,7 +51,7 @@ class VideoStream(Tool):
 
 
     def _setInterval (self, param, freq):
-        self.timer.setInterval(1000.0/param.value())
+        self.timer.setInterval(1000.0 / param.value())
 
 
     def activate(self):

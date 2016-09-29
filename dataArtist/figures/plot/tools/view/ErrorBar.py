@@ -1,3 +1,5 @@
+from __future__ import division
+
 from pyqtgraph_karl import ErrorBarItem 
 from collections import OrderedDict
 
@@ -48,7 +50,7 @@ class ErrorBar(Tool):
         for d in self.display.workspace.displays():
             if d != self.display and d.widget.__class__ == self.display.widget.__class__:
                 self._w[d.name()] = d.widget
-        self.pSource.setLimits(self._w.keys())
+        self.pSource.setLimits(list(self._w.keys()))
         
 
     def deactivate(self):

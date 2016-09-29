@@ -1,3 +1,6 @@
+from __future__ import division
+from __future__ import print_function
+
 import numpy as np
 import pyqtgraph_karl as pg
 import cv2
@@ -187,7 +190,8 @@ class PerspectiveCorrection(Tool):
         w = self.display.widget
 
         r = w.view.vb.viewRange()  
-        p = ((r[0][0]+r[0][1])/2, (r[1][0]+r[1][1])/2)
+        p = ((r[0][0]+r[0][1]) / 2, 
+             (r[1][0]+r[1][1]) / 2 )
         s = [(r[0][1]-r[0][0])*0.1, (r[1][1]-r[1][0])*0.1]
 
         pos = np.array( [ [p[0]-s[0],p[1]+s[1]],
@@ -365,7 +369,7 @@ class PerspectiveCorrection(Tool):
                     #TODO: allow different image shapes
                     cv2.warpAffine(i,M, w.image.shape[1:3],
                                  borderValue=0) )
-                print out[-1].shape
+                print(out[-1].shape)
         else:
             r = v == 'Reference image'
             e = self.pExecOn.value()

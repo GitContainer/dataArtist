@@ -1,3 +1,4 @@
+from builtins import str
 import numpy as np
 
 from dataArtist.widgets.Tool import Tool

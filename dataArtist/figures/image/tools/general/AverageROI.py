@@ -1,3 +1,5 @@
+from __future__ import division
+
 import numpy as np
 
 #OWN
@@ -110,7 +112,8 @@ class AverageROI(ROITool):
             index = None
                 #take middle of current position
         r = self.display.widget.view.vb.viewRange()  
-        p = ((r[0][0]+r[0][1])/2, (r[1][0]+r[1][1])/2)
+        p = ((r[0][0]+r[0][1]) / 2, 
+             (r[1][0]+r[1][1]) / 2)
         s = [(r[0][1]-r[0][0])*0.1, (r[1][1]-r[1][0])*0.1]
         #CREATE NEW ROI:
         roi = ROI(self, 
