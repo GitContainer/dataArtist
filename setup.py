@@ -48,7 +48,7 @@ setup(
         # "interactiveTutorial"
         "pyqtgraph_karl",  # a fork of the original pyqtgraph
         # FOREIGN
-        "puka",  # a RabbitMQ client
+        "pika",  # a RabbitMQ client
         "numpy",
         "scipy",
         "scikit-image",
