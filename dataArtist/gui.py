@@ -295,24 +295,29 @@ class Gui(MultiWorkspaceWindow):
         aPref= QtGui.QAction('Dock preferences', v)
         aPref.setShortcut(QtCore.Qt.Key_F3)
         aPref.setCheckable(True)     
+    
+        def isPrefVisible():
+            w = self.currentWorkspace()
+            s = w.vert_splitter
+            return s.sizes()[0] != 0
         
-        def showhidePref(checked):
+        def showhidePref():
+            show = not isPrefVisible()
             s = self.currentWorkspace().vert_splitter
             r = s.getRange(1)[1]
-            if checked:
+            if show:
                 r/= 3
             else:
                 r = 0
             return s.moveSplitter(r,1)
-        
-        def isPrefVisible():
+
+        def setupPref():
             w = self.currentWorkspace()
-            s = w.vert_splitter
-            aPref.setChecked(s.sizes()[0]!=0)
+            aPref.setChecked(isPrefVisible())
             aPref.setEnabled(w.displayPrefTabs.isVisible())
                 
         aPref.triggered.connect(showhidePref) 
-        v.aboutToShow.connect(isPrefVisible)
+        v.aboutToShow.connect(setupPref)
         v.addAction(aPref)  
 
                 #ACTION VIEW2CLIPBOARD

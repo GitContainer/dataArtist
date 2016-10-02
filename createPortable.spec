@@ -29,7 +29,7 @@ def addDataFiles():
     return extraDatas
 
 
-a = Analysis(['dataArtist\\gui.py'],
+a = Analysis(['dataArtist\\gui_pyinstaller.py'],
              pathex=[
              	os.path.join(pkg_dir,'pyqtgraph_karl'), 
              	os.path.join(pkg_dir,'fancyTools'), 
@@ -43,22 +43,10 @@ a = Analysis(['dataArtist\\gui.py'],
              hiddenimports=[
 
              	#'mpl_toolkits.mplot3d',#3d surface plot with matplotlib
-             	#'pygments.lexers.SourcesListLexer',
-             	
              	'scipy.linalg._decomp_u',#???for tool: createSpatialSensitivity Array
-             	#'ctypes',
-             	
+
              	#skimage:
                 'scipy.special._ufuncs_cxx',
-                #'skimage.external.tifffile._tifffile',
-             	#'skimage.filter.rank.generic' 
-             	#'skimage.filter.rank.core_cy', 
-             	#'skimage.draw.draw',
-                # 'skimage.draw._draw',
-                # 'skimage.draw.draw3d',
-                # 'skimage._shared.geometry',
-                # 'skimage._shared.interpolation',
-                # 'skimage.filter.rank.core_cy'
              	],
              	
              hookspath=None,
@@ -77,6 +65,30 @@ a.datas += [ ('llvmlite.dll', 'C:\\Python27\\Lib\\site-packages\\llvmlite\\bindi
 a.datas += [ ('vcruntime140.dll', 'C:\\Python27\\Lib\\site-packages\\llvmlite\\binding\\vcruntime140.dll', 'DATA') ]
 a.datas += [ ('msvcp140.dll', 'C:\\Python27\\Lib\\site-packages\\llvmlite\\binding\\msvcp140.dll', 'DATA') ]
 #at the moment the visual studio redistributables 2015 also have to be installed
+
+
+
+
+# Target remove specific files...
+a.binaries = a.binaries - TOC([
+ ('sqlite3.dll', None, None),
+ ('tcl85.dll', None, None),
+ ('tk85.dll', None, None),
+ ('_sqlite3', None, None),
+ ('_tkinter', None, None)])
+
+# Add a single missing dll...
+#a.binaries = a.binaries + [
+#  ('opencv_ffmpeg245_64.dll', 'C:\\Python27\\opencv_ffmpeg245_64.dll', 'BINARY')]
+
+# Delete everything bar matplotlib data...
+#a.datas = [x for x in a.datas if
+# os.path.dirname(x[1]).startswith("C:\\Python27\\Lib\\site-packages\\matplotlib")]
+
+
+
+
+
 
 
 pyz = PYZ(a.pure)

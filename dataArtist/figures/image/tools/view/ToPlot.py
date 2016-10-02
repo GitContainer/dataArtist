@@ -15,15 +15,30 @@ class ToPlot(Tool):
         Tool.__init__(self, imageDisplay)
 
 
+        pa = self.setParameterMenu() 
+
+        self.pMax = pa.addChild({
+                    'name':'Max plots',
+                    'value':20,
+                    'type':'int',
+                    'limits':(0,1e6)})
+
+
+
     def activate(self):
         d = self.display
         _,s1,s2 = d.widget.image.shape
         
         x = np.arange(s1)
-        names = [ str(val) for val in range(s2) ]
+        if self.pMax.value() <  s2:
+            y = np.linspace(0, s2-1, self.pMax.value(), dtype=int)
+        else:
+            y = range(s2)
+        
+        names = [ str(val) for val in y]
         
         for n, im in enumerate(d.widget.image):
-            vals = [(x,im[:,i]) for i in range(s2)]
+            vals = [(x,im[:,i]) for i in y]
             
             d = self.display.workspace.addDisplay(
                 axes=2,
