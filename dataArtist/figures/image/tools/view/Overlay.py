@@ -16,7 +16,10 @@ class Overlay(Tool):
         pa = self.setParameterMenu() 
         
         #make some space for the color layer names:
-        self._menu.pTree.header().setResizeMode(QtWidgets.QHeaderView.Fixed)
+        try:
+            self._menu.pTree.header().setResizeMode(QtWidgets.QHeaderView.Fixed)
+        except AttributeError:
+            self._menu.pTree.header().setSectionResizeMode(QtWidgets.QHeaderView.Fixed)
         self._menu.pTree.setColumnWidth (0, 270)
 
         self.pAdd = pa.addChild({

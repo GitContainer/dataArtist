@@ -113,7 +113,7 @@ class Automation(QtWidgets.QWidget):
         #LAYOUT
         layout = QtWidgets.QVBoxLayout()
         layout.setAlignment(QtCore.Qt.AlignTop)
-        layout.setMargin(0)
+# setMargin removed. obsolete, doesn't do anything, not even in PyQt4
         self.setLayout(layout)
             #top layout
         hl = QtWidgets.QHBoxLayout()

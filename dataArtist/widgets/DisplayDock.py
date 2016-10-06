@@ -814,7 +814,10 @@ class _PreferencesWidget(QtWidgets.QWidget):
         #PAREMETERTREE
         pref = ParameterTree(display.p, showHeader=False) 
         h = pref.header()
-        h.setResizeMode(0,QtWidgets.QHeaderView.Stretch)
+        try:
+            h.setResizeMode(0,QtWidgets.QHeaderView.Stretch)
+        except AttributeError:
+            h.setSectionResizeMode(0, QtWidgets.QHeaderView.Stretch)
         h.setStretchLastSection(False)
         #TITLE
         l.addWidget(QtWidgets.QLabel('<b>Preferences</b'))

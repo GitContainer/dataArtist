@@ -359,9 +359,11 @@ class Gui(MultiWorkspaceWindow):
         self._m_duplDisp.aboutToShow.connect(self._fillMenuDuplicateToOtherWS ) 
             #MENU - TOOLBARS                
         self.menu_toolbars = QtWidgets.QMenu('Toolbars', m)
-        self.connect(self.menu_toolbars, QtCore.SIGNAL("hovered(QAction *)"),
-                     lambda action, m=self.menu_toolbars: 
-                        _showActionToolTipInMenu(m, action))
+        self.menu_toolbars.hovered[QtWidgets.QAction].connect(
+                lambda action, m=self.menu_toolbars: _showActionToolTipInMenu(m, action))
+        # self.connect(self.menu_toolbars, QtCore.SIGNAL("hovered(QAction *)"),
+        #              lambda action, m=self.menu_toolbars: 
+        #                 _showActionToolTipInMenu(m, action))
         
             #SHOW ALL TOOLBARS - ACTION
         a = self.menu_toolbars.a_show = QtWidgets.QAction('show', m)
