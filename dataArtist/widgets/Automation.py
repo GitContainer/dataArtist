@@ -561,8 +561,8 @@ class _Timer(QtCore.QTimer):
     * started, and
     * stopped
     '''
-    sigStarted = QtCore.pyqtSignal(object) #self
-    sigStopped = QtCore.pyqtSignal(object) #self
+    sigStarted = QtCore.Signal(object) #self
+    sigStopped = QtCore.Signal(object) #self
     
     
     def start(self, msec=None):

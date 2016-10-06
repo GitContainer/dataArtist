@@ -46,10 +46,10 @@ class DisplayDock(Dock):
     * choosing the right TOOLS for the corresponding display widget
     * creating PREFERENCES in INFORMATION about the input 
     '''
-    clicked = QtCore.pyqtSignal(object) #self
-    closed = QtCore.pyqtSignal(object) #self
-    sigLayerChanged = QtCore.pyqtSignal(object) #self
-    sigNewLayer = QtCore.pyqtSignal(object) #self
+    clicked = QtCore.Signal(object) #self
+    closed = QtCore.Signal(object) #self
+    sigLayerChanged = QtCore.Signal(object) #self
+    sigNewLayer = QtCore.Signal(object) #self
     
     def __init__(self, number, workspace, origin=None, index=None, 
                  names=None, title='', data=None, axes=None, info=None, 
@@ -870,8 +870,8 @@ class _StackParameter(GroupParameter):
     Parameter containing information about all input layers and 
     allowing to change their position within the stack
     '''
-    sigValuesChanged = QtCore.pyqtSignal(object) #values
-    sigLayerNameChanged = QtCore.pyqtSignal(int, object)#index, name
+    sigValuesChanged = QtCore.Signal(object) #values
+    sigLayerNameChanged = QtCore.Signal(int, object)#index, name
 
     def __init__(self, display):
         self.display = display

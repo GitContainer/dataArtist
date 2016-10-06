@@ -20,7 +20,7 @@ class _ProcessThread(QtCore.QThread):
     Thread to be used in tool.activate in order not to block 
     the gui 
     '''
-    sigDone = QtCore.pyqtSignal(object)
+    sigDone = QtCore.Signal(object)
 
     def __init__(self, tool, runfn, donefn=None):
         QtCore.QThread.__init__(self)

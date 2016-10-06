@@ -14,7 +14,7 @@ class ReaderBase(QtCore.QThread):
     reading input files within a QThread in order not to block the screen
     Show progress in progress bar
     '''                      #array, filenames, labels
-    done = QtCore.pyqtSignal(object, object,    object) 
+    done = QtCore.Signal(object, object,    object) 
     preferences = None
     forceSetup = False #whether to show import preferences on the first time
 
