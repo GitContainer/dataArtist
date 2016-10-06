@@ -42,9 +42,13 @@ class ImageWidget(DisplayWidget, ImageView, PyqtgraphgDisplayBase):
         PyqtgraphgDisplayBase.__init__(self)
         DisplayWidget.__init__(self, **kwargs)
         
+
+        
         self.display = display
         self.moveLayerToNewImage = None
         self.cItems = OrderedDict() #colorlayerItems
+
+        self.sigTimeChanged.connect(self.display.highlightLayer)
 
         #for unified access within different widgets:
         self.item = self.imageItem
@@ -103,6 +107,8 @@ class ImageWidget(DisplayWidget, ImageView, PyqtgraphgDisplayBase):
         return 0
 
     def close(self):
+        self.sigTimeChanged.disconnect(self.display.highlightLayer)
+
         self.clear()#free memory
         try:
             ImageView.close(self)

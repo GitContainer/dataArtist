@@ -1,8 +1,7 @@
 from __future__ import absolute_import
-from builtins import str
-from builtins import range
-import tifffile as tff
 
+# import tifffile as tff
+from skimage.external.tifffile import TiffFile
 from imgProcessor.transformations import transpose
 import cv2
 
@@ -33,7 +32,7 @@ class StackedTifImages(ImageWithOpenCV):
     def check(ftype, fname):  
         if ftype in StackedTifImages.ftypes:
             try:
-                tif = tff.TIFFfile(str(fname))
+                tif = TiffFile(str(fname))
                 #try to extract labels names set by imageJ:
                 tif.pages[0].imagej_tags['labels']
                 return True
@@ -45,7 +44,7 @@ class StackedTifImages(ImageWithOpenCV):
     def open(self, filename):
         prefs = self.preferences
         #OPEN
-        tif = tff.TIFFfile(str(filename))
+        tif = TiffFile(str(filename))
         img = tif.asarray()
         #due to different conventions:
         img = transpose(img) 

@@ -441,7 +441,7 @@ class Workspace(QtGui.QWidget):
                 display.widget.toolbars = sorted(t, key=findBar)
         
         #add new toolbars:
-        if display.widget:
+        if display is not None:
             for bar in display.widget.toolbars:
                 if bar.isSelected():
     #                 p = bar.position

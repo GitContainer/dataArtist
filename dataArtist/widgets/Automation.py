@@ -273,7 +273,7 @@ class Automation(QtGui.QWidget):
             # move splitter:
                 # smallest possible size of batchTab 
             if l:
-                a = old_div((l[i] - minSize), len(l))
+                a = (l[i] - minSize)/ len(l)
                 for n,y in enumerate(l):
                     if n != i:
                         l[n] = y+a

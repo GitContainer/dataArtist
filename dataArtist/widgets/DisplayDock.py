@@ -75,9 +75,7 @@ class DisplayDock(Dock):
         '''
         self.workspace = workspace  
         self.number = number
-
         self.widget = None
-
         self._isclosed = False
 
         #GET VALUES FROM ORIGIN DISPLAY
@@ -165,25 +163,22 @@ class DisplayDock(Dock):
                                   weakref.proxy(self.stack))
         #ADD AXES PARAMETERS:
         self.p.addChild(self.axes.p)
-        #LIST OF ALL FITTING DISPLAY FIGURES:
-        widgetList = _DisplayFigureList(self)
 
         #UPDATE DATA FROM FILE USING SPECIFIED PREFERENCES: 
-        #TODO: 'update' should only update file based data and no processed data
         if self.reader:
-#             pUpdate = Parameter.create(**{
-#                         'type':'action',
-#                         'name':'Update',
-#                         })
             if self.reader.preferences:
-#                 pUpdate.addChild(self.reader.preferences)
-#             pUpdate.sigActivated.connect(self.updateInput)
                 self.p.addChild(self.reader.preferences)
 
-        self.p.addChild(widgetList)
-      
+        #LIST OF ALL FITTING DISPLAY FIGURES:
+        widgetList = _DisplayFigureList(self)
+        if len(widgetList) > 1:
+            #only show available widgets if
+            #there are more than one: 
+            self.p.addChild(widgetList)
+        
         #INIT WIDGET
         self.changeWidget(widgetList.getWidget())#, data, names)
+        
         #ADD DATA
         if len(names):
             if data is None and PathStr(names[0]).isfile():
@@ -623,8 +618,17 @@ class DisplayDock(Dock):
         self.widget.updateView()
         self.stack.addChange(changes, index=index)
         self.sigLayerChanged.emit(self)
+       
             
-            
+    
+    def highlightLayer(self, ind):
+        '''
+        highlight layer of index [ind] in 'Layers' group
+        '''
+        item = next(iter(self.stack.childs[ind].items.items()))[0]
+        item.treeWidget().setCurrentItem(item)
+    
+     
     def showToolBar(self, name):
         '''
         show an other toolbar of the same display.widget
@@ -840,7 +844,11 @@ class _DisplayFigureList(ListParameter):
         self.sigValueChanged.connect(lambda param, value: 
             self.display.changeWidget(self._name_to_figure[value]))
 
-       
+    
+    def __len__(self):
+        return len(self._name_to_figure)
+    
+    
     def getWidget(self):
         '''
         return the first widget in the list

@@ -62,7 +62,7 @@ setup(
         "exifread",
         # "pypiwin32", # pip integration for pywin32, which is not in pip http://sourceforge.net/projects/pywin32/files/pywin32/Build%20219/
         "pygments",
-        "tifffile",# for tiffFileReader
+        #"tifffile",# for tiffFileReader // included in skimage
         "enum34", #neede by numba(llvmlite) ... and for some reason not installed 
         # TO BE INSTALLED MANUALLY:
         # opencv
