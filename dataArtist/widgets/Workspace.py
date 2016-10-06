@@ -2,7 +2,7 @@ from __future__ import print_function
 import weakref
 
 import pyqtgraph_karl as pg
-from pyqtgraph_karl.Qt import QtGui, QtCore
+from pyqtgraph_karl.Qt import QtGui, QtPrintSupport, QtWidgets, QtCore
 
 from fancywidgets.pyQtBased.Console import Console
 from fancytools.fcollections.naturalSorting import naturalSorting
@@ -17,7 +17,7 @@ from dataArtist.widgets.dialogs.ImportDialog import ImportDialog
 
 
 
-class Workspace(QtGui.QWidget):
+class Workspace(QtWidgets.QWidget):
     '''
     One workspace of dataArtist.gui containing:
     * multiple displays
@@ -26,7 +26,7 @@ class Workspace(QtGui.QWidget):
     '''
     def __init__(self, gui):
         
-        QtGui.QWidget.__init__(self)
+        QtWidgets.QWidget.__init__(self)
         
         self.gui = gui
         self._last_active_display = None
@@ -43,20 +43,20 @@ class Workspace(QtGui.QWidget):
         self.area_middle = MiddleDockArea()
         
         #LAYOUT:
-        layout = QtGui.QHBoxLayout()
+        layout = QtWidgets.QHBoxLayout()
         #remove space between statusbar and console:
         m = layout.contentsMargins()
         m.setBottom(0)
         layout.setContentsMargins(m)
         self.setLayout(layout)
         #middle - displays and message
-        self.middle_splitter = QtGui.QSplitter(QtCore.Qt.Orientation(0))#0=horiz, 1=vert
+        self.middle_splitter = QtWidgets.QSplitter(QtCore.Qt.Orientation(0))#0=horiz, 1=vert
         self.middle_splitter.addWidget(self.area_middle)
         self.middle_splitter.addWidget(self.console)
         #hide console by default
         self.middle_splitter.moveSplitter(0,0)# (410, 1)
         #add areas to centralWidget     
-        self.vert_splitter = QtGui.QSplitter(QtCore.Qt.Orientation(1))#0=horiz, 1=vert
+        self.vert_splitter = QtWidgets.QSplitter(QtCore.Qt.Orientation(1))#0=horiz, 1=vert
         layout.addWidget(self.vert_splitter)
         self.vert_splitter.addWidget(self.displayPrefTabs)
         self.vert_splitter.addWidget(self.middle_splitter)
@@ -85,13 +85,13 @@ class Workspace(QtGui.QWidget):
             for d in list(docks.values()):
                 d.hideTitleBar() 
             for c in containers:
-                if  isinstance(c, QtGui.QSplitter):
+                if  isinstance(c, QtWidgets.QSplitter):
                     c.setStyleSheet("QSplitter::handle{background-color: %s;}" %col)
         else:
             for d in list(docks.values()):
                 d.showTitleBar() 
             for c in containers:
-                if  isinstance(c, QtGui.QSplitter):
+                if  isinstance(c, QtWidgets.QSplitter):
                     c.setStyleSheet("")
 
 
@@ -265,7 +265,7 @@ class Workspace(QtGui.QWidget):
 
 
     def _removeCurrentToolBars(self):
-        toolbars = self.gui.findChildren(QtGui.QToolBar)
+        toolbars = self.gui.findChildren(QtWidgets.QToolBar)
         for bar in toolbars:
                 self.gui.removeToolBar(bar)      
 #         if self._last_active_display:
@@ -277,7 +277,7 @@ class Workspace(QtGui.QWidget):
         self.setInactive()
         for widget in list(self.area_middle.docks.values()):
             widget.close()
-        QtGui.QWidget.close(self)
+        QtWidgets.QWidget.close(self)
             
 
     def tabChanged(self, index):
@@ -356,7 +356,7 @@ class Workspace(QtGui.QWidget):
         e.g. [ [bar1, bar2], #row1
                [bar3] ]      #row2
         '''
-        toolbars = sorted(self.gui.findChildren(QtGui.QToolBar), 
+        toolbars = sorted(self.gui.findChildren(QtWidgets.QToolBar), 
                           key=lambda bar: (bar.pos().y(), bar.pos().x()))  
         rows = [[]]
         for bar in  toolbars:
@@ -514,7 +514,7 @@ class Workspace(QtGui.QWidget):
 
     def copyViewToClipboard(self):
         p = QtGui.QPixmap.grabWidget(self.area_middle)
-        QtGui.QApplication.clipboard().setPixmap(p)
+        QtWidgets.QApplication.clipboard().setPixmap(p)
         print('Copied view to clipboard.')
 
 
@@ -522,7 +522,7 @@ class Workspace(QtGui.QWidget):
         d = self.getCurrentDisplay()
         if d is not None:
             p = QtGui.QPixmap.grabWidget(d)
-            QtGui.QApplication.clipboard().setPixmap(p)
+            QtWidgets.QApplication.clipboard().setPixmap(p)
             print('Copied current display to clipboard.')
 
 

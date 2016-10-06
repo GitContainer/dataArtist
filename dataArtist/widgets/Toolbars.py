@@ -1,7 +1,7 @@
 from __future__ import print_function
 import traceback
 import importlib
-from pyqtgraph_karl.Qt import QtGui, QtCore 
+from pyqtgraph_karl.Qt import QtGui, QtPrintSupport, QtWidgets, QtCore 
 import inspect
 
 ############################
@@ -59,7 +59,7 @@ def build(widget):
 
 
 
-class _ToolBar(QtGui.QToolBar):
+class _ToolBar(QtWidgets.QToolBar):
     '''
     A ToolBar remembering it's position
     and whether it's selected.
@@ -67,7 +67,7 @@ class _ToolBar(QtGui.QToolBar):
     for different display widgets of the same kind
     '''
     def __init__(self, name, widget, pkg, toolClasses):
-        QtGui.QToolBar.__init__(self, name)
+        QtWidgets.QToolBar.__init__(self, name)
 
         self.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
         self.customContextMenuRequested.connect(self._openContextMenu)
@@ -98,7 +98,7 @@ class _ToolBar(QtGui.QToolBar):
         show = getattr(pkg, 'show', True)
         if isinstance(show, dict):
             #whether to show/hide a toolbar depends on the chosen profile:
-            session = QtGui.QApplication.instance().session
+            session = QtWidgets.QApplication.instance().session
             profile = session.app_opts.get('profile',None)
             show = show.get(profile, False)
         if self.widget.__class__.selectedToolbars.get(name, None) is None:
@@ -142,7 +142,7 @@ class _ToolBar(QtGui.QToolBar):
             self.setPalette(p)
             self.setAutoFillBackground(True)
 
-        self.actionSelect = a = QtGui.QAction(name, self)
+        self.actionSelect = a = QtWidgets.QAction(name, self)
         s = 'contains...'
         for cls in self.toolClasses:
             s += '\n     %s' %cls.__name__
@@ -178,10 +178,10 @@ class _ToolBar(QtGui.QToolBar):
 
     def _openContextMenu(self, pos):
         #show toolbar name and action[remove] on right click
-        m = QtGui.QMenu()
+        m = QtWidgets.QMenu()
         #title:
-        a = QtGui.QAction('Toolbar:   %s' %self.name, self)
-        a.setSoftKeyRole(QtGui.QAction.NoSoftKey)
+        a = QtWidgets.QAction('Toolbar:   %s' %self.name, self)
+        a.setSoftKeyRole(QtWidgets.QAction.NoSoftKey)
         f = a.font()
         f.setBold(True)
         a.setFont(f)
@@ -202,7 +202,7 @@ class _ToolBar(QtGui.QToolBar):
                     self.widget.tools[cls.__name__] = tool
                     #ADD TOOL
                     self.addWidget(tool)
-                    if tool.popupMode() == QtGui.QToolButton.MenuButtonPopup:
+                    if tool.popupMode() == QtWidgets.QToolButton.MenuButtonPopup:
                         self.width += 39 #[px] - tool is wider if drop down button is shown
                     else:
                         self.width += 27 #px
@@ -231,7 +231,7 @@ class _ToolBar(QtGui.QToolBar):
                 del tool
             except KeyError:
                 pass #tool no created yet
-        for toolAction in self.findChildren(QtGui.QAction):
+        for toolAction in self.findChildren(QtWidgets.QAction):
             self.removeAction(toolAction)
             del toolAction
 
@@ -242,13 +242,13 @@ class _ToolBar(QtGui.QToolBar):
     def show(self):
         #ensure that all tools are loaded:
         self.addTools()
-        QtGui.QToolBar.show(self)
+        QtWidgets.QToolBar.show(self)
 
  
 #     def hide(self):
 #         if not self.isSelected():
 #             self.removeTools()
-#         QtGui.QToolBar.hide(self)    
+#         QtWidgets.QToolBar.hide(self)    
 
 
     def toggleViewAction(self):

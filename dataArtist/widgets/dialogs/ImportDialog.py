@@ -1,16 +1,16 @@
-from pyqtgraph_karl.Qt import QtGui, QtCore
+from pyqtgraph_karl.Qt import QtGui, QtPrintSupport, QtWidgets, QtCore
 
 
 
-class ImportDialog(QtGui.QDialog):
+class ImportDialog(QtWidgets.QDialog):
     '''
     Dialog that shares some of the preferences of 
     dataArtist.widgets.preferences.PreferencesImport 
     '''
     def __init__(self, import_pref, fnames):
-        QtGui.QDialog.__init__(self)
+        QtWidgets.QDialog.__init__(self)
         
-        l = QtGui.QVBoxLayout()
+        l = QtWidgets.QVBoxLayout()
         self.setLayout(l)
         
         p = self.pref = import_pref
@@ -25,7 +25,7 @@ class ImportDialog(QtGui.QDialog):
             
         self.setWindowFlags(QtCore.Qt.WindowStaysOnTopHint)
 
-        self.btn_done = QtGui.QPushButton('Done')
+        self.btn_done = QtWidgets.QPushButton('Done')
         self.btn_done.clicked.connect(self.accept)
         l.addWidget(self.btn_done) 
 
@@ -35,4 +35,4 @@ class ImportDialog(QtGui.QDialog):
         write setting to the preferences
         '''
         self.dial_pref.updateSettings(self.pref)
-        QtGui.QDialog.accept(self)
+        QtWidgets.QDialog.accept(self)

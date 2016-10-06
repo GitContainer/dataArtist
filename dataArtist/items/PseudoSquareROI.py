@@ -1,7 +1,7 @@
 from __future__ import division
 
 import pyqtgraph_karl as pg
-from pyqtgraph_karl.Qt import QtCore, QtGui
+from pyqtgraph_karl.Qt import QtCore, QtGui, QtPrintSupport, QtWidgets
 import numpy as np
 import cv2
 

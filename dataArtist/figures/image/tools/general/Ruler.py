@@ -2,7 +2,7 @@ from __future__ import division
 
 import numpy as np
 import pyqtgraph_karl as pg
-from pyqtgraph_karl.Qt import QtGui, QtCore
+from pyqtgraph_karl.Qt import QtGui, QtPrintSupport, QtWidgets, QtCore
 
 #OWN
 from dataArtist.widgets.Tool import Tool
@@ -174,22 +174,22 @@ class Ruler(Tool):
 
 
 
-class _ScaleEditor(QtGui.QWidget):
+class _ScaleEditor(QtWidgets.QWidget):
     '''
     Editor to define measured length and concerning axis
     '''
     def __init__(self, tool):
-        QtGui.QWidget.__init__(self)
+        QtWidgets.QWidget.__init__(self)
         self.tool = tool
         self.display = tool.display
 
-        l = QtGui.QHBoxLayout()
+        l = QtWidgets.QHBoxLayout()
         self.setLayout(l)
         
-        d = QtGui.QLabel('Set distance in')
-        self.combo = QtGui.QComboBox()
+        d = QtWidgets.QLabel('Set distance in')
+        self.combo = QtWidgets.QComboBox()
         self.combo.addItems(['x','y', 'distance'])
-        self.editor = QtGui.QLineEdit()
+        self.editor = QtWidgets.QLineEdit()
         self.editor.setValidator(QtGui.QDoubleValidator(0.0, 9999.0, 3))
         l.addWidget(d)        
         l.addWidget(self.combo)

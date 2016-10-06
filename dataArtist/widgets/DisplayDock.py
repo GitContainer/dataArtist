@@ -5,7 +5,7 @@ import inspect
 import weakref
 import numpy as np
 
-from pyqtgraph_karl.Qt import QtGui, QtCore
+from pyqtgraph_karl.Qt import QtGui, QtPrintSupport, QtWidgets, QtCore
 
 from fancywidgets.pyqtgraphBased.parametertree import ParameterTree, Parameter
 from fancywidgets.pyqtgraphBased.parametertree.parameterTypes \
@@ -786,14 +786,14 @@ class DisplayDock(Dock):
 
 
 
-class _DisplayTab(QtGui.QSplitter):
+class _DisplayTab(QtWidgets.QSplitter):
     '''
     A QSplitter containing...
     * Automation
     * Display Preferences 
     '''
     def __init__(self, display):
-        QtGui.QSplitter.__init__(self, QtCore.Qt.Orientation(0))#0=horiz, 1=vert) 
+        QtWidgets.QSplitter.__init__(self, QtCore.Qt.Orientation(0))#0=horiz, 1=vert) 
         self.display = display
         self.automation = Automation(display, self)
         self.prefs = _PreferencesWidget(display)
@@ -802,22 +802,22 @@ class _DisplayTab(QtGui.QSplitter):
 
 
 
-class _PreferencesWidget(QtGui.QWidget):
+class _PreferencesWidget(QtWidgets.QWidget):
     '''
     Format 'Preferences'-ParameterTree
     and add a Title on top 
     '''
     def __init__(self, display):
-        QtGui.QWidget.__init__(self)
-        l = QtGui.QVBoxLayout()
+        QtWidgets.QWidget.__init__(self)
+        l = QtWidgets.QVBoxLayout()
         self.setLayout(l)
         #PAREMETERTREE
         pref = ParameterTree(display.p, showHeader=False) 
         h = pref.header()
-        h.setResizeMode(0,QtGui.QHeaderView.Stretch)
+        h.setResizeMode(0,QtWidgets.QHeaderView.Stretch)
         h.setStretchLastSection(False)
         #TITLE
-        l.addWidget(QtGui.QLabel('<b>Preferences</b'))
+        l.addWidget(QtWidgets.QLabel('<b>Preferences</b'))
         l.addWidget(pref) 
 
 
@@ -876,7 +876,7 @@ class _StackParameter(GroupParameter):
     def __init__(self, display):
         self.display = display
 
-        mAll = QtGui.QMenu('All layers')
+        mAll = QtWidgets.QMenu('All layers')
         mAll.addAction('Change').triggered.connect(self.display.changeLayerFiles)
         mAll.addAction('Remove').triggered.connect(self.display.removeLayers)
 
@@ -972,15 +972,15 @@ class _StackParameter(GroupParameter):
             pass
         
         #ADD OPTIONS TO THE CONTEXT MENU:
-        mCopy = QtGui.QMenu('Copy')
-        mMove = QtGui.QMenu('Move')
+        mCopy = QtWidgets.QMenu('Copy')
+        mMove = QtWidgets.QMenu('Move')
 
         if not fname or not PathStr(fname).isfile():
             fname = None
 
         menu_entries = [mCopy, mMove]
         if self.display.reader is not None:
-            aFile = QtGui.QAction('Change File', self)
+            aFile = QtWidgets.QAction('Change File', self)
             aFile.triggered.connect(lambda checked, i=len(self.childs): 
                                         self.display.changeLayerFile(i))
             menu_entries.append(aFile)

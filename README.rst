@@ -19,8 +19,8 @@ About
 
 **Please cite *dataArtist* as follows:**
 
-    K.G. Bedrich et al., “Electroluminescence Imaging of PV Devices:
-    Camera Calibration and Image Correction”, Proc. 43rd IEEE Photovoltaic Specialists Conference, Portland, 2016.
+    K.G. Bedrich et al., "Electroluminescence Imaging of PV Devices:
+    Camera Calibration and Image Correction", Proc. 43rd IEEE Photovoltaic Specialists Conference, Portland, 2016.
 
 
 Manuals

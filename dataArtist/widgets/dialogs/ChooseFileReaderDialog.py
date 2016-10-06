@@ -1,8 +1,8 @@
-from pyqtgraph_karl.Qt import QtGui
+from pyqtgraph_karl.Qt import QtGui, QtPrintSupport, QtWidgets
 
 
 
-class ChooseFileReaderDialog(QtGui.QDialog):
+class ChooseFileReaderDialog(QtWidgets.QDialog):
     '''
     If mutliple file readers are available for a given file type
     this dialog lets the user decide which one to take.
@@ -11,30 +11,30 @@ class ChooseFileReaderDialog(QtGui.QDialog):
 
 
     def __init__(self, readers):
-        QtGui.QDialog.__init__(self)
+        QtWidgets.QDialog.__init__(self)
     
-        labTxt = QtGui.QLabel(
+        labTxt = QtWidgets.QLabel(
         '''Multiple file reader are available for the chosen ftype:
 (Hover for details)''')
-        g = QtGui.QButtonGroup()
+        g = QtWidgets.QButtonGroup()
 
-        l = QtGui.QVBoxLayout()
+        l = QtWidgets.QVBoxLayout()
         self.setLayout(l)
         
         l.addWidget(labTxt)
 
-        gl = QtGui.QGroupBox('Readers')
+        gl = QtWidgets.QGroupBox('Readers')
         l.addWidget(gl)
 
-        b = QtGui.QPushButton('Done')
+        b = QtWidgets.QPushButton('Done')
         b.clicked.connect(self.accept)
         l.addWidget(b)
 
-        l = QtGui.QVBoxLayout()
+        l = QtWidgets.QVBoxLayout()
         gl.setLayout(l)
 
         for n, r in enumerate(readers):
-            btn = QtGui.QRadioButton(r.__name__)
+            btn = QtWidgets.QRadioButton(r.__name__)
             btn.clicked.connect(lambda checked, n=n: self.__setattr__('index',n))
             if r.__doc__ is not None:
                 btn.setToolTip(r.__doc__)

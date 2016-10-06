@@ -1,7 +1,7 @@
 from __future__ import division
 
 import pyqtgraph_karl as pg
-from pyqtgraph_karl.Qt import QtGui
+from pyqtgraph_karl.Qt import QtGui, QtPrintSupport, QtWidgets
 
 #OWN
 from dataArtist.widgets.Tool import Tool
@@ -21,7 +21,7 @@ class Slice(Tool):
         self.n_slices = 0
         self._ROIs = []
 
-        a_show = QtGui.QAction('show', self)
+        a_show = QtWidgets.QAction('show', self)
         a_show.setCheckable(True)
         a_show.setChecked(True)
         a_show.toggled.connect(self.toggleShow)

@@ -1,7 +1,7 @@
 from __future__ import division
 
 import pyqtgraph_karl as pg
-from pyqtgraph_karl.Qt import QtGui
+from pyqtgraph_karl.Qt import QtGui, QtPrintSupport, QtWidgets
 #OWN
 from dataArtist.widgets.Tool import Tool
 
@@ -19,11 +19,11 @@ class Drill(Tool):
         self.scene = self.view.scene()
         
         #MENU:
-        self.a_newDisplay = QtGui.QAction('result in new display', self)
+        self.a_newDisplay = QtWidgets.QAction('result in new display', self)
         self.a_newDisplay.setCheckable(True)
         self.addAction(self.a_newDisplay)
      
-        a_show = QtGui.QAction('show', self)
+        a_show = QtWidgets.QAction('show', self)
         a_show.setCheckable(True)
         a_show.setChecked(True)
         a_show.toggled.connect(self.toggleShow)

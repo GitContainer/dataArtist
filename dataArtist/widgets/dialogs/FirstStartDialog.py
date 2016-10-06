@@ -1,7 +1,7 @@
 from appbase.dialogs.FirstStart import FirstStart
 from dataArtist.widgets.preferences import ChooseProfile
 
-from pyqtgraph_karl.Qt import QtGui
+from pyqtgraph_karl.Qt import QtGui, QtPrintSupport, QtWidgets
 
 
 
@@ -16,9 +16,9 @@ class FirstStartDialog(FirstStart):
 
         #TEMPORARY CONTENT TO BE REMOVED AFTER CODE RELEASE
         self.resize(300,310)
-        lab = QtGui.QLabel('<b>Software License Agreement</b>')
+        lab = QtWidgets.QLabel('<b>Software License Agreement</b>')
         
-        ed = QtGui.QTextBrowser()
+        ed = QtWidgets.QTextBrowser()
         ed.setReadOnly(True)  
         ed.setOpenExternalLinks(True)
         ed.setCurrentFont(QtGui.QFont("Courier New", 8))
@@ -29,7 +29,7 @@ More information can be found <a href = "http://www.gnu.org/licenses/quick-guide
 </a> </font>''')
 
  
-        btn = QtGui.QCheckBox('I accept the terms')
+        btn = QtWidgets.QCheckBox('I accept the terms')
         self.btn_done.setEnabled(False)
         
         btn.clicked.connect(lambda checked: self.btn_done.setEnabled(checked))

@@ -2,7 +2,7 @@ from __future__ import print_function
 import os
 import traceback
 
-from pyqtgraph_karl.Qt import QtGui, QtCore
+from pyqtgraph_karl.Qt import QtGui, QtPrintSupport, QtWidgets, QtCore
 
 from fancytools.os.PathStr import PathStr
 
@@ -63,14 +63,14 @@ class _ProcessThread(QtCore.QThread):
         
         
 
-class Tool(QtGui.QToolButton):
+class Tool(QtWidgets.QToolButton):
     '''
     Base class for all display.widget.tools
     '''
     reinit = False #whether to execute activate()/deactivate() at restoreState()
 
     def __init__(self, display):
-        QtGui.QToolButton.__init__(self)
+        QtWidgets.QToolButton.__init__(self)
         self.display = display
         self.view = display.widget.view.vb
         #SET ICON
@@ -97,7 +97,7 @@ class Tool(QtGui.QToolButton):
                 self.deactivate = self._deactivate
                 self.setCheckable(False) 
         else:
-            self.setPopupMode(QtGui.QToolButton.InstantPopup)  
+            self.setPopupMode(QtWidgets.QToolButton.InstantPopup)  
  
         self.clicked.connect(self.toggle)
 
@@ -262,8 +262,8 @@ class Tool(QtGui.QToolButton):
 
 
     def _checkShowBtnMenu(self):
-        if self.popupMode() != QtGui.QToolButton.InstantPopup:
-            self.setPopupMode(QtGui.QToolButton.MenuButtonPopup)
+        if self.popupMode() != QtWidgets.QToolButton.InstantPopup:
+            self.setPopupMode(QtWidgets.QToolButton.MenuButtonPopup)
 
 
     def setMenu(self, *args):
@@ -271,7 +271,7 @@ class Tool(QtGui.QToolButton):
         only show drop-down menu option if menu is filled with entries
         '''
         self._checkShowBtnMenu()
-        QtGui.QToolButton.setMenu(self, *args)
+        QtWidgets.QToolButton.setMenu(self, *args)
 
 
     def setParameterMenu(self):
@@ -285,7 +285,7 @@ class Tool(QtGui.QToolButton):
         only show drop-down menu option if menu is filled with entries
         '''
         self._checkShowBtnMenu()
-        QtGui.QToolButton.addAction(self, *args)
+        QtWidgets.QToolButton.addAction(self, *args)
 
 
     def startThread(self, runfn, donefn=None):

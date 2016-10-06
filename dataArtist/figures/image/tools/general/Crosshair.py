@@ -1,6 +1,6 @@
 from builtins import zip
 import pyqtgraph_karl as pg
-from pyqtgraph_karl.Qt import QtGui
+from pyqtgraph_karl.Qt import QtGui, QtPrintSupport, QtWidgets
 
 #OWN
 from dataArtist.widgets.Tool import Tool
@@ -21,17 +21,17 @@ class Crosshair(Tool):
         self.scene = self.view.scene()
         self._first_time = True
         
-        self.actionHide = QtGui.QAction('show',self)
+        self.actionHide = QtWidgets.QAction('show',self)
         self.actionHide.setCheckable(True)
         self.actionHide.setChecked(True)
         self.actionHide.triggered.connect(self.toggleShow)
         self.addAction(self.actionHide) 
         
-        areset = QtGui.QAction('reset',self)
+        areset = QtWidgets.QAction('reset',self)
         areset.triggered.connect(self.reset)       
         self.addAction(areset)
 
-        self.actionShowCoord = QtGui.QAction('show coordinates',self)
+        self.actionShowCoord = QtWidgets.QAction('show coordinates',self)
         self.actionShowCoord.setCheckable(True)
         self.actionShowCoord.setChecked(True)
         self.addAction(self.actionShowCoord)

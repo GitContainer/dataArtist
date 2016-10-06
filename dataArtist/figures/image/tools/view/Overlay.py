@@ -1,4 +1,4 @@
-from pyqtgraph_karl.Qt import QtGui
+from pyqtgraph_karl.Qt import QtGui, QtPrintSupport, QtWidgets
 #OWN
 from dataArtist.widgets.Tool import Tool
 
@@ -16,7 +16,7 @@ class Overlay(Tool):
         pa = self.setParameterMenu() 
         
         #make some space for the color layer names:
-        self._menu.pTree.header().setResizeMode(QtGui.QHeaderView.Fixed)
+        self._menu.pTree.header().setResizeMode(QtWidgets.QHeaderView.Fixed)
         self._menu.pTree.setColumnWidth (0, 270)
 
         self.pAdd = pa.addChild({
@@ -92,7 +92,7 @@ class Overlay(Tool):
         add color button in parameter menu if an overlay is added
         '''
 
-        aExport = QtGui.QAction('Export to new display', self._menu.p)
+        aExport = QtWidgets.QAction('Export to new display', self._menu.p)
         aExport.triggered.connect(lambda c, n=name:
                                   self._exportLayerToNewDisplay(n))
         

@@ -3,7 +3,7 @@ Widgets handling all dataArtist preferences
 '''
 from builtins import str
 
-from pyqtgraph_karl.Qt import QtGui, QtCore
+from pyqtgraph_karl.Qt import QtGui, QtPrintSupport, QtWidgets, QtCore
 import pyqtgraph_karl
 
 from dataArtist.components.RabbitMQServer import RabbitMQServer
@@ -11,13 +11,13 @@ from dataArtist.components.WatchFolder import WatchFolder
 
 
 
-class PreferencesCommunication(QtGui.QWidget):
+class PreferencesCommunication(QtWidgets.QWidget):
     '''
     Preferences for communication between dataArtist and other programs
      - this is at the moment done using a RabbitMQ server
     '''
     def __init__(self, gui):
-        QtGui.QWidget.__init__(self)  
+        QtWidgets.QWidget.__init__(self)  
 
         self.gui = gui
         
@@ -33,37 +33,37 @@ class PreferencesCommunication(QtGui.QWidget):
                 rab.stop)
 
         #LAYOUT:
-        layout = QtGui.QVBoxLayout()
+        layout = QtWidgets.QVBoxLayout()
         layout.setAlignment(QtCore.Qt.AlignTop)
         self.setLayout(layout)
 
         #WATCH FOLDER
         #############
-        self.cb_watchFolder = QtGui.QCheckBox('Watch folder')
+        self.cb_watchFolder = QtWidgets.QCheckBox('Watch folder')
         self.cb_watchFolder.toggled.connect(self._watchFolderChanged)
         layout.addWidget( self.cb_watchFolder )
         
-        self._folder_opts = QtGui.QWidget()
+        self._folder_opts = QtWidgets.QWidget()
         layout.addWidget(self._folder_opts)
-        gl = QtGui.QGridLayout()
+        gl = QtWidgets.QGridLayout()
         self._folder_opts.setLayout(gl)
         self._folder_opts.hide()
 
-        self._wf_folderEdit = QtGui.QLineEdit('-')
+        self._wf_folderEdit = QtWidgets.QLineEdit('-')
         self._wf_folderEdit.setReadOnly(True)
         gl.addWidget(self._wf_folderEdit, 0,0)
-        btn = QtGui.QPushButton('Change')
+        btn = QtWidgets.QPushButton('Change')
         btn.clicked.connect(self._wf_folderChanged)
         gl.addWidget(btn, 0,1)
         
-        self._cb_filesOnly = QtGui.QCheckBox('Files only')
+        self._cb_filesOnly = QtWidgets.QCheckBox('Files only')
         self._cb_filesOnly.setChecked(wf.opts['files only'])
         self.cb_watchFolder.toggled.connect(lambda val: 
                                 wf.opts.__setitem__('files only', val))
         gl.addWidget(self._cb_filesOnly,1,0 )
 
-        gl.addWidget(QtGui.QLabel('refreshrate [msec]'), 2,0)
-        self._wf_refRate = QtGui.QSpinBox()
+        gl.addWidget(QtWidgets.QLabel('refreshrate [msec]'), 2,0)
+        self._wf_refRate = QtWidgets.QSpinBox()
         self._wf_refRate.setRange(1,100000)
         self._wf_refRate.setValue(wf.opts['refreshrate'])
         self._wf_refRate.valueChanged.connect(self._wf_refRateChanged)
@@ -71,53 +71,53 @@ class PreferencesCommunication(QtGui.QWidget):
 
         #RABBIT MQ
         ##########
-        hlayout = QtGui.QHBoxLayout()
+        hlayout = QtWidgets.QHBoxLayout()
         layout.addLayout(hlayout)
         
-        self.cb_allowRabbit = QtGui.QCheckBox('Allow inter-process communication\nusing the RabbitMQ server')
+        self.cb_allowRabbit = QtWidgets.QCheckBox('Allow inter-process communication\nusing the RabbitMQ server')
         self.cb_allowRabbit.toggled.connect(self._allowRabbitMQchanged)
         hlayout.addWidget( self.cb_allowRabbit )
 
-        self.cb_confirm = QtGui.QCheckBox('Confirm received messages')
+        self.cb_confirm = QtWidgets.QCheckBox('Confirm received messages')
         self.cb_confirm.hide()
         self.cb_confirm.setChecked(rab.opts['corfirmPosts'])
         self.cb_confirm.toggled .connect(lambda val: rab.opts.__setitem__(
                                                     'corfirmPosts', val) )
         hlayout.addWidget( self.cb_confirm )
 
-        self._rab_opts = QtGui.QWidget()
+        self._rab_opts = QtWidgets.QWidget()
         layout.addWidget(self._rab_opts)
-        gl = QtGui.QGridLayout()
+        gl = QtWidgets.QGridLayout()
         self._rab_opts.setLayout(gl)
         self._rab_opts.hide()
         
-        gl.addWidget(QtGui.QLabel('refreshrate [msec]'), 0,0)
-        self._rab_refRate = QtGui.QSpinBox()
+        gl.addWidget(QtWidgets.QLabel('refreshrate [msec]'), 0,0)
+        self._rab_refRate = QtWidgets.QSpinBox()
         self._rab_refRate.setRange(1,1000)
         self._rab_refRate.setValue(rab.opts['refreshrate'])
         self._rab_refRate.valueChanged.connect(lambda val: rab.opts.__setitem__(
                                                     'refreshrate', val) )
         gl.addWidget(self._rab_refRate, 0,1)
 
-        gl.addWidget(QtGui.QLabel('host'), 1,0)
-        self.le_host = QtGui.QLineEdit()
+        gl.addWidget(QtWidgets.QLabel('host'), 1,0)
+        self.le_host = QtWidgets.QLineEdit()
         self.le_host.setText(rab.opts['host'])
         self.le_host.textChanged.connect(lambda val: 
                                 rab.opts.__setitem__('host', val) )
         gl.addWidget(self.le_host, 1,1)
         
-        gl.addWidget(QtGui.QLabel('timeout [msec]'), 2,0)
-        self.sb_timeout = QtGui.QSpinBox()
+        gl.addWidget(QtWidgets.QLabel('timeout [msec]'), 2,0)
+        self.sb_timeout = QtWidgets.QSpinBox()
         self.sb_timeout.setRange(0,1000)
         self.sb_timeout.setValue(rab.opts['timeout'])
         self.sb_timeout.valueChanged.connect(lambda val: 
                                 rab.opts.__setitem__('timeout', val) )
         gl.addWidget(self.sb_timeout, 2,1)
 
-        gl.addWidget(QtGui.QLabel('<b>....listen to queues named:</b>'), 3,0)
+        gl.addWidget(QtWidgets.QLabel('<b>....listen to queues named:</b>'), 3,0)
         for n, (queue, action) in enumerate(rab.listenTo.items()):
-            gl.addWidget(QtGui.QLabel(queue), 4+n,0)
-            gl.addWidget(QtGui.QLabel(action.__doc__), 4+n,1)
+            gl.addWidget(QtWidgets.QLabel(queue), 4+n,0)
+            gl.addWidget(QtWidgets.QLabel(action.__doc__), 4+n,1)
  
 
 
@@ -154,7 +154,7 @@ class PreferencesCommunication(QtGui.QWidget):
                 self.rabbitMQServer.start()
             except Exception as err:
                 #maybe rabbitMQ is not installed
-                self._errm = QtGui.QErrorMessage() #needs to assign to self, otherwise garbage collected
+                self._errm = QtWidgets.QErrorMessage() #needs to assign to self, otherwise garbage collected
                 self._errm.showMessage(str(err))
                 self.cb_allowRabbit.setChecked(False)
                 self.cb_allowRabbit.setEnabled(False)
@@ -198,16 +198,16 @@ class PreferencesCommunication(QtGui.QWidget):
 
 
 
-class ChooseProfile(QtGui.QWidget):
+class ChooseProfile(QtWidgets.QWidget):
     def __init__(self, session):
-        QtGui.QWidget.__init__(self) 
+        QtWidgets.QWidget.__init__(self) 
 
-        lab = QtGui.QLabel('Profile:')
+        lab = QtWidgets.QLabel('Profile:')
         tt = '''The chosen profile influences the visibility of tool bars.
 Changes are only effective after restarting the program.'''
         lab.setToolTip(tt)
         
-        cb = QtGui.QComboBox()
+        cb = QtWidgets.QComboBox()
         cb.setToolTip(tt)
         items = ( 'simple', 'advanced')
         cb.addItems(items)
@@ -220,7 +220,7 @@ Changes are only effective after restarting the program.'''
                                 session.app_opts.__setitem__(
                                 'profile', str(cb.currentText())))
         
-        l = QtGui.QHBoxLayout()
+        l = QtWidgets.QHBoxLayout()
         self.setLayout(l)
         
         l.addWidget(lab)
@@ -228,36 +228,36 @@ Changes are only effective after restarting the program.'''
 
 
 
-class PreferencesView(QtGui.QWidget):
+class PreferencesView(QtWidgets.QWidget):
     '''
     General view preferences, like the colour theme
     '''
     def __init__(self, gui):
         #TODO: make pyqtgraph optics(colortheme...) directly changeable - not just
         #      at reload
-        QtGui.QWidget.__init__(self) 
+        QtWidgets.QWidget.__init__(self) 
         self.gui = gui
         session = gui.app.session
         #CONNECT SAVE/RESTORE:
         session.sigSave.connect(self._save)
         session.sigRestore.connect(self._restore)
         #LAYOUT:
-        layout = QtGui.QVBoxLayout()
+        layout = QtWidgets.QVBoxLayout()
         layout.setAlignment(QtCore.Qt.AlignTop)
         self.setLayout(layout)
 
-        hlayout = QtGui.QHBoxLayout()
+        hlayout = QtWidgets.QHBoxLayout()
         layout.addLayout(hlayout)
-        self.label_colorTheme = QtGui.QLabel('Color theme') 
+        self.label_colorTheme = QtWidgets.QLabel('Color theme') 
         hlayout.addWidget(self.label_colorTheme)
          
-        self.combo_colorTheme = QtGui.QComboBox()
+        self.combo_colorTheme = QtWidgets.QComboBox()
         hlayout.addWidget(self.combo_colorTheme)
         self.combo_colorTheme.addItems(( 'dark', 'bright'))
         self.combo_colorTheme.currentIndexChanged.connect(lambda i, self=self: 
                                 self.setColorTheme(self.combo_colorTheme.currentText()))
         
-        self.check_antialiasting = QtGui.QCheckBox('Antialiasting')
+        self.check_antialiasting = QtWidgets.QCheckBox('Antialiasting')
         layout.addWidget(self.check_antialiasting)
         self.check_antialiasting.stateChanged.connect(self._setAntialiasting)
 
@@ -297,7 +297,7 @@ class PreferencesView(QtGui.QWidget):
 #                 d.reloadWidget()
 
 
-class PreferencesImport(QtGui.QWidget):
+class PreferencesImport(QtWidgets.QWidget):
     '''
     Preferences for importing files
     '''
@@ -311,22 +311,22 @@ class PreferencesImport(QtGui.QWidget):
     loadImportedFiles = True
     
     def __init__(self, gui):
-        QtGui.QWidget.__init__(self)
+        QtWidgets.QWidget.__init__(self)
         self.gui = gui
         #CONNECT SAVE/RESTORE:
         gui.app.session.sigSave.connect(self._save)
         gui.app.session.sigRestore.connect(self._restore)
         #LAYOUT:
-        layout = QtGui.QVBoxLayout()
+        layout = QtWidgets.QVBoxLayout()
         layout.setAlignment(QtCore.Qt.AlignTop)
         self.setLayout(layout)
 
-        hlayout = QtGui.QHBoxLayout()
+        hlayout = QtWidgets.QHBoxLayout()
         layout.addLayout(hlayout)
-        self.label_multifiles = QtGui.QLabel('Import files') 
+        self.label_multifiles = QtWidgets.QLabel('Import files') 
         hlayout.addWidget(self.label_multifiles)
         
-        self.combo_import = QtGui.QComboBox()
+        self.combo_import = QtWidgets.QComboBox()
         hlayout.addWidget(self.combo_import)
         
 #         self.combo_import.addItems(( 'separated', 
@@ -341,14 +341,14 @@ class PreferencesImport(QtGui.QWidget):
         self.combo_import.setCurrentIndex(self.importFilesPolicy)
         self.combo_import.currentIndexChanged.connect(self._importChanged)
 
-        self.btn_loadFiles = QtGui.QCheckBox('load files')
+        self.btn_loadFiles = QtWidgets.QCheckBox('load files')
         self.btn_loadFiles.setChecked(True)
         self.btn_loadFiles.toggled.connect(
             lambda checked, self=self: self.__setattr__(
                                     'loadImportedFiles', checked) )
         layout.addWidget(self.btn_loadFiles)
 
-        self.btn_ask = QtGui.QCheckBox('Show import dialog')
+        self.btn_ask = QtWidgets.QCheckBox('Show import dialog')
         self.btn_ask.setChecked(self.showImportDialog)
         self.btn_ask.toggled.connect(
             lambda checked, self=self: self.__setattr__(

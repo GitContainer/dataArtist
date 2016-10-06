@@ -1,6 +1,6 @@
 from builtins import str
 import pyqtgraph_karl as pg
-from pyqtgraph_karl.Qt import QtGui, QtCore
+from pyqtgraph_karl.Qt import QtGui, QtPrintSupport, QtWidgets, QtCore
 
 from dataArtist.widgets.Tool import Tool
 

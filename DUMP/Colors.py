@@ -1,4 +1,4 @@
-from pyqtgraph_karl.Qt import QtGui
+from pyqtgraph_karl.Qt import QtGui, QtPrintSupport, QtWidgets
 from pyqtgraph_karl.functions import mkPen, mkColor
 
 from dataArtist.widgets.Tool import Tool

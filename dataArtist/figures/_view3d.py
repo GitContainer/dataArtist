@@ -8,7 +8,7 @@ from builtins import object
 
 import pyqtgraph_karl.opengl as gl
 import pyqtgraph_karl as pg
-from pyqtgraph_karl import QtGui, QtCore
+from pyqtgraph_karl import QtGui, QtPrintSupport, QtWidgets, QtCore
 
 class Grid(object):
     def __init__(self, parent):
@@ -51,9 +51,9 @@ class View3d(gl.GLViewWidget):
         
 
 if __name__ == '__main__':
-    app = QtGui.QApplication([])
+    app = QtWidgets.QApplication([])
     w = View3d()
     w.show()
     import sys
     if (sys.flags.interactive != 1) or not hasattr(QtCore, 'PYQT_VERSION'):
-        QtGui.QApplication.instance().exec_()
+        QtWidgets.QApplication.instance().exec_()

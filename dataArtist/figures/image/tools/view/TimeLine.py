@@ -1,6 +1,6 @@
 from dataArtist.widgets.Tool import Tool
  
-from pyqtgraph_karl.Qt import QtGui
+from pyqtgraph_karl.Qt import QtGui, QtPrintSupport, QtWidgets
 
 
 class TimeLine(Tool):
@@ -36,7 +36,7 @@ class TimeLine(Tool):
 
         for d in self.display.workspace.displays():
             if d.name() != self.display.name():
-                a = QtGui.QAction(d.name(),menu, checkable=True)
+                a = QtWidgets.QAction(d.name(),menu, checkable=True)
                 menu.addAction(a)
                 if d in  self._connected:               
                     a.setChecked(True)

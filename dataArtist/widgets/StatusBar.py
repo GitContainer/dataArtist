@@ -1,10 +1,10 @@
-from pyqtgraph_karl.Qt import QtGui, QtCore
+from pyqtgraph_karl.Qt import QtGui, QtPrintSupport, QtWidgets, QtCore
 
 
 
-class StatusBar(QtGui.QStatusBar):
+class StatusBar(QtWidgets.QStatusBar):
     def __init__(self):
-        QtGui.QStatusBar.__init__(self)
+        QtWidgets.QStatusBar.__init__(self)
         
         #do not resize mainWindow when a longer message is displayed:
         self.setMinimumWidth(2)
@@ -19,8 +19,8 @@ class StatusBar(QtGui.QStatusBar):
         self._pErr.setColor(QtGui.QPalette.Foreground,QtCore.Qt.red)
         
 #         #QLabel displaying error messages:
-#         self._errLabel = QtGui.QLabel()
-#         self._errLabel.setFrameStyle(QtGui.QFrame.NoFrame)
+#         self._errLabel = QtWidgets.QLabel()
+#         self._errLabel.setFrameStyle(QtWidgets.QFrame.NoFrame)
 #         palette = QtGui.QPalette()
 #         palette.setColor(QtGui.QPalette.Foreground,QtCore.Qt.red)
 #         self._errLabel.setPalette(palette)
@@ -33,7 +33,7 @@ class StatusBar(QtGui.QStatusBar):
     def showMessage(self, msg, time_ms=9000):
         if msg != '\n':
             self.setPalette(self._pMsg)
-            return QtGui.QStatusBar.showMessage(self,  msg, time_ms)
+            return QtWidgets.QStatusBar.showMessage(self,  msg, time_ms)
     
     
     def showError(self, msg, time_ms=9000):
@@ -42,7 +42,7 @@ class StatusBar(QtGui.QStatusBar):
         '''
         if msg != '\n':
             self.setPalette(self._pErr)
-            return QtGui.QStatusBar.showMessage(self,  msg, time_ms)
+            return QtWidgets.QStatusBar.showMessage(self,  msg, time_ms)
             
             
 #             ###limit size otherwise gui would be resized:

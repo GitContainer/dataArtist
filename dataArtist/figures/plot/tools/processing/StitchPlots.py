@@ -1,5 +1,5 @@
 from builtins import zip
-from pyqtgraph_karl.Qt import QtGui
+from pyqtgraph_karl.Qt import QtGui, QtPrintSupport, QtWidgets
 import numpy as np
 
 from dataArtist.widgets.Tool import Tool
@@ -15,7 +15,7 @@ class StitchPlots(Tool):
     def __init__(self, plotDisplay):
         Tool.__init__(self, plotDisplay)
 
-        self.mDisplay = QtGui.QMenu('from display')
+        self.mDisplay = QtWidgets.QMenu('from display')
         self.setMenu(self.mDisplay)
         self.mDisplay.aboutToShow.connect(self._buildMenu)
 

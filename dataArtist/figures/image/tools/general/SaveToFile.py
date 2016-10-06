@@ -2,7 +2,7 @@ from __future__ import division
 from __future__ import print_function
 
 import cv2
-from pyqtgraph_karl.Qt import QtGui
+from pyqtgraph_karl.Qt import QtGui, QtPrintSupport, QtWidgets
 import numpy as np
 
 from skimage.transform import resize

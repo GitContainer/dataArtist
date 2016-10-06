@@ -1,6 +1,6 @@
 from fancywidgets.pyQtBased.FwTabWidget import FwTabWidget
 
-from pyqtgraph_karl.Qt import QtGui
+from pyqtgraph_karl.Qt import QtGui, QtPrintSupport, QtWidgets
 
 
 
@@ -12,7 +12,7 @@ class DisplayPrefTabs(FwTabWidget):
     def __init__(self):
         FwTabWidget.__init__(self)
         self.setMovable(True)  
-        self.setSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
+        self.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
         self.hide()
 
         
