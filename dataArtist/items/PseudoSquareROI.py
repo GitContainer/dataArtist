@@ -1,4 +1,5 @@
 from __future__ import division
+from past.utils import old_div
 
 import pyqtgraph_karl as pg
 from pyqtgraph_karl.Qt import QtCore, QtGui, QtPrintSupport, QtWidgets
@@ -89,7 +90,9 @@ class PseudoSquareROI(pg.ROI):
     
     def paint(self, p, opt, widget):
         r = self.boundingRect()
-        p.scale(r.width(), r.height())## workaround for GL bug
+        # QGraphicsItem.scale obsolete in Qt 4.8
+        # p.scale(r.width(), r.height())## workaround for GL bug
+        p.setTransform(QtGui.QTransform.fromScale(r.width(), r.height()), True)
         p.setRenderHint(QtGui.QPainter.Antialiasing)
         p.setPen(self.currentPen)
         #interrupted rectangle:

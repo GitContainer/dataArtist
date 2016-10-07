@@ -125,6 +125,7 @@ class Stitch(ImageTool):
         bgcol = {'0'     : 0,
                  'np.nan': np.nan, 
                  '-'     : None }
+        out = None
         for i in im:
             if i is not None:
                 out = st.addImg(i, 
