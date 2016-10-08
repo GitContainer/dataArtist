@@ -1,7 +1,7 @@
 from appbase.dialogs.FirstStart import FirstStart
 from dataArtist.widgets.preferences import ChooseProfile
 
-from pyqtgraph_karl.Qt import QtGui, QtPrintSupport, QtWidgets
+from qtpy import QtGui,QtWidgets
 
 
 

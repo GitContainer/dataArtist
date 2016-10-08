@@ -5,7 +5,7 @@ import inspect
 import weakref
 import numpy as np
 
-from pyqtgraph_karl.Qt import QtGui, QtPrintSupport, QtWidgets, QtCore
+from qtpy import QtWidgets, QtCore
 
 from fancywidgets.pyqtgraphBased.parametertree import ParameterTree, Parameter
 from fancywidgets.pyqtgraphBased.parametertree.parameterTypes \

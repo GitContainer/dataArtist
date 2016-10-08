@@ -5,7 +5,7 @@ import sys
 import os
 
 
-from pyqtgraph_karl.Qt import QtGui, QtPrintSupport, QtWidgets, QtCore
+from qtpy import QtGui, QtWidgets, QtCore
 
 #FIXME: many array indices in pyqtgraph are not int
 #therefore numpy 1.11 shows many VisibleDeprecationWarning...

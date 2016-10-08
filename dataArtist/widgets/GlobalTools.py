@@ -1,5 +1,4 @@
-from builtins import range
-from pyqtgraph_karl.Qt import QtGui, QtPrintSupport, QtWidgets
+from qtpy import QtWidgets
 
 
 class GlobalTools(QtWidgets.QWidget):

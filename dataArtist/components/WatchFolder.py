@@ -1,4 +1,4 @@
-from pyqtgraph_karl.Qt import QtCore
+from qtpy import QtCore
 from fancytools.os.PathStr import PathStr
 
 

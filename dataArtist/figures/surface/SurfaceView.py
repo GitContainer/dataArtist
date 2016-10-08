@@ -9,7 +9,7 @@ from past.utils import old_div
 
 
 
-from pyqtgraph_karl.Qt import QtCore, QtGui, QtPrintSupport, QtWidgets
+
 import pyqtgraph_karl as pg
 import pyqtgraph_karl.opengl as gl
 import numpy as np

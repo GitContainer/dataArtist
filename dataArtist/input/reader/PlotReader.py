@@ -4,7 +4,7 @@ from __future__ import print_function
 import numpy as np
 from operator import itemgetter 
 
-from pyqtgraph_karl.Qt import QtCore
+from qtpy import QtCore
 from pyqtgraph_karl.pgcollections import OrderedDict
 
 import fancywidgets.pyqtgraphBased.parametertree.parameterTypes as pTypes

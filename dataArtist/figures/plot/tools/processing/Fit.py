@@ -1,7 +1,7 @@
 from __future__ import division
 
 import numpy as np
-from pyqtgraph_karl.Qt import QtGui, QtPrintSupport, QtWidgets, QtCore
+from qtpy import QtWidgets, QtCore
 
 from scipy.optimize import curve_fit
 from scipy.misc import factorial

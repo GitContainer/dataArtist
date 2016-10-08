@@ -4,7 +4,7 @@ from __future__ import print_function
 import numpy as np
 
 from pyqtgraph_karl.functions import mkPen, mkBrush
-from pyqtgraph_karl.Qt import QtCore, QtGui, QtPrintSupport, QtWidgets
+from qtpy import QtCore, QtGui
 import pyqtgraph_karl as pg
 import cv2
 

@@ -1,6 +1,6 @@
 from __future__ import division
 
-from pyqtgraph_karl.Qt import QtGui, QtPrintSupport, QtWidgets, QtCore
+from qtpy import QtWidgets, QtCore, QtGui
 import numpy as np
 import traceback
 

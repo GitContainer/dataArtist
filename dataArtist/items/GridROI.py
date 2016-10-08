@@ -6,7 +6,7 @@ import pyqtgraph_karl as pg
 import numpy as np
 from math import cos, sin, pi
 import cv2
-from pyqtgraph_karl.Qt import QtCore
+from qtpy import QtCore
 
 from .PseudoSquareROI import PseudoSquareROI
 from dataArtist.items.QPainterPath import QPainterPath

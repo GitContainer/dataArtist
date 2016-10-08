@@ -4,7 +4,7 @@ import cv2
 import numpy as np
 
 import pyqtgraph_karl as pg
-from pyqtgraph_karl.Qt import QtCore
+from qtpy import QtCore
 from pyqtgraph_karl import ImageView
 from pyqtgraph_karl.ordereddict import OrderedDict
 

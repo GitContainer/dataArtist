@@ -1,4 +1,4 @@
-from pyqtgraph.Qt import QtGui, QtPrintSupport, QtWidgets
+from qtpy import QtWidgets
 
 
 from dataArtist.widgets.Tool import Tool
