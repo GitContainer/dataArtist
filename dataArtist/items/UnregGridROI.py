@@ -82,9 +82,9 @@ class UnregGridROI(PolyLineROI):
 
 if __name__ == '__main__':
     from pyqtgraph.Qt import QtGui
-    import pyqtgraph as pg
+    import pyqtgraph_karl as pg
 
-    app = QtGui.QApplication([])
+    app = QtWidgets.QApplication([])
     w = pg.GraphicsWindow(size=(1000,800), border=True)
     w.setWindowTitle('pyqtgraph example: ROI Examples')
     

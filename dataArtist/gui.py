@@ -5,7 +5,7 @@ import sys
 import os
 
 
-from pyqtgraph_karl.Qt import QtGui, QtCore
+from pyqtgraph_karl.Qt import QtGui, QtPrintSupport, QtWidgets, QtCore
 
 #FIXME: many array indices in pyqtgraph are not int
 #therefore numpy 1.11 shows many VisibleDeprecationWarning...
@@ -50,12 +50,12 @@ def _showActionToolTipInMenu(menu, action):
     #show tooltip on the right side of [menu]
     ###QMenu normaly doesnt allow QActions to show tooltips...
     tip = action.toolTip()
-#             QtGui.QToolTip.showText(QtGui.QCursor.pos(), tip)
+#             QtWidgets.QToolTip.showText(QtGui.QCursor.pos(), tip)
     p = menu.pos()
     p.setX(p.x()+105)
     p.setY(p.y()-21)
     if tip != action.text():
-        QtGui.QToolTip.showText(p, tip)
+        QtWidgets.QToolTip.showText(p, tip)
 
 
 class Gui(MultiWorkspaceWindow):
@@ -256,7 +256,7 @@ class Gui(MultiWorkspaceWindow):
             #MENU - FILE
         f = m.menu_file
         p = f.action_preferences 
-        action_file = QtGui.QAction('&Import', f)
+        action_file = QtWidgets.QAction('&Import', f)
         action_file.triggered.connect(self.openFile)
         action_file.setShortcut(QtGui.QKeySequence(QtCore.Qt.CTRL + QtCore.Qt.Key_I))
         f.insertAction(p,action_file)
@@ -264,14 +264,14 @@ class Gui(MultiWorkspaceWindow):
             #MENU VIEW
         v = m.menu_view
                 #ACTION PRINT VIEW
-        aPrintView = QtGui.QAction('Print view', v)
+        aPrintView = QtWidgets.QAction('Print view', v)
         aPrintView.setCheckable(True)
         aPrintView.triggered.connect(
                 lambda checked: self.currentWorkspace().setPrintView(checked) ) 
         v.addAction(aPrintView)
                 
                 #SHOW/HIDE history
-        aHistory = QtGui.QAction('Program history', v)
+        aHistory = QtWidgets.QAction('Program history', v)
         aHistory.setShortcut(QtCore.Qt.Key_F4)
 
         aHistory.setCheckable(True)     
@@ -292,7 +292,7 @@ class Gui(MultiWorkspaceWindow):
         v.addAction(aHistory)     
                
                 #SHOW/HIDE preferences
-        aPref= QtGui.QAction('Dock preferences', v)
+        aPref= QtWidgets.QAction('Dock preferences', v)
         aPref.setShortcut(QtCore.Qt.Key_F3)
         aPref.setCheckable(True)     
     
@@ -321,17 +321,17 @@ class Gui(MultiWorkspaceWindow):
         v.addAction(aPref)  
 
                 #ACTION VIEW2CLIPBOARD
-        aClipboard = QtGui.QAction('Copy view to clipboard', v)
+        aClipboard = QtWidgets.QAction('Copy view to clipboard', v)
         aClipboard.triggered.connect(
                 lambda checked: self.currentWorkspace().copyViewToClipboard() ) 
         v.addAction(aClipboard)
                 #ACTION Display2CLIPBOARD
-        aClipboard = QtGui.QAction('Copy active display to clipboard', v)
+        aClipboard = QtWidgets.QAction('Copy active display to clipboard', v)
         aClipboard.triggered.connect(
                 lambda checked: self.currentWorkspace().copyCurrentDisplayToClipboard() ) 
         v.addAction(aClipboard)
             #MENU - TOOLS   
-        t = m.menu_tools = QtGui.QMenu('Dock')
+        t = m.menu_tools = QtWidgets.QMenu('Dock')
         m.insertMenuBefore(m.menu_workspace, t)
             #ADD DISPLAY
         mDisplay = t.addMenu('Add Display')
@@ -358,13 +358,15 @@ class Gui(MultiWorkspaceWindow):
         self._m_duplDisp = t.addMenu('Move current display to other workspace')
         self._m_duplDisp.aboutToShow.connect(self._fillMenuDuplicateToOtherWS ) 
             #MENU - TOOLBARS                
-        self.menu_toolbars = QtGui.QMenu('Toolbars', m)
-        self.connect(self.menu_toolbars, QtCore.SIGNAL("hovered(QAction *)"),
-                     lambda action, m=self.menu_toolbars: 
-                        _showActionToolTipInMenu(m, action))
+        self.menu_toolbars = QtWidgets.QMenu('Toolbars', m)
+        self.menu_toolbars.hovered[QtWidgets.QAction].connect(
+                lambda action, m=self.menu_toolbars: _showActionToolTipInMenu(m, action))
+        # self.connect(self.menu_toolbars, QtCore.SIGNAL("hovered(QAction *)"),
+        #              lambda action, m=self.menu_toolbars: 
+        #                 _showActionToolTipInMenu(m, action))
         
             #SHOW ALL TOOLBARS - ACTION
-        a = self.menu_toolbars.a_show = QtGui.QAction('show', m)
+        a = self.menu_toolbars.a_show = QtWidgets.QAction('show', m)
         f = a.font()
         f.setBold(True)   
         a.setFont(f)
@@ -412,7 +414,7 @@ class Gui(MultiWorkspaceWindow):
         for i in range(c.count()):
             if i != c.currentIndex():
                 t = '[%s]'%str(i+1)
-                a = QtGui.QAction(t, self._m_duplDisp)
+                a = QtWidgets.QAction(t, self._m_duplDisp)
                 a.triggered.connect(lambda clicked, i=i, self=self: 
                         self._moveCurrentDiplayToWorkspace(i))
                 self._m_duplDisp.addAction(a)
@@ -441,7 +443,7 @@ class Gui(MultiWorkspaceWindow):
     #<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
     def keyPressEvent(self, event):
         if event.matches(QtGui.QKeySequence.Paste):
-            self.dropEvent(QtGui.QApplication.clipboard())
+            self.dropEvent(QtWidgets.QApplication.clipboard())
             
             
     def dragEnterEvent(self, event):

@@ -1,6 +1,6 @@
 from __future__ import division
 
-from pyqtgraph_karl.Qt import QtGui, QtCore
+from pyqtgraph_karl.Qt import QtGui, QtPrintSupport, QtWidgets, QtCore
 import numpy as np
 import traceback
 
@@ -37,7 +37,7 @@ SPRIPT_PATH = PathStr(dataArtist.__file__).dirname().join('scripts')
 
 
 
-class Automation(QtGui.QWidget):
+class Automation(QtWidgets.QWidget):
     '''
     Widget for easy automation within dataArtist, providing:
     
@@ -50,7 +50,7 @@ class Automation(QtGui.QWidget):
     '''
     
     def __init__(self, display, splitter):
-        QtGui.QWidget.__init__(self)
+        QtWidgets.QWidget.__init__(self)
         
         self.display = display
         display.sigLayerChanged.connect(self.toggleDataChanged)
@@ -63,13 +63,13 @@ class Automation(QtGui.QWidget):
         self._collect = False
         self._activeWidgets = []
         #BUTTON: OF/OFF
-        self.btn_show = QtGui.QRadioButton('Console')
+        self.btn_show = QtWidgets.QRadioButton('Console')
         f=self.btn_show.font()
         f.setBold(True)
         self.btn_show.setFont(f)
         self.btn_show.clicked.connect(self._toggleShow)
         #COMBOBOX: IMPORT
-        self.combo_import = QtGui.QComboBox()
+        self.combo_import = QtWidgets.QComboBox()
         self.combo_import.addItems((
                     '<import>', 
                     'from file'))
@@ -79,7 +79,7 @@ class Automation(QtGui.QWidget):
                     if (x[0] != '_' and x.endswith('.py'))]) 
         self.combo_import.currentIndexChanged.connect(self._importScript)
         #BUTTON: COLLECT
-        self.btn_collect= QtGui.QPushButton('Collect')
+        self.btn_collect= QtWidgets.QPushButton('Collect')
         self.btn_collect.setToolTip('click on all tool parameters you want to change during the batch process')
         self.btn_collect.setCheckable(True)
         self.btn_collect.clicked.connect(self.collectWidgets)
@@ -93,13 +93,13 @@ class Automation(QtGui.QWidget):
         self.tabs.defaultTabWidget = lambda: ScriptTab(self, refreshR)
         self.tabs.addEmptyTab('New')
         #BUTTON: RUN AT NEW INPUT
-        self.label_run_on = QtGui.QLabel('Activate on')
-        self.cb_run_on = QtGui.QComboBox()
+        self.label_run_on = QtWidgets.QLabel('Activate on')
+        self.cb_run_on = QtWidgets.QComboBox()
         self.cb_run_on.addItems(['-', 'New Data', 'Data Changed'])
         
         #SPINBOX REFRESHRATE
-        self.label_refresh = QtGui.QLabel('Refresh rate:')
-        self.sb_refreshrate = QtGui.QSpinBox()
+        self.label_refresh = QtWidgets.QLabel('Refresh rate:')
+        self.sb_refreshrate = QtWidgets.QSpinBox()
         self.sb_refreshrate.setSuffix(" Hz")
         self.sb_refreshrate.setMinimum(0)
         self.sb_refreshrate.setMaximum(100)
@@ -107,16 +107,16 @@ class Automation(QtGui.QWidget):
         self.sb_refreshrate.valueChanged.connect(
             lambda hz: self.tabs.currentWidget().thread.setRefreshrate(hz))
         #BUTTON: RUN
-        self.btn_run_now = QtGui.QPushButton('Run')
+        self.btn_run_now = QtWidgets.QPushButton('Run')
         self.btn_run_now.setCheckable(True)
         self.btn_run_now.clicked.connect(self.toggle)
         #LAYOUT
-        layout = QtGui.QVBoxLayout()
+        layout = QtWidgets.QVBoxLayout()
         layout.setAlignment(QtCore.Qt.AlignTop)
-        layout.setMargin(0)
+# setMargin removed. obsolete, doesn't do anything, not even in PyQt4
         self.setLayout(layout)
             #top layout
-        hl = QtGui.QHBoxLayout()
+        hl = QtWidgets.QHBoxLayout()
         hl.addWidget(self.btn_show)
         hl.addWidget(self.btn_collect)
             #fill layout
@@ -124,7 +124,7 @@ class Automation(QtGui.QWidget):
         layout.addWidget(self.combo_import)
         layout.addWidget(self.tabs)
         
-        hl2 = QtGui.QHBoxLayout()
+        hl2 = QtWidgets.QHBoxLayout()
         hl2.addWidget(self.label_run_on)
         hl2.addWidget(self.cb_run_on)
         hl2.addWidget(self.label_refresh)
@@ -191,10 +191,10 @@ class Automation(QtGui.QWidget):
         #TOGGLE BETWEEN NORMAL- AND PointingHandCursor
         self._collect = not self._collect
         if self._collect:
-            QtGui.QApplication.setOverrideCursor(QtGui.QCursor(
+            QtWidgets.QApplication.setOverrideCursor(QtGui.QCursor(
                                                         QtCore.Qt.PointingHandCursor))
         else:
-            QtGui.QApplication.restoreOverrideCursor()
+            QtWidgets.QApplication.restoreOverrideCursor()
         #TOGGLE BUTTON
         self.btn_collect.setChecked(self._collect)
         #add chosen widget to active script:  
@@ -561,8 +561,8 @@ class _Timer(QtCore.QTimer):
     * started, and
     * stopped
     '''
-    sigStarted = QtCore.pyqtSignal(object) #self
-    sigStopped = QtCore.pyqtSignal(object) #self
+    sigStarted = QtCore.Signal(object) #self
+    sigStopped = QtCore.Signal(object) #self
     
     
     def start(self, msec=None):

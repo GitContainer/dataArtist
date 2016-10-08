@@ -1,7 +1,7 @@
 from __future__ import print_function
 from builtins import str
 import numpy as np
-from pyqtgraph_karl.Qt import QtGui
+from pyqtgraph_karl.Qt import QtGui, QtPrintSupport, QtWidgets
 
 from imgProcessor.camera.CameraCalibration import CameraCalibration
 from fancywidgets.pyQtBased.ArgSetter import ArgSetter
@@ -92,8 +92,8 @@ class CalibrationFile(GlobalTool):
                 'value':'',
                 'visible':False}) 
             
-            aView = QtGui.QAction('View', self)
-            aDel = QtGui.QAction('Remove', self)
+            aView = QtWidgets.QAction('View', self)
+            aDel = QtWidgets.QAction('Remove', self)
             aView.triggered.connect(lambda checked, n=name:
                                     self._viewCurrentCoeff(n))
             aDel.triggered.connect(lambda checked, n=name: 

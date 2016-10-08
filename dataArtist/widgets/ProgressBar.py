@@ -1,24 +1,24 @@
-from pyqtgraph_karl.Qt import QtGui
+from pyqtgraph_karl.Qt import QtGui, QtPrintSupport, QtWidgets
 
 
 
-class ProgressBar(QtGui.QWidget):
+class ProgressBar(QtWidgets.QWidget):
     '''
     A general propose procress bar 
     e.g. used when files are imported or tools are executed.
     '''
     
     def __init__(self, statusbar):
-        QtGui.QWidget.__init__(self)
+        QtWidgets.QWidget.__init__(self)
         
         self.statusbar = statusbar
         
-        layout = QtGui.QHBoxLayout()
+        layout = QtWidgets.QHBoxLayout()
         layout.setContentsMargins(0, 0, 0, 0)
         self.setLayout(layout)
-        self.bar = QtGui.QProgressBar()
-        self.cancel = QtGui.QPushButton('Cancel')
-        self.label = QtGui.QLabel()
+        self.bar = QtWidgets.QProgressBar()
+        self.cancel = QtWidgets.QPushButton('Cancel')
+        self.label = QtWidgets.QLabel()
         layout.addWidget(self.label)
         layout.addWidget(self.bar)
         layout.addWidget(self.cancel)
@@ -29,4 +29,4 @@ class ProgressBar(QtGui.QWidget):
         
     def show(self):
         self.statusbar.clearMessage()
-        QtGui.QWidget.show(self)
+        QtWidgets.QWidget.show(self)

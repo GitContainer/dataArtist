@@ -1,4 +1,4 @@
-from  pyqtgraph_karl.Qt import QtGui
+from  pyqtgraph_karl.Qt import QtGui, QtPrintSupport, QtWidgets
 
 #OWN
 from dataArtist.widgets.Tool import Tool
@@ -16,7 +16,7 @@ class LinkView(Tool):
 
         self._linked_display = None
 
-        self._menu = QtGui.QMenu()
+        self._menu = QtWidgets.QMenu()
         self.setMenu(self._menu)
         self._menu.aboutToShow.connect(self._buildMenu)
 
@@ -28,12 +28,12 @@ class LinkView(Tool):
         '''
         self._menu.clear()
                 
-        ag = QtGui.QActionGroup(self._menu, exclusive=True)
+        ag = QtWidgets.QActionGroup(self._menu, exclusive=True)
 
         for d in self.display.workspace.displays():
             if d != self.display:
                 
-                a = ag.addAction(QtGui.QAction(d.name(),self._menu, checkable=True))
+                a = ag.addAction(QtWidgets.QAction(d.name(),self._menu, checkable=True))
                 self._menu.addAction(a)
 
                 a.triggered.connect(lambda checked, d=d, self=self: 

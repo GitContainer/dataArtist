@@ -1,7 +1,7 @@
 from __future__ import print_function
 import numpy as np
 
-from pyqtgraph_karl.Qt import QtCore, QtGui
+from pyqtgraph_karl.Qt import QtCore, QtGui, QtPrintSupport, QtWidgets
 
 from fancywidgets.pyqtgraphBased.parametertree import ParameterTree
 from fancywidgets.pyqtgraphBased.parametertree.parameterTypes import GroupParameter
@@ -14,7 +14,7 @@ class ReaderBase(QtCore.QThread):
     reading input files within a QThread in order not to block the screen
     Show progress in progress bar
     '''                      #array, filenames, labels
-    done = QtCore.pyqtSignal(object, object,    object) 
+    done = QtCore.Signal(object, object,    object) 
     preferences = None
     forceSetup = False #whether to show import preferences on the first time
 
@@ -78,12 +78,12 @@ class ReaderBase(QtCore.QThread):
         self.filenames = filenames
         
         if self.preferences and self.forceSetup and self._firstTime:
-            d = QtGui.QDialog()
+            d = QtWidgets.QDialog()
             d.setWindowTitle('Import preferences')
             
-            l = QtGui.QVBoxLayout()
+            l = QtWidgets.QVBoxLayout()
             t = ParameterTree(self.preferences)
-            b = QtGui.QPushButton('OK')
+            b = QtWidgets.QPushButton('OK')
             b.clicked.connect(d.accept)            
             
             l.addWidget(t)

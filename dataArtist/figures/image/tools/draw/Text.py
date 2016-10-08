@@ -1,5 +1,5 @@
 from pyqtgraph_karl import TextItem as pgTextItem
-from pyqtgraph_karl.Qt import QtCore, QtGui
+from pyqtgraph_karl.Qt import QtCore, QtGui, QtPrintSupport, QtWidgets
 from pyqtgraph_karl import functions as fn
 
 #OWN
@@ -77,7 +77,7 @@ class Text(Tool):
             
  
     def _setFont(self):
-        f = QtGui.QFontDialog.getFont
+        f = QtWidgets.QFontDialog.getFont
         if self.textItems:
             d = f(self.textItems[-1].textItem.font())
         else:
@@ -138,7 +138,7 @@ class _TextItem(pgTextItem):
         pgTextItem.__init__(self, **kwargs)
         self._parent = parent
 
-        self.editor = QtGui.QLineEdit(parent)
+        self.editor = QtWidgets.QLineEdit(parent)
         self.editor.setWindowFlags(QtCore.Qt.Popup)
         self.editor.setFocusProxy(parent)
         self.editor.editingFinished.connect(self.editingFinished)

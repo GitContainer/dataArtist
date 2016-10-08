@@ -1,16 +1,16 @@
 from builtins import range
-from pyqtgraph_karl.Qt import QtGui
+from pyqtgraph_karl.Qt import QtGui, QtPrintSupport, QtWidgets
 
 
      
-class UndoRedo(QtGui.QWidget):
+class UndoRedo(QtWidgets.QWidget):
     '''
     Widget containing an undo and redo button + 
     tool-button menu to choose the current step in history
     '''
     
     def __init__(self, MEDIA_FOLDER):
-        QtGui.QWidget.__init__(self)
+        QtWidgets.QWidget.__init__(self)
         
         self.is_active = True
         self.max_hist_len = 5
@@ -20,10 +20,10 @@ class UndoRedo(QtGui.QWidget):
         self.setContentsMargins (0, 0, 0, 0)
 
         #HISTORY MENU
-        self.menu = QtGui.QMenu()
+        self.menu = QtWidgets.QMenu()
         self.menu.aboutToShow.connect(self._showMenu)
 
-        hl = QtGui.QHBoxLayout()
+        hl = QtWidgets.QHBoxLayout()
         hl.setContentsMargins (0, 0, 0, 0)
 
         self.setLayout(hl)
@@ -31,7 +31,7 @@ class UndoRedo(QtGui.QWidget):
         icon_path = MEDIA_FOLDER.join("icons")
         
         #UNDO BUTTON
-        self.btn_undo = QtGui.QToolButton()
+        self.btn_undo = QtWidgets.QToolButton()
         self.btn_undo.setAutoRaise(True)
         self.btn_undo.setToolTip('Undo')
         self.btn_undo.setIcon(QtGui.QIcon(icon_path.join('undo.svg')))
@@ -40,22 +40,22 @@ class UndoRedo(QtGui.QWidget):
         self.btn_undo.setEnabled(False)
         
         #MENU BUTTON
-        self.btn_menu = QtGui.QToolButton()
+        self.btn_menu = QtWidgets.QToolButton()
         self.btn_menu.setAutoRaise(True)
         self.btn_menu.setFixedWidth(9)
         self.btn_menu.setToolTip('Undo/Redo options')
         self.btn_menu.setMenu(self.menu)
-        self.btn_menu.setPopupMode(QtGui.QToolButton.InstantPopup)
+        self.btn_menu.setPopupMode(QtWidgets.QToolButton.InstantPopup)
         
         self.menu_options = _MenuOptions()
         self.menu_options.activate.stateChanged.connect(self.setActive)
         
-        action = QtGui.QWidgetAction(self)
+        action = QtWidgets.QWidgetAction(self)
         action.setDefaultWidget(self.menu_options)
         self.menu.addAction(action)      
 
         #REDO BUTTON
-        self.btn_redo = QtGui.QToolButton()
+        self.btn_redo = QtWidgets.QToolButton()
         self.btn_redo.setAutoRaise(True)
         self.btn_redo.setToolTip('Redo')
         self.btn_redo.setIcon(QtGui.QIcon(icon_path.join('redo.svg')))
@@ -219,29 +219,29 @@ class UndoRedo(QtGui.QWidget):
 
 
      
-class _MenuOptions(QtGui.QWidget): 
+class _MenuOptions(QtWidgets.QWidget): 
     '''
     Display last history steps and activate button
     '''
     def __init__(self):
-        QtGui.QWidget.__init__(self)  
+        QtWidgets.QWidget.__init__(self)  
         
-        l = QtGui.QVBoxLayout()
+        l = QtWidgets.QVBoxLayout()
         self.setLayout(l)
         
-        title = QtGui.QLabel('<b>Undo / Redo</b>')
+        title = QtWidgets.QLabel('<b>Undo / Redo</b>')
         
-        self.activate = QtGui.QCheckBox('Activate')
+        self.activate = QtWidgets.QCheckBox('Activate')
         self.activate.setChecked(True)
         
         self.activate.stateChanged.connect(self._enableLenHistory)
 
-        self._label_lenHist = QtGui.QLabel('History Length')
-        self.lenHistory = QtGui.QSpinBox()
+        self._label_lenHist = QtWidgets.QLabel('History Length')
+        self.lenHistory = QtWidgets.QSpinBox()
         self.lenHistory.setRange(1, 100)
         self.lenHistory.setValue(5)
         
-        l_history = QtGui.QHBoxLayout()
+        l_history = QtWidgets.QHBoxLayout()
         l_history.addWidget(self._label_lenHist)
         l_history.addWidget(self.lenHistory)
         

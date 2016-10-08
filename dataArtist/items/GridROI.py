@@ -495,7 +495,7 @@ class CellPseudoSquareROI(_CellBase, PseudoSquareROI):
 if __name__ == '__main__':
     from pyqtgraph.Qt import QtGui
 
-    app = QtGui.QApplication([])
+    app = QtWidgets.QApplication([])
     w = pg.GraphicsWindow(size=(1000,800), border=True)
     w.setWindowTitle('pyqtgraph example: ROI Examples')
     

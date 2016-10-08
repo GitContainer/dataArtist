@@ -2,7 +2,7 @@ from __future__ import division
 
 import pyqtgraph_karl as pg
 import numpy as np
-from pyqtgraph_karl.Qt import QtGui, QtCore
+from pyqtgraph_karl.Qt import QtGui, QtPrintSupport, QtWidgets, QtCore
 
 RED = QtGui.QColor(QtCore.Qt.red).rgb()
 

@@ -1,7 +1,7 @@
 from __future__ import division
 
 import numpy as np
-from pyqtgraph_karl.Qt import QtGui, QtCore
+from pyqtgraph_karl.Qt import QtGui, QtPrintSupport, QtWidgets, QtCore
 
 from scipy.optimize import curve_fit
 from scipy.misc import factorial
@@ -146,7 +146,7 @@ class _Poisson(object):
 
 
 
-class _ControlWidget(QtGui.QWidget):
+class _ControlWidget(QtWidgets.QWidget):
     '''
     A draggable control window with:
     * Button 'Previous'
@@ -156,14 +156,14 @@ class _ControlWidget(QtGui.QWidget):
     sigDone = QtCore.Signal(tuple) #parameter values
 
     def __init__(self, parameters, function, xVals, plotItem):
-        QtGui.QWidget.__init__(self)
+        QtWidgets.QWidget.__init__(self)
         
         #make frame-less:
         self.setWindowFlags(QtCore.Qt.FramelessWindowHint | 
                             QtCore.Qt.WindowStaysOnTopHint)
         #TODO:
 #         #go to current screen:
-#         d = QtGui.QApplication.desktop()
+#         d = QtWidgets.QApplication.desktop()
 #         n = d.screenNumber(self)
 #         self.setGeometry(d.screenGeometry(n))  
 
@@ -171,14 +171,14 @@ class _ControlWidget(QtGui.QWidget):
         self.plotItem = plotItem
         self.function = function
 
-        layout = QtGui.QGridLayout()
+        layout = QtWidgets.QGridLayout()
         self.setLayout(layout)
         
         self.s = []#all spinboxes
         
         for n, (name, value) in enumerate(parameters.items()):
-            layout.addWidget(QtGui.QLabel(name),n,0)
-            s = QtGui.QDoubleSpinBox()
+            layout.addWidget(QtWidgets.QLabel(name),n,0)
+            s = QtWidgets.QDoubleSpinBox()
             s.setValue(value)
             s.setMaximum(1e6)
             s.setMinimum(-1e6)
@@ -187,7 +187,7 @@ class _ControlWidget(QtGui.QWidget):
             layout.addWidget(s,n,1)
             self.s.append(s)
         
-        btn_done = QtGui.QPushButton('Done')  
+        btn_done = QtWidgets.QPushButton('Done')  
         btn_done.clicked.connect(self.done)   
         layout.addWidget(btn_done, n+1, 0, 1,2)
         

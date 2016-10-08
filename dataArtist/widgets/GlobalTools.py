@@ -1,19 +1,19 @@
 from builtins import range
-from pyqtgraph_karl.Qt import QtGui
+from pyqtgraph_karl.Qt import QtGui, QtPrintSupport, QtWidgets
 
 
-class GlobalTools(QtGui.QWidget):
+class GlobalTools(QtWidgets.QWidget):
     '''
     Widget containing all global tools
     '''
 
     def __init__(self):
-        QtGui.QWidget.__init__(self)
-        l = QtGui.QHBoxLayout()
+        QtWidgets.QWidget.__init__(self)
+        l = QtWidgets.QHBoxLayout()
         self.setLayout(l)
         l.setContentsMargins(0, 0, 0, 0)   
         l.setSpacing(0) 
-        l.setDirection(QtGui.QBoxLayout.RightToLeft)
+        l.setDirection(QtWidgets.QBoxLayout.RightToLeft)
         
            
     def addWidget(self, w):

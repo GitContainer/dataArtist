@@ -1,5 +1,5 @@
 import numpy as np
-from pyqtgraph_karl.Qt import QtGui, QtCore
+from pyqtgraph_karl.Qt import QtGui, QtPrintSupport, QtWidgets, QtCore
 
 #OWN 
 from dataArtist.widgets.Tool import Tool
@@ -92,7 +92,7 @@ class ZoomTo(Tool):
 
 
 
-class _ControlWidget(QtGui.QWidget):
+class _ControlWidget(QtWidgets.QWidget):
     '''
     A draggable control window with:
     * Button 'Previous'
@@ -100,16 +100,16 @@ class _ControlWidget(QtGui.QWidget):
     to be connected with the given functions
     '''
     def __init__(self, fnPrevious, fnNext):
-        QtGui.QWidget.__init__(self)
+        QtWidgets.QWidget.__init__(self)
         #make frameles:
         self.setWindowFlags(QtCore.Qt.FramelessWindowHint | QtCore.Qt.WindowStaysOnTopHint)
 
-        layout = QtGui.QHBoxLayout()
+        layout = QtWidgets.QHBoxLayout()
         self.setLayout(layout)
 
-        btn_previous = QtGui.QPushButton('Previous')  
+        btn_previous = QtWidgets.QPushButton('Previous')  
         btn_previous.clicked.connect(fnPrevious)   
-        btn_next = QtGui.QPushButton('Next')
+        btn_next = QtWidgets.QPushButton('Next')
         btn_next.clicked.connect(fnNext)   
 
         layout.addWidget(btn_previous)

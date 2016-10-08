@@ -55,12 +55,12 @@ setup(
         "lxml",
         "transforms3d",
         "cssselect",
-        "hachoir-core",
-        "hachoir-metadata",
-        "hachoir-parser",
+        # "hachoir-core",
+        # "hachoir-metadata",
+        # "hachoir-parser",
         "pyfits",
         "exifread",
-        # "pypiwin32", # pip integration for pywin32, which is not in pip http://sourceforge.net/projects/pywin32/files/pywin32/Build%20219/
+        "pywin32",
         "pygments",
         #"tifffile",# for tiffFileReader // included in skimage
         "enum34", #neede by numba(llvmlite) ... and for some reason not installed 

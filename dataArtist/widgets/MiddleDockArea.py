@@ -2,7 +2,7 @@ from builtins import str
 from builtins import range
 from fancywidgets.pyqtgraphBased.DockArea import DockArea
 
-from pyqtgraph_karl.Qt import QtGui
+from pyqtgraph_karl.Qt import QtGui, QtPrintSupport, QtWidgets
 from dataArtist.input.getFileReader import SUPPORTED_FTYPES
 
 
@@ -25,7 +25,7 @@ class MiddleDockArea(DockArea):
             t += '<li>'  + str(f)[1:-1]
         t += '</ul>'
         
-        self.text = QtGui.QLabel('''<html>
+        self.text = QtWidgets.QLabel('''<html>
             <p>Just <strong>drag and drop</strong> ...</p>
         <ul>
             <li>one or more <strong>files </strong>or <strong>folders</strong></li>
@@ -35,7 +35,7 @@ class MiddleDockArea(DockArea):
             over this area to open it</p>
             <nl><nl> <p> <strong>Supported file types are:</strong> %s
             </html>''' %t)
-        l = QtGui.QHBoxLayout()
+        l = QtWidgets.QHBoxLayout()
         l.addStretch(1)
         l.addWidget(self.text, stretch=10)
         self.layout.addLayout(l)

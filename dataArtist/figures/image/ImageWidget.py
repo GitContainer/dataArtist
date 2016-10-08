@@ -28,8 +28,8 @@ class ImageWidget(DisplayWidget, ImageView, PyqtgraphgDisplayBase):
     '''
     dimensions = (3,4)
     icon = PathStr.getcwd('dataArtist').join('media', 'icons','image.svg')
-    sigOverlayAdded = QtCore.pyqtSignal(object, object, object) #item, name, tip
-    sigOverlayRemoved = QtCore.pyqtSignal(object) #item
+    sigOverlayAdded = QtCore.Signal(object, object, object) #item, name, tip
+    sigOverlayRemoved = QtCore.Signal(object) #item
 
     shows_one_layer_at_a_time = True
 

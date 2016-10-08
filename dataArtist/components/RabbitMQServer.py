@@ -2,7 +2,7 @@ from __future__ import division
 from __future__ import print_function
 
 import pika
-from pyqtgraph_karl.Qt import QtCore, QtGui
+from pyqtgraph_karl.Qt import QtCore, QtGui, QtPrintSupport, QtWidgets
 
 
 
@@ -87,7 +87,7 @@ class RabbitMQServer(object):
 
 
 if __name__ == '__main__':
-    app = QtGui.QApplication([])
+    app = QtWidgets.QApplication([])
     r = RabbitMQServer(None)
     r.start()
     app.exec_()

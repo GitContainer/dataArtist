@@ -1,4 +1,4 @@
-from  pyqtgraph_karl.Qt import QtGui
+from  pyqtgraph_karl.Qt import QtGui, QtPrintSupport, QtWidgets
 
 #OWN
 from dataArtist.widgets.Tool import Tool
@@ -17,7 +17,7 @@ class LinkColorbar(Tool):
         self._linked_displays = []
         self._actions = []
         
-        self._menu = QtGui.QMenu()
+        self._menu = QtWidgets.QMenu()
         self.setMenu(self._menu)
         self._menu.aboutToShow.connect(self._buildMenu)
 
@@ -29,7 +29,7 @@ class LinkColorbar(Tool):
         for d in self.display.otherDisplaysOfSameType():
             # add an action for all imageDisplays:
 #             if d != self.display and d.__class__ == self.display.__class__:
-            a = QtGui.QAction(d.name(),self._menu, checkable=True)
+            a = QtWidgets.QAction(d.name(),self._menu, checkable=True)
             self._menu.addAction(a)
             self._actions.append(a)
 

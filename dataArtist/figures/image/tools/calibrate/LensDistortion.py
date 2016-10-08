@@ -2,7 +2,7 @@ from __future__ import division
 from __future__ import print_function
 
 import numpy as np
-from pyqtgraph_karl.Qt import QtGui, QtCore
+from pyqtgraph_karl.Qt import QtGui, QtPrintSupport, QtWidgets, QtCore
 
 from imgProcessor.camera.LensDistortion import LensDistortion as LD
 from imgProcessor.camera.LensDistortion import EnoughImages, NothingFound
@@ -43,7 +43,7 @@ class LensDistortion(Tool):
                 
         pa = self.setParameterMenu() 
         
-        btn = QtGui.QPushButton('Show Patterns')
+        btn = QtWidgets.QPushButton('Show Patterns')
         btn.clicked.connect(lambda: os.startfile(PATTERN_FILE) )
         btn.setFlat(True)
         self._menu.content.header.insertWidget(2, btn)
@@ -256,7 +256,7 @@ True: Images are taken every time the first layer is updated
                 self.pLiveTrigger.sigActivated.connect(self._addImgStream)
                 if not self.key:
                     #ACTIVATE ON KEY [+]
-                    self.key = QtGui.QShortcut(self.display.workspace)
+                    self.key = QtWidgets.QShortcut(self.display.workspace)
                     self.key.setKey(QtGui.QKeySequence(QtCore.Qt.Key_Plus))
                     self.key.setContext(QtCore.Qt.ApplicationShortcut)
                 self.key.activated.connect(self.pLiveTrigger.activate)     

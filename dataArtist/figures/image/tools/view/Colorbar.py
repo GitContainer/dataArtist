@@ -1,5 +1,5 @@
 import numpy as np
-from pyqtgraph.Qt import QtGui
+from pyqtgraph.Qt import QtGui, QtPrintSupport, QtWidgets
 from dataArtist.widgets.Tool import Tool
 from imgProcessor.imgSignal import signalRange
 
@@ -88,7 +88,7 @@ class Colorbar(Tool):
         self._actions = []
         
         for d in self.display.otherDisplaysOfSameType():
-            a = QtGui.QAction(d.name(),menu, checkable=True)
+            a = QtWidgets.QAction(d.name(),menu, checkable=True)
             menu.addAction(a)
             self._actions.append(a)
 

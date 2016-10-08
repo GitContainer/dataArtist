@@ -1,4 +1,4 @@
-from pyqtgraph.Qt import QtGui
+from pyqtgraph.Qt import QtGui, QtPrintSupport, QtWidgets
 
 
 from dataArtist.widgets.Tool import Tool
@@ -47,12 +47,12 @@ class LockView(Tool):
         if vb_linked: 
             #get object from weakref
             vb_linked = vb_linked()
-#         ag = QtGui.QActionGroup(menu, exclusive=True)
+#         ag = QtWidgets.QActionGroup(menu, exclusive=True)
 
         for d in self.display.workspace.displays():
             if d.name() != self.display.name():
-#                 a = ag.addAction(QtGui.QAction(d.name(),menu, checkable=True))
-                a = QtGui.QAction(d.name(),menu, checkable=True)
+#                 a = ag.addAction(QtWidgets.QAction(d.name(),menu, checkable=True))
+                a = QtWidgets.QAction(d.name(),menu, checkable=True)
                 menu.addAction(a)
                 #IS LINKED?:
                 vb2 = d.widget.view.vb
