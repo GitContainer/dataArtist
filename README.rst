@@ -65,11 +65,11 @@ a) Portable version
 b) Installation into existing Python installation using pip
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-- After installing Python2.7 and ensuring that 'pip' is a recognised command in the command shell (Windows: CMD.exe).
+- After installing Python3.x and ensuring that 'pip' is a recognised command in the command shell (Windows: CMD.exe).
   you need to install the following packages BEFORE installing dataArtist:
   
     - PyQt4 
-    - OpenCV2.4
+    - OpenCV3.1
     - OPTIONAL: RabbitMQ (for inter-program communication)
   
    Please refer to the `USER manual`_ for more information.
