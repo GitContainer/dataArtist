@@ -1,5 +1,4 @@
 from __future__ import absolute_import
-# import tifffile as tff
 
 from imgProcessor.transformations import transpose
 import cv2
