@@ -1,6 +1,6 @@
 from __future__ import division
 
-from pyqtgraph_karl.Qt import QtGui, QtPrintSupport, QtWidgets, QtCore
+from qtpy import QtWidgets, QtCore, QtGui
 import numpy as np
 import traceback
 
@@ -266,7 +266,7 @@ class Automation(QtWidgets.QWidget):
             # move splitter:
             # smallest possible size of batchTab
             if l:
-                a = old_div((l[i] - minSize), len(l))
+                a = (l[i] - minSize)/ len(l)
                 for n, y in enumerate(l):
                     if n != i:
                         l[n] = y + a

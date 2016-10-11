@@ -2,7 +2,7 @@ from __future__ import print_function
 import weakref
 
 import pyqtgraph_karl as pg
-from pyqtgraph_karl.Qt import QtGui, QtPrintSupport, QtWidgets, QtCore
+from qtpy import QtGui, QtCore, QtWidgets
 
 from fancywidgets.pyQtBased.Console import Console
 from fancytools.fcollections.naturalSorting import naturalSorting
@@ -422,7 +422,7 @@ class Workspace(QtWidgets.QWidget):
                 display.widget.toolbars = sorted(t, key=findBar)
 
         # add new toolbars:
-        if display.widget:
+        if display is not None:
             for bar in display.widget.toolbars:
                 if bar.isSelected():
                     #                 p = bar.position

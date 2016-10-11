@@ -3,7 +3,7 @@ Widgets handling all dataArtist preferences
 '''
 from builtins import str
 
-from pyqtgraph_karl.Qt import QtGui, QtPrintSupport, QtWidgets, QtCore
+from qtpy import QtWidgets, QtCore
 import pyqtgraph_karl
 
 from dataArtist.components.RabbitMQServer import RabbitMQServer

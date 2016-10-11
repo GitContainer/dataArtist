@@ -1,8 +1,7 @@
 from __future__ import division
-from past.utils import old_div
 
 import pyqtgraph_karl as pg
-from pyqtgraph_karl.Qt import QtCore, QtGui, QtPrintSupport, QtWidgets
+from qtpy import QtCore, QtGui
 import numpy as np
 import cv2
 
@@ -39,8 +38,8 @@ class PseudoSquareROI(pg.ROI):
         a = x1 * ratioEllispeRectangle
         b = y2 * ratioEllispeRectangle
         # intersection coords in the 1st quadrant with center=(0,0):
-        y1 = ((1 - old_div(x1**2, a**2)) * b**2)**0.5
-        x2 = ((1 - old_div(y2**2, b**2)) * a**2)**0.5
+        y1 = ((1-(x1**2/a**2))*b**2)**0.5
+        x2 = ((1-(y2**2/b**2))*a**2)**0.5
 
         c = r.center()
         cx = c.x()
@@ -68,12 +67,8 @@ class PseudoSquareROI(pg.ROI):
 
     def _prepare(self):
         r = self.boundingRect()
-        r = QtCore.QRectF(
-            old_div(
-                r.x(), r.width()), old_div(
-                r.y(), r.height()), 1, 1)
-        # get draw params:
-        self._edges, self._angles, self._alen = self._intersectionPointsAndAngles(
+        r = QtCore.QRectF((r.x()/r.width()), (r.y()/r.height()), 1,1)
+        # get draw params:        self._edges, self._angles, self._alen = self._intersectionPointsAndAngles(
             r, self._ratioEllispeRectangle)
         # scale rect:
         bl = r.bottomLeft()
@@ -107,7 +102,7 @@ class PseudoSquareROI(pg.ROI):
 
         p = self.state['pos']
         s = self.state['size']
-        center = p + old_div(s, 2)
+        center = p + s/2
         a = self.state['angle']
         # opencv convention:
         shape = (shape[1], shape[0])
@@ -145,7 +140,7 @@ class PseudoSquareROI(pg.ROI):
         w = arr.shape[0]
         h = arr.shape[1]
         # generate an ellipsoidal mask
-        mask = np.fromfunction(lambda x, y: ((old_div((x + 0.5), (old_div(w, 2.))) - 1)**2 + (
-            old_div((y + 0.5), (old_div(h, 2.))) - 1)**2)**0.5 < self._ratioEllispeRectangle, (w, h))
+        mask = np.fromfunction(lambda x,y: ((((x+0.5)/((w/2.)))-1)**2+ (
+                        ((y+0.5)/((h/2.)))-1)**2)**0.5 < self._ratioEllispeRectangle, (w, h))
 
         return arr * mask

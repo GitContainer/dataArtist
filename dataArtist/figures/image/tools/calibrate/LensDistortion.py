@@ -2,7 +2,7 @@ from __future__ import division
 from __future__ import print_function
 
 import numpy as np
-from pyqtgraph_karl.Qt import QtGui, QtPrintSupport, QtWidgets, QtCore
+from qtpy import QtGui, QtWidgets, QtCore
 
 from imgProcessor.camera.LensDistortion import LensDistortion as LD
 from imgProcessor.camera.LensDistortion import EnoughImages, NothingFound

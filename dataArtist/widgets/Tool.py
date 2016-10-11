@@ -2,7 +2,7 @@ from __future__ import print_function
 import os
 import traceback
 
-from pyqtgraph_karl.Qt import QtGui, QtPrintSupport, QtWidgets, QtCore
+from qtpy import QtWidgets, QtCore, QtGui
 
 from fancytools.os.PathStr import PathStr
 

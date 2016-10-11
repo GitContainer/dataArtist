@@ -1,7 +1,7 @@
 from __future__ import print_function
-from builtins import str
+
 import numpy as np
-from pyqtgraph_karl.Qt import QtGui, QtPrintSupport, QtWidgets
+from qtpy import QtWidgets
 
 from imgProcessor.camera.CameraCalibration import CameraCalibration
 from fancywidgets.pyQtBased.ArgSetter import ArgSetter

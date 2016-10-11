@@ -1,6 +1,6 @@
 from __future__ import division
 
-from pyqtgraph_karl.Qt import QtGui, QtPrintSupport, QtWidgets
+from qtpy import QtGui
 from functools import reduce
 
 

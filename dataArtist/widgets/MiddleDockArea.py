@@ -2,7 +2,7 @@ from builtins import str
 from builtins import range
 from fancywidgets.pyqtgraphBased.DockArea import DockArea
 
-from pyqtgraph_karl.Qt import QtGui, QtPrintSupport, QtWidgets
+from qtpy import QtWidgets
 from dataArtist.input.getFileReader import SUPPORTED_FTYPES
 
 

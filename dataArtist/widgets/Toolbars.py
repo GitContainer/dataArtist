@@ -1,7 +1,7 @@
 from __future__ import print_function
 import traceback
 import importlib
-from pyqtgraph_karl.Qt import QtGui, QtPrintSupport, QtWidgets, QtCore
+from qtpy import QtGui, QtWidgets, QtCore 
 import inspect
 
 ############################

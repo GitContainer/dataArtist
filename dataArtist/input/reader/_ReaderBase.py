@@ -1,7 +1,7 @@
 from __future__ import print_function
 import numpy as np
 
-from pyqtgraph_karl.Qt import QtCore, QtGui, QtPrintSupport, QtWidgets
+from qtpy import QtCore, QtWidgets
 
 from fancywidgets.pyqtgraphBased.parametertree import ParameterTree
 from fancywidgets.pyqtgraphBased.parametertree.parameterTypes import GroupParameter

@@ -1,6 +1,6 @@
 from builtins import zip
 import pyqtgraph_karl as pg
-from pyqtgraph_karl.Qt import QtGui, QtPrintSupport, QtWidgets
+from qtpy import QtWidgets
 
 # OWN
 from dataArtist.widgets.Tool import Tool
@@ -55,6 +55,7 @@ class Crosshair(Tool):
         self.poiMarker = pg.ScatterPlotItem(pen='r', brush='r')
 
         w = self.display.widget
+        print (55)
         w.sigTimeChanged.connect(self._updateValues)
         w.imageItem.sigImageChanged.connect(self._updateValues)
 
@@ -161,15 +162,20 @@ class Crosshair(Tool):
         self.view.addItem(textPOI)
 
     def reset(self):
+        self._first_time = True
+
         for t in self.poiTextList:
             self.view.removeItem(t)
-        self.poiMarker.clear()
+        #self.poiMarker.clear()
+        self.view.removeItem(self.poiMarker)
 
         w = self.display.widget
-        w.sigTimeChanged.disconnect(self._updateValues)
-        w.imageItem.sigImageChanged.disconnect(self._updateValues)
+        try:
+            # FIXME: sometime method is not connected any more ...
+            w.sigTimeChanged.disconnect(self._updateValues)
+            w.imageItem.sigImageChanged.disconnect(self._updateValues) 
+        except: pass
 
-        self._first_time = True
 
     def toggleShow(self):
         if self.actionHide.isChecked():

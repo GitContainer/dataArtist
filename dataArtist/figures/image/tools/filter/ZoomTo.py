@@ -1,5 +1,5 @@
 import numpy as np
-from pyqtgraph_karl.Qt import QtGui, QtPrintSupport, QtWidgets, QtCore
+from qtpy import QtWidgets, QtCore
 
 # OWN
 from dataArtist.widgets.Tool import Tool

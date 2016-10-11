@@ -1,4 +1,4 @@
-from pyqtgraph_karl.Qt import QtGui, QtPrintSupport, QtWidgets, QtCore
+from qtpy import QtWidgets, QtCore
 
 
 class ImportDialog(QtWidgets.QDialog):

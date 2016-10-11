@@ -1,5 +1,5 @@
 import pyqtgraph_karl as pg
-from pyqtgraph_karl.Qt import QtCore
+from qtpy import QtCore
 from pyqtgraph_karl import functions as fn
 
 from math import atan2, degrees

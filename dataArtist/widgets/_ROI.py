@@ -1,4 +1,3 @@
-from builtins import str
 import pyqtgraph_karl as pg
 
 from dataArtist.widgets.Tool import Tool

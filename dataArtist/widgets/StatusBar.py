@@ -1,4 +1,4 @@
-from pyqtgraph_karl.Qt import QtGui, QtPrintSupport, QtWidgets, QtCore
+from qtpy import QtGui, QtWidgets, QtCore
 
 
 class StatusBar(QtWidgets.QStatusBar):

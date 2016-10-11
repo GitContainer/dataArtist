@@ -1,6 +1,6 @@
 from dataArtist.widgets.Tool import Tool
 
-from pyqtgraph_karl.Qt import QtGui, QtPrintSupport, QtWidgets
+from qtpy import QtWidgets
 
 
 class TimeLine(Tool):

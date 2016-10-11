@@ -2,7 +2,7 @@ from __future__ import division
 
 import numpy as np
 import pyqtgraph_karl as pg
-from pyqtgraph_karl.Qt import QtGui, QtPrintSupport, QtWidgets, QtCore
+from qtpy import QtGui, QtWidgets, QtCore
 
 # OWN
 from dataArtist.widgets.Tool import Tool

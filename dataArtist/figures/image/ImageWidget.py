@@ -4,7 +4,7 @@ import cv2
 import numpy as np
 
 import pyqtgraph_karl as pg
-from pyqtgraph_karl.Qt import QtCore
+from qtpy import QtCore
 from pyqtgraph_karl import ImageView
 from pyqtgraph_karl.ordereddict import OrderedDict
 
@@ -45,9 +45,13 @@ class ImageWidget(DisplayWidget, ImageView, PyqtgraphgDisplayBase):
         PyqtgraphgDisplayBase.__init__(self)
         DisplayWidget.__init__(self, **kwargs)
 
+
+        
         self.display = display
         self.moveLayerToNewImage = None
         self.cItems = OrderedDict()  # colorlayerItems
+
+        self.sigTimeChanged.connect(self.display.highlightLayer)
 
         # for unified access within different widgets:
         self.item = self.imageItem
@@ -105,8 +109,9 @@ class ImageWidget(DisplayWidget, ImageView, PyqtgraphgDisplayBase):
         return 0
 
     def close(self):
-        self.clear()  # free memory
-        try:
+        self.sigTimeChanged.disconnect(self.display.highlightLayer)
+
+        self.clear()  # free memory        try:
             ImageView.close(self)
         except TypeError:
             pass

@@ -1,7 +1,8 @@
 import numpy as np
 
 # OWN
-from dataArtist.input.reader._ReaderBase import ReaderBase
+from fancywidgets.pyqtgraphBased.parametertree.parameterTypes import GroupParameterfrom dataArtist.input.reader._ReaderBase import ReaderBase
+
 
 
 class NpyReader(ReaderBase):
@@ -12,6 +13,7 @@ class NpyReader(ReaderBase):
 
     def __init__(self, *args, **kwargs):
         ReaderBase.__init__(self, *args, **kwargs)
+        self.preferences = _Preferences()
 
     @staticmethod
     def check(ftype, fname):
@@ -26,5 +28,22 @@ class NpyReader(ReaderBase):
 
     def open(self, filename):
         arr = np.load(filename)
-        labels = None
+        if self.preferences.pMulti.value():
+            labels = [str(i) for i in range(self.axes)]
+        else:
+            labels = None
         return arr, labels
+
+
+
+
+class _Preferences(GroupParameter):
+    
+    def __init__(self, name=' Numpy array import'):
+        
+        GroupParameter.__init__(self, name=name)
+
+        self.pMulti = self.addChild({
+                'name':'Contains multiple layers',
+                'type':'bool',
+                'value':False})

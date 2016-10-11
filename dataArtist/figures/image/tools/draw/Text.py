@@ -1,5 +1,5 @@
 from pyqtgraph_karl import TextItem as pgTextItem
-from pyqtgraph_karl.Qt import QtCore, QtGui, QtPrintSupport, QtWidgets
+from qtpy import QtCore, QtWidgets
 from pyqtgraph_karl import functions as fn
 
 # OWN

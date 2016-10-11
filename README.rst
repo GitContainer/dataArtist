@@ -1,7 +1,7 @@
 **dataArtist** - *…scientific data processing made easy.*
 
 .. image:: https://img.shields.io/badge/License-GPLv3-red.svg
-.. image:: https://img.shields.io/badge/python-2.6%7C2.7-yellow.svg
+.. image:: https://img.shields.io/badge/python-3.5-blue.svg
 
 `Download for Windows 7-10`_
 
@@ -13,7 +13,7 @@ About
 | *dataArtist* is a graphical program for interactive data analysis and
   processing. It is currently specialized image processing tasks in
   combination with electroluminescence imaging of photovoltaic devices.
-| It is written in Python (2.7) and is released under open source.
+| It is written in Python (3.x) and is released under open source.
 | *dataArtist* is written to be platform independent. It is known to run
   under Windows 7-10 and Ubuntu Linux 14.10 (soon).
 
@@ -65,11 +65,11 @@ a) Portable version
 b) Installation into existing Python installation using pip
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-- After installing Python2.7 and ensuring that 'pip' is a recognised command in the command shell (Windows: CMD.exe).
+- After installing Python3.x and ensuring that 'pip' is a recognised command in the command shell (Windows: CMD.exe).
   you need to install the following packages BEFORE installing dataArtist:
   
     - PyQt4 
-    - OpenCV2.4
+    - OpenCV3.1
     - OPTIONAL: RabbitMQ (for inter-program communication)
   
    Please refer to the `USER manual`_ for more information.
