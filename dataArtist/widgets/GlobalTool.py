@@ -1,3 +1,4 @@
+# coding=utf-8
 from dataArtist.widgets.Tool import Tool
 
 
@@ -12,7 +13,6 @@ class GlobalTool(Tool):
         self._display = display
         self.gui = display.workspace.gui
 
-    
     @property
     def display(self):
         '''
@@ -22,9 +22,8 @@ class GlobalTool(Tool):
         if self._display.isClosed() or d.__class__ == self._display.__class__:
             self._display = d
         return self._display
-    
-    
+
     @display.setter
     def display(self, d):
-        #display cannot be changed
+        # display cannot be changed
         pass

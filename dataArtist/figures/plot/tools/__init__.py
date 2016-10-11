@@ -1,3 +1,5 @@
-import processing
-import view
-import filter
+# coding=utf-8
+from __future__ import absolute_import
+from . import processing
+from . import view
+from . import filter

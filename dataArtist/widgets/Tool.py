@@ -1,7 +1,9 @@
+# coding=utf-8
+from __future__ import print_function
 import os
 import traceback
 
-from pyqtgraph_karl.Qt import QtGui, QtCore
+from qtpy import QtWidgets, QtCore, QtGui
 
 from fancytools.os.PathStr import PathStr
 
@@ -16,21 +18,20 @@ del dataArtist
 
 class _ProcessThread(QtCore.QThread):
     '''
-    Thread to be used in tool.activate in order not to block 
-    the gui 
+    Thread to be used in tool.activate in order not to block
+    the gui
     '''
-    sigDone = QtCore.pyqtSignal(object)
+    sigDone = QtCore.Signal(object)
 
     def __init__(self, tool, runfn, donefn=None):
         QtCore.QThread.__init__(self)
         self.tool = tool
         self.progressBar = tool.display.workspace.gui.progressBar
         self.runfn = runfn
-        
-        self.sigDone.connect(self.done)
-        if not donefn is None:
-            self.sigDone.connect(donefn)
 
+        self.sigDone.connect(self.done)
+        if donefn is not None:
+            self.sigDone.connect(donefn)
 
     def kill(self):
         self.progressBar.hide()
@@ -38,68 +39,65 @@ class _ProcessThread(QtCore.QThread):
         self.tool.setChecked(False)
         self.terminate()
 
-
     def start(self):
         self.progressBar.show()
         self.progressBar.cancel.clicked.connect(self.kill)
         self.progressBar.bar.setValue(50)
-        self.progressBar.label.setText("Processing %s" %self.tool.__class__.__name__)
+        self.progressBar.label.setText(
+            "Processing %s" %
+            self.tool.__class__.__name__)
         QtCore.QThread.start(self)
-
 
     def done(self):
         self.progressBar.hide()
         self.progressBar.cancel.clicked.disconnect(self.kill)
-        
 
     def run(self):
         try:
             out = self.runfn()
         except Exception:
-            print 'tool activation aborted: %s' %traceback.format_exc()
+            print('tool activation aborted: %s' % traceback.format_exc())
             return self.progressBar.cancel.click()
         self.sigDone.emit(out)
-        
-        
 
-class Tool(QtGui.QToolButton):
+
+class Tool(QtWidgets.QToolButton):
     '''
     Base class for all display.widget.tools
     '''
-    reinit = False #whether to execute activate()/deactivate() at restoreState()
+    reinit = False  # whether to execute activate()/deactivate() at restoreState()
 
     def __init__(self, display):
-        QtGui.QToolButton.__init__(self)
+        QtWidgets.QToolButton.__init__(self)
         self.display = display
         self.view = display.widget.view.vb
-        #SET ICON
+        # SET ICON
         icon = getattr(self, 'icon', None)
         if icon:
             if not os.path.exists(icon):
                 icon = ICONFOLDER.join(icon)
-            self.setIcon (QtGui.QIcon(icon))
-        #SET TOOLTIP
+            self.setIcon(QtGui.QIcon(icon))
+        # SET TOOLTIP
         if self.__doc__:
-            #USING THE CLASS DOC
-            t = '%s\n\t%s' %(self.__class__.__name__, self.__doc__)
+            # USING THE CLASS DOC
+            t = '%s\n\t%s' % (self.__class__.__name__, self.__doc__)
         else:
-            #USING THE CLASS NAME
-            t =self.__class__.__name__
+            # USING THE CLASS NAME
+            t = self.__class__.__name__
         self.setToolTip(t)
-        #SETUP CHECKABILITY:
+        # SETUP CHECKABILITY:
         if hasattr(self, 'activate'):
             try:
-                #if a tool has a method deactivate it should be checkable
+                # if a tool has a method deactivate it should be checkable
                 self.deactivate
-                self.setCheckable(True) 
+                self.setCheckable(True)
             except AttributeError:
                 self.deactivate = self._deactivate
-                self.setCheckable(False) 
+                self.setCheckable(False)
         else:
-            self.setPopupMode(QtGui.QToolButton.InstantPopup)  
- 
-        self.clicked.connect(self.toggle)
+            self.setPopupMode(QtWidgets.QToolButton.InstantPopup)
 
+        self.clicked.connect(self.toggle)
 
     def showGlobalTool(self, toolCls):
         g = self.display.workspace.gui.gTools
@@ -110,33 +108,30 @@ class Tool(QtGui.QToolButton):
         t = toolCls(self.display)
         g.addWidget(t)
         return t
-            
 
     def createResultInDisplayParam(self, parent, value='[NEW, OVERRIDE]'):
-        self.pOutDisplay = parent.addChild({'name':'Result in display',
-                    'value':value,
-                    'type':'menu'})
+        self.pOutDisplay = parent.addChild({'name': 'Result in display',
+                                            'value': value,
+                                            'type': 'menu'})
         self.pOutDisplay.display = None
         self.pOutDisplay.aboutToShow.connect(self._buildResInDisplayMenu)
         return self.pOutDisplay
 
-
     def _buildResInDisplayMenu(self, menu):
-        
+
         def addToParam(name, display=None, layer=None):
             menu.setTitle(name)
             self.pOutDisplay.display = display
             self.pOutDisplay.layer = layer
-            
+
         menu.clear()
-        
+
         a = menu.addAction('[NEW, OVERRIDE]')
         a.triggered.connect(lambda: addToParam('[NEW, OVERRIDE]'))
         #a.setToolTip('Create once a new display, than replace values in there.')
 
         a = menu.addAction('[NEW, ADD]')
         a.triggered.connect(lambda: addToParam('[NEW, ADD]'))
-
 
         a = menu.addAction('[ALLWAYS NEW]')
         a.triggered.connect(lambda: addToParam('[ALLWAYS NEW]'))
@@ -145,152 +140,150 @@ class Tool(QtGui.QToolButton):
         a = menu.addAction('[ADD]')
         a.triggered.connect(lambda: addToParam('[ADD]'))
         #a.setToolTip('Add a new layer to the current display.')
-        
+
         a = menu.addAction('[REPLACE]')
         a.triggered.connect(lambda: addToParam('[REPLACE]'))
         #a.setToolTip('Add the current layer to the current display.')
-        
+
         for d in self.display.workspace.displays():
             if d != self.display and d.widget.__class__ == self.display.widget.__class__:
                 m = menu.addMenu(d.name())
                 m.addAction('[ADD]').triggered.connect(
-                    lambda checked, d=d: addToParam('[ADD to %s]' %d.name(), d))
-                for n,l in enumerate(d.layerNames()):
+                    lambda checked, d=d: addToParam('[ADD to %s]' % d.name(), d))
+                for n, l in enumerate(d.layerNames()):
                     m.addAction(l).triggered.connect(
-                        lambda checked, d=d, n=n,l=l: 
-                        addToParam('[REPLACE %s]' %l, d, n) )
-        
+                        lambda checked, d=d, n=n, l=l:
+                        addToParam('[REPLACE %s]' % l, d, n))
 
     def handleOutput(self, out, **kwargs):
         try:
             v = self.pOutDisplay.value()
         except AttributeError:
             v = '[ALLWAYS NEW]'
-        
+
         if v == '[ALLWAYS NEW]':
             self.setChecked(False)
             d = self.display.workspace.addDisplay(
-                    origin=self.display,
-                    data=out, 
-                    **kwargs)
-        
+                origin=self.display,
+                data=out,
+                **kwargs)
+
         elif v == '[NEW, OVERRIDE]' or v == '[NEW, ADD]':
             d = self.pOutDisplay.display
             if d is None or d.isClosed():
-                #NEW
+                # NEW
                 d = self.display.workspace.addDisplay(
-                        origin=self.display,
-                        data=out, 
-                        **kwargs)
+                    origin=self.display,
+                    data=out,
+                    **kwargs)
                 self.pOutDisplay.display = d
             else:
-                t = kwargs.pop('title',None)
-                n = kwargs.pop('names',None)
+                t = kwargs.pop('title', None)
+                n = kwargs.pop('names', None)
                 if v == '[NEW, OVERRIDE]':
-                    #OVERRIDE
-                    d.changeLayer(data=out, **kwargs) 
+                    # OVERRIDE
+                    d.changeLayer(data=out, **kwargs)
                 else:
                     if n is None:
                         n = t
-                    #ADD
+                    # ADD
                     d.addLayer(filename=n, data=out, **kwargs)
         else:
-            t = kwargs.pop('title',None)
-            n = kwargs.pop('names',None)
+            t = kwargs.pop('title', None)
+            n = kwargs.pop('names', None)
             out = out[0]
-            #TODO: changes filename in name or names ... in displaydock - make it consistent
+            # TODO: changes filename in name or names ... in displaydock - make
+            # it consistent
             if n:
                 n = n[0]
             elif t is not None:
                 n = t
             d = self.display
             if v == '[REPLACE]':
-                d.changeLayer(data=out, **kwargs) 
+                d.changeLayer(data=out, **kwargs)
             elif v == '[ADD]':
                 d.addLayer(filename=n, data=out, **kwargs)
             else:
-                #CHANGE OTHER DISPLAY
+                # CHANGE OTHER DISPLAY
                 l = self.pOutDisplay.layer
                 d = self.pOutDisplay.display
                 if l is None:
-                    d.addLayer(filename=n, data=out, origin=self.display, **kwargs)
+                    d.addLayer(
+                        filename=n,
+                        data=out,
+                        origin=self.display,
+                        **kwargs)
                 else:
-                    d.changeLayer(data=out, index=l,**kwargs)
+                    d.changeLayer(data=out, index=l, **kwargs)
         return d
-                    
-    def buildOtherDisplayLayersMenu(self, menu, triggerFn, includeThisDisplay=False, updateMenuValue=True):
+
+    def buildOtherDisplayLayersMenu(
+            self, menu, triggerFn, includeThisDisplay=False, updateMenuValue=True):
         '''
         fill the menu with all available layers within other displays
         this function of often connected with the menu.aboutToShow signal
         '''
         menu.clear()
-        #SUBMENU FOR ALL DISPLAYS
+        # SUBMENU FOR ALL DISPLAYS
 #         for d in self.display.workspace.displays():
 #             if (isinstance(d.widget,self.display.widget.__class__)
 #                 and d.name() != self.display.name() ):
         for d in self.display.otherDisplaysOfSameType(includeThisDisplay):
-                m = menu.addMenu(d.name())
-                #ACTION FOR ALL LAYERS
-                for n,l in enumerate(d.layerNames()):
-                    name = '%s - %s' %(n,l)
-                    a = m.addAction(name)
+            m = menu.addMenu(d.name())
+            # ACTION FOR ALL LAYERS
+            for n, l in enumerate(d.layerNames()):
+                name = '%s - %s' % (n, l)
+                a = m.addAction(name)
+                a.triggered.connect(
+                    lambda checked, d=d, n=n, l=l:
+                        triggerFn(d, n, l))
+                if updateMenuValue:
                     a.triggered.connect(
-                        lambda checked, d=d, n=n,l=l: 
-                            triggerFn(d, n, l) )
-                    if updateMenuValue:
-                        a.triggered.connect(lambda checked, name=name: menu.setTitle(name))
+                        lambda checked, name=name: menu.setTitle(name))
 
-
-    def  buildOtherDisplaysMenu(self, menu, triggerFn, lenMenuName=25):
+    def buildOtherDisplaysMenu(self, menu, triggerFn, lenMenuName=25):
         '''
         fill the menu with all available displays
         this function of often connected with the menu.aboutToShow signal
         '''
         menu.clear()
-        #SUBMENU FOR ALL DISPLAYS
+        # SUBMENU FOR ALL DISPLAYS
 #         for d in self.display.workspace.displays():
-#             if (isinstance(d.widget,self.display.widget.__class__) 
+#             if (isinstance(d.widget,self.display.widget.__class__)
 #                     and d.name() != self.display.name() ):
         for d in self.display.otherDisplaysOfSameType():
             a = menu.addAction(d.name())
-            a.triggered.connect( lambda checked, d=d: 
-                            triggerFn(d) )
-            a.triggered.connect(lambda checked, d=d:     
-                menu.setTitle(d.name()[:lenMenuName]) )
-            
-
+            a.triggered.connect(lambda checked, d=d:
+                                triggerFn(d))
+            a.triggered.connect(lambda checked, d=d:
+                                menu.setTitle(d.name()[:lenMenuName]))
 
     def _checkShowBtnMenu(self):
-        if self.popupMode() != QtGui.QToolButton.InstantPopup:
-            self.setPopupMode(QtGui.QToolButton.MenuButtonPopup)
-
+        if self.popupMode() != QtWidgets.QToolButton.InstantPopup:
+            self.setPopupMode(QtWidgets.QToolButton.MenuButtonPopup)
 
     def setMenu(self, *args):
         '''
         only show drop-down menu option if menu is filled with entries
         '''
         self._checkShowBtnMenu()
-        QtGui.QToolButton.setMenu(self, *args)
-
+        QtWidgets.QToolButton.setMenu(self, *args)
 
     def setParameterMenu(self):
         self._menu = ParameterMenu(self)
         self.setMenu(self._menu)
         return self._menu.p
-    
-    
+
     def addAction(self, *args):
         '''
         only show drop-down menu option if menu is filled with entries
         '''
         self._checkShowBtnMenu()
-        QtGui.QToolButton.addAction(self, *args)
-
+        QtWidgets.QToolButton.addAction(self, *args)
 
     def startThread(self, runfn, donefn=None):
         self._thread = _ProcessThread(self, runfn, donefn)
         self._thread.start()
-        
 
     def toggle(self):
         if not self.isCheckable() or self.isChecked():
@@ -300,23 +293,19 @@ class Tool(QtGui.QToolButton):
             try:
                 self.display.closed.disconnect(self.deactivate)
             except TypeError:
-                pass #'instancemethod' object is not connected
+                pass  # 'instancemethod' object is not connected
             self.deactivate()
-
 
     def _deactivate(self): pass
 
-
     def saveState(self):
-        state={}
-        state['activated'] = self.isChecked()
-        #self.saveToDict(l)
+        state = {'activated': self.isChecked()}
+        # self.saveToDict(l)
         try:
             state['menu'] = self.menu().p.saveState()
         except AttributeError:
             pass
         return state
-
 
     def restoreState(self, state):
         try:
@@ -333,8 +322,7 @@ class Tool(QtGui.QToolButton):
                     self.deactivate()
                 except AttributeError:
                     pass
-            
-  
+
     def returnToolOnClick(self, activate, returnMethod):
         '''
         if activate=True:
@@ -347,18 +335,16 @@ class Tool(QtGui.QToolButton):
         else:
             self.clicked.connect(self.toggle)
             self.clicked.disconnect(self._doReturnToolOnClick)
-        
-    
+
     def _doReturnToolOnClick(self):
         self.setChecked(False)
-        return self._returnMethod(self)    
-        
+        return self._returnMethod(self)
 
-    def mouseCoord(self,evt):
+    def mouseCoord(self, evt):
         '''
         return the mouse coordinates
         '''
-        #case clicked:
+        # case clicked:
         if not isinstance(evt, QtCore.QPointF):
             evt = evt.scenePos()
         mousePoint = self.view.mapSceneToView(evt)

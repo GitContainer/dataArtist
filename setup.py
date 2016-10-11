@@ -48,25 +48,26 @@ setup(
         # "interactiveTutorial"
         "pyqtgraph_karl",  # a fork of the original pyqtgraph
         # FOREIGN
-        "puka",  # a RabbitMQ client
+        "pika",  # a RabbitMQ client
         "numpy",
         "scipy",
         "scikit-image",
         "lxml",
         "transforms3d",
         "cssselect",
-        "hachoir-core",
-        "hachoir-metadata",
-        "hachoir-parser",
+        # "hachoir-core",
+        # "hachoir-metadata",
+        # "hachoir-parser",
         "pyfits",
         "exifread",
-        # "pypiwin32", # pip integration for pywin32, which is not in pip http://sourceforge.net/projects/pywin32/files/pywin32/Build%20219/
+        "pywin32",
         "pygments",
-        "tifffile",# for tiffFileReader
-        "enum34", #neede by numba(llvmlite) ... and for some reason not installed 
+        # TODO: still needed although we use py3 now?:
+        "enum34",
+        # neede by numba(llvmlite) ... and for some reason not installed
+        "qtpy"
         # TO BE INSTALLED MANUALLY:
         # opencv
-        # PyQt4
     ],
     classifiers=[
         'Intended Audience :: Developers',
@@ -78,7 +79,7 @@ setup(
         'Topic :: Scientific/Engineering :: Information Analysis',
         'Topic :: Scientific/Engineering :: Visualization',
         'Topic :: Software Development :: Libraries :: Python Modules',
-        ],
+    ],
     description=package.__doc__,
     packages=find_packages(exclude=['tests*']),
     include_package_data=True,
@@ -86,14 +87,14 @@ setup(
     entry_points={
         'gui_scripts': [
             'dataArtist = dataArtist.gui:main',
-                        ]
-                  },    
+        ]
+    },
     long_description=(
         read('README.rst')  # + '\n\n' +
         # read('CHANGES.rst') + '\n\n' +
         # read('AUTHORS.rst')
-        )
     )
+)
 
 # remove the build
 # else old and non-existent files could come again in the installed pkg

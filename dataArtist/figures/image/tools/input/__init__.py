@@ -1,4 +1,6 @@
-from VideoStream import VideoStream
+# coding=utf-8
+from __future__ import absolute_import
+from .VideoStream import VideoStream
 
-show=False
+show = False
 color = 'orchid'

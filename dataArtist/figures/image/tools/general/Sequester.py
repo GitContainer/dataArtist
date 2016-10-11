@@ -1,3 +1,4 @@
+# coding=utf-8
 from dataArtist.widgets.Tool import Tool
 
 
@@ -8,8 +9,7 @@ class Sequester(Tool):
     its copies
     '''
     icon = 'sequester.svg'
-    
-    
+
     def activate(self):
         w = self.display.widget
         w.setImage(w.image.copy())

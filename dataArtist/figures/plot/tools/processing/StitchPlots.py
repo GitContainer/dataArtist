@@ -1,8 +1,9 @@
-from pyqtgraph_karl.Qt import QtGui
+# coding=utf-8
+from builtins import zip
+from qtpy import QtWidgets
 import numpy as np
 
 from dataArtist.widgets.Tool import Tool
-
 
 
 class StitchPlots(Tool):
@@ -10,14 +11,13 @@ class StitchPlots(Tool):
     Stitch 2 plots together
     '''
     icon = 'stitchPlots.svg'
-    
+
     def __init__(self, plotDisplay):
         Tool.__init__(self, plotDisplay)
 
-        self.mDisplay = QtGui.QMenu('from display')
+        self.mDisplay = QtWidgets.QMenu('from display')
         self.setMenu(self.mDisplay)
         self.mDisplay.aboutToShow.connect(self._buildMenu)
-
 
     def _buildMenu(self):
         self.mDisplay.clear()
@@ -25,17 +25,16 @@ class StitchPlots(Tool):
             if d != self.display and d.widget.__class__ == self.display.widget.__class__:
                 a = self.mDisplay.addAction(d.name())
                 a.triggered.connect(
-                    lambda checked, d=d: 
-                        self.activate(d) )
-
+                    lambda checked, d=d:
+                        self.activate(d))
 
     def activate(self, display=None):
         if display is None:
             return
-        for curve,foreignCurve in zip(self.display.widget.curves, 
-                                      display.widget.curves):
-            x,y = curve.xData, curve.yData
-            x = np.append(x,foreignCurve.xData)
-            y = np.append(y,foreignCurve.yData)
-            curve.setData(x,y)         
-        self.setChecked(True)        
+        for curve, foreignCurve in zip(self.display.widget.curves,
+                                       display.widget.curves):
+            x, y = curve.xData, curve.yData
+            x = np.append(x, foreignCurve.xData)
+            y = np.append(y, foreignCurve.yData)
+            curve.setData(x, y)
+        self.setChecked(True)
