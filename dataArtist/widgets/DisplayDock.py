@@ -798,8 +798,11 @@ class _DisplayFigureList(ListParameter):
         names, icons = self.getWidgetList()
 
         ListParameter.__init__(self, **{
-            self.sigValueChanged.connect(lambda param, value:
-                                         self.display.changeWidget(self._name_to_figure[value]))})
+            'name':   'Figure',
+            'limits': names,
+            'icons':  icons})
+
+        self.sigValueChanged.connect(lambda param, value: self.display.changeWidget(self._name_to_figure[value]))
 
     def __len__(self):
         return len(self._name_to_figure)
