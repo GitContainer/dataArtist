@@ -7,11 +7,10 @@ from .NoiseLevelFunction import NoiseLevelFunction
 from .PointSpreadFunction import PointSpreadFunction
 from .DeconvolutionBalance import DeconvolutionBalance
 
-tools = ( RelativeSharpness, NoiseLevelFunction, 
-          DarkCurrent, FlatField, PointSpreadFunction, 
-          DeconvolutionBalance, LensDistortion )
+tools = (RelativeSharpness, NoiseLevelFunction,
+         DarkCurrent, FlatField, PointSpreadFunction,
+         DeconvolutionBalance, LensDistortion)
 # position='top'
-secondRow=True
-color='pink'
-show = {'simple':False, 'advanced':True}
-
+secondRow = True
+color = 'pink'
+show = {'simple': False, 'advanced': True}

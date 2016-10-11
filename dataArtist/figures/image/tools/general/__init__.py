@@ -7,5 +7,5 @@ from .Crosshair import Crosshair
 from .Ruler import Ruler
 
 color = 'purple'
-show=True
-tools = (Reload, SaveToFile,Sequester,Crosshair,AverageROI,Ruler)
+show = True
+tools = (Reload, SaveToFile, Sequester, Crosshair, AverageROI, Ruler)

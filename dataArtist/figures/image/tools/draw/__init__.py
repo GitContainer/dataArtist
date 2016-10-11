@@ -4,4 +4,4 @@ from .Freehand import Freehand
 from .Text import Text
 
 color = 'orange'
-show=False
+show = False

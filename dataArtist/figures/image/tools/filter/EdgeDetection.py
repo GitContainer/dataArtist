@@ -4,7 +4,6 @@ import numpy as np
 from dataArtist.widgets.Tool import Tool
 
 
-
 class EdgeDetection(Tool):
     '''
     Execute edge detection (Sobel, Laplace)
@@ -12,17 +11,16 @@ class EdgeDetection(Tool):
     icon = 'edgeDetection.svg'
 
     def __init__(self, imageDisplay):
-        Tool.__init__(self, imageDisplay)        
-        pa = self.setParameterMenu() 
+        Tool.__init__(self, imageDisplay)
+        pa = self.setParameterMenu()
         self.createResultInDisplayParam(pa)
 
         self.pConvMethod = pa.addChild({
-            'name':'Method',
-            'type':'list',
-            'value':'Edge gradient',
-            'limits':['Edge gradient', 'Sobel-H', 
-                      'Sobel-V', 'Laplace']})
-
+            'name': 'Method',
+            'type': 'list',
+            'value': 'Edge gradient',
+            'limits': ['Edge gradient', 'Sobel-H',
+                       'Sobel-V', 'Laplace']})
 
     @staticmethod
     def _filter(img, method):
@@ -36,9 +34,8 @@ class EdgeDetection(Tool):
             return sobel(img, axis=1, mode='constant')
         if method == 'Laplace':
             return laplace(img)
-        
-        
-    def activate(self):  
+
+    def activate(self):
         out = np.empty_like(self.display.widget.image)
         for n, i in enumerate(self.display.widget.image):
             out[n] = self._filter(i, self.pConvMethod.value())

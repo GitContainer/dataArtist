@@ -2,8 +2,7 @@ from builtins import zip
 from builtins import object
 import weakref
 
-from dataArtist.widgets import  Toolbars
-
+from dataArtist.widgets import Toolbars
 
 
 class DisplayWidget(object):
@@ -12,7 +11,7 @@ class DisplayWidget(object):
     '''
     selectedToolbars = {}
     shows_one_layer_at_a_time = False
-    
+
     def __init__(self, toolbars=None):
         self.tools = {}
         if toolbars is not None:
@@ -20,22 +19,20 @@ class DisplayWidget(object):
         else:
             self.toolbars = Toolbars.build(weakref.proxy(self))
 
-
     def saveState(self):
-        state={}
+        state = {}
         state['toolbars'] = [t.isSelected() for t in self.toolbars]
-        #tools
+        # tools
         state['tools'] = t = {}
         for name, tool in self.tools.items():
             t[name] = tool.saveState()
         return state
-        
-        
+
     def restoreState(self, state):
-        #toolbars
-        for t,sel in zip(self.toolbars, state['toolbars']):
+        # toolbars
+        for t, sel in zip(self.toolbars, state['toolbars']):
             t.setSelected(sel)
-        #tools
+        # tools
         t = state['tools']
         for name, tool in self.tools.items():
             try:

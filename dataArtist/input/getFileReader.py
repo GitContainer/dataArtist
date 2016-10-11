@@ -7,14 +7,14 @@ from dataArtist.input import reader
 READERS = inspect.getmembers(reader, inspect.isclass)
 
 SUPPORTED_FTYPES = set()
-[[SUPPORTED_FTYPES.add(f) for f in cls.ftypes] for _,cls in READERS]
+[[SUPPORTED_FTYPES.add(f) for f in cls.ftypes] for _, cls in READERS]
 
 
 def getFileReader(filenames=[]):
     '''
     Try to find the right reader comparing filetypes of the given [filenames]
     (e.g. reader.image for *.jpg)
-    '''        
+    '''
     readers = []
     if not filenames:
         raise IOError('need a list of filenames if no reader is given')
@@ -25,10 +25,9 @@ def getFileReader(filenames=[]):
         if cls.check(ftype, filenames[0]):
             readers.append(cls)
     if not readers:
-        raise IOError( ftype + ' not supported') 
-    if len(readers)>1:
+        raise IOError(ftype + ' not supported')
+    if len(readers) > 1:
         d = ChooseFileReaderDialog(readers)
-        d.exec_()   
+        d.exec_()
         return readers[d.index]
     return readers[0]
-

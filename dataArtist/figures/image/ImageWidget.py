@@ -13,40 +13,43 @@ from fancytools.utils.incrementName import incrementName
 from imgProcessor.transform.PerspectiveTransformation import PerspectiveTransformation
 from imgProcessor.transformations import isColor, toColor, toGray
 
-#OWN
+# OWN
 from dataArtist.items.ColorLayerItem import ColorLayerItem
 from dataArtist.figures._PyqtgraphgDisplayBase import PyqtgraphgDisplayBase
 from dataArtist.figures.DisplayWidget import DisplayWidget
 from dataArtist.widgets.dialogs.DifferentShapeDialog import DifferentShapeDialog
-        
-    
+
 
 class ImageWidget(DisplayWidget, ImageView, PyqtgraphgDisplayBase):
     '''
-    A pyqtgraph.ImageView with methods to add/move/remove images 
+    A pyqtgraph.ImageView with methods to add/move/remove images
     as layer or colour-layer
     '''
-    dimensions = (3,4)
-    icon = PathStr.getcwd('dataArtist').join('media', 'icons','image.svg')
-    sigOverlayAdded = QtCore.Signal(object, object, object) #item, name, tip
-    sigOverlayRemoved = QtCore.Signal(object) #item
+    dimensions = (3, 4)
+    icon = PathStr.getcwd('dataArtist').join('media', 'icons', 'image.svg')
+    sigOverlayAdded = QtCore.Signal(object, object, object)  # item, name, tip
+    sigOverlayRemoved = QtCore.Signal(object)  # item
 
     shows_one_layer_at_a_time = True
 
-
     def __init__(self, display, axes, data=None, names=None, **kwargs):
         for a in axes:
-            a.setPen() # update colour theme
-        
-        ImageView.__init__(self, view=pg.PlotItem(axisItems={'bottom':axes[0],'left':axes[1]}))
+            a.setPen()  # update colour theme
+
+        ImageView.__init__(
+            self,
+            view=pg.PlotItem(
+                axisItems={
+                    'bottom': axes[0],
+                    'left': axes[1]}))
         PyqtgraphgDisplayBase.__init__(self)
         DisplayWidget.__init__(self, **kwargs)
-        
+
         self.display = display
         self.moveLayerToNewImage = None
-        self.cItems = OrderedDict() #colorlayerItems
+        self.cItems = OrderedDict()  # colorlayerItems
 
-        #for unified access within different widgets:
+        # for unified access within different widgets:
         self.item = self.imageItem
         self.setTitle = self.view.setTitle
 
@@ -58,34 +61,33 @@ class ImageWidget(DisplayWidget, ImageView, PyqtgraphgDisplayBase):
         self._set_kwargs = {}
 
         self.setOpts(discreteTimeSteps=True)
-        
-        #make splitter an unchangeable small grey line:
+
+        # make splitter an unchangeable small grey line:
         s = self.ui.splitter
         s.handle(1).setEnabled(False)
         s.setStyleSheet("QSplitter::handle{background-color: grey}")
         s.setHandleWidth(2)
-        
-        #TODO: better would be to init imageView with given histrogramAxis
+
+        # TODO: better would be to init imageView with given histrogramAxis
         #      ... but this is easier:
         axes[2].sigLabelChanged.connect(self.setHistogramLabel)
         self.setHistogramLabel(axes[2].labelText)
         axes[2].sigRangeChanged.connect(self.ui.histogram.axis.setRange)
         axes[2].sigFontSizeChanged.connect(self._setHistogramFontSize)
- 
-        #hide buttons
+
+        # hide buttons
         self.ui.roiBtn.hide()
         self.ui.normBtn.hide()
-        #fixed height for time axis:
-        self.ui.splitter.setSizes([self.height()-35, 35])
-        self.ui.splitter.setStretchFactor (0, 1)
-        #Remove ROI plot:
+        # fixed height for time axis:
+        self.ui.splitter.setSizes([self.height() - 35, 35])
+        self.ui.splitter.setStretchFactor(0, 1)
+        # Remove ROI plot:
         self.ui.roiPlot.setMouseEnabled(False, False)
         self.ui.roiPlot.hide()
 
         if data is not None:
             self.update(data)
             self.updateView()
-
 
     @staticmethod
     def getNLayers(data):
@@ -94,31 +96,28 @@ class ImageWidget(DisplayWidget, ImageView, PyqtgraphgDisplayBase):
         if l == 2:
             return 1
         if l == 3:
-            if s[-1] in (3,4):
+            if s[-1] in (3, 4):
                 return 1
             return s[0]
         if l == 4:
-            if s[-1] in (3,4):
+            if s[-1] in (3, 4):
                 return s[0]
         return 0
 
     def close(self):
-        self.clear()#free memory
+        self.clear()  # free memory
         try:
             ImageView.close(self)
         except TypeError:
             pass
 
-
     def roiClicked(self):
         '''not used'''
         pass
 
-
     def roiChanged(self):
         '''not used'''
         pass
-
 
     def saveState(self):
         state = DisplayWidget.saveState(self)
@@ -129,7 +128,6 @@ class ImageWidget(DisplayWidget, ImageView, PyqtgraphgDisplayBase):
         state['image'] = self.image
         return state
 
-
     def restoreState(self, state):
         self.view.vb.setState(state['view'])
         self.ui.histogram.vb.setState(state['histogram'])
@@ -137,18 +135,16 @@ class ImageWidget(DisplayWidget, ImageView, PyqtgraphgDisplayBase):
         self.ui.histogram.gradient.restoreState(state['colorbar'])
         img = state['image']
         if img is not None:
-            self.setImage(img, autoRange=False, autoLevels=False, 
-                      autoHistogramRange=False)
+            self.setImage(img, autoRange=False, autoLevels=False,
+                          autoHistogramRange=False)
         DisplayWidget.restoreState(self, state)
-        
 
     def showTimeline(self, show=True):
         self._timeline_visible = show
-        if show and len(self.image)>1:
+        if show and len(self.image) > 1:
             self.ui.roiPlot.show()
         else:
-            self.ui.roiPlot.hide() 
-
+            self.ui.roiPlot.hide()
 
     def setColorLayer(self, layer, **kwargs):
         '''
@@ -159,43 +155,41 @@ class ImageWidget(DisplayWidget, ImageView, PyqtgraphgDisplayBase):
             item = self.cItems.get(name, None)
             if item:
                 return item.setLayer(layer)
-        return self.addColorLayer(layer,**kwargs)
+        return self.addColorLayer(layer, **kwargs)
 
-
-    def addColorLayer(self, layer=None, name='Unnamed', tip='', 
+    def addColorLayer(self, layer=None, name='Unnamed', tip='',
                       color=None, alpha=0.5):
         '''
         add a [layer], a np.array (2d or 3d), as colour overlay to the image
         '''
         if layer is None:
-            s  = self.image.shape
-            if len(s) == 4: # multi layer color image
+            s = self.image.shape
+            if len(s) == 4:  # multi layer color image
                 s = s[1:-1]
             elif len(s) == 3:
-                if s[-1] == 3: # single layer color image
+                if s[-1] == 3:  # single layer color image
                     s = s[:-1]
-                else: #multi layer grey image
+                else:  # multi layer grey image
                     s = s[1:]
-            layer = np.zeros(shape=s)  
-        
+            layer = np.zeros(shape=s)
+
         if isColor(layer):
             layer = toGray(layer)
 
         if color is None:
-            #set colour as function of the number of colorItems:
+            # set colour as function of the number of colorItems:
             color = pg.intColor(len(self.cItems)).rgb()
-        
+
         cItem = ColorLayerItem(layer,
                                imageWidget=self,
                                color=color,
                                alpha=alpha
-                               ) 
+                               )
         name = incrementName(list(self.cItems.keys()), name)
         self.cItems[name] = cItem
         self.view.addItem(cItem)
         self.sigOverlayAdded.emit(cItem, name, tip)
         return cItem
-
 
     def removeColorLayer(self, nameOrItem):
         if isinstance(nameOrItem, ColorLayerItem):
@@ -209,16 +203,14 @@ class ImageWidget(DisplayWidget, ImageView, PyqtgraphgDisplayBase):
         self.sigOverlayRemoved.emit(item)
         del item
 
-
     def _setHistogramFontSize(self, ptSize):
         '''
-        set font size of the histogram and change the size of the 
-        viewBox that contain the image and the histogram accordingly 
+        set font size of the histogram and change the size of the
+        viewBox that contain the image and the histogram accordingly
         '''
         vb = self.ui.histogram.vb
-        vb.setFixedWidth(vb.width() * (9.0 / ptSize) )
+        vb.setFixedWidth(vb.width() * (9.0 / ptSize))
         self.ui.histogram.axis.setFontSize(ptSize)
-
 
     def insertLayer(self, index, name=None, data=None):
         '''
@@ -233,18 +225,18 @@ class ImageWidget(DisplayWidget, ImageView, PyqtgraphgDisplayBase):
             except IndexError:
                 index = -1
                 self.image = np.insert(self.image, index, data, axis=0)
-                
+
             except (ValueError, MemoryError):
                 if index == 0 and len(self.image) == 1:
-                    #replace, if only has one layer
+                    # replace, if only has one layer
                     self.image = np.expand_dims(data, axis=0)
                 else:
-                    if type(data) == list:
+                    if isinstance(data, list):
                         data = data[0]
 
                     s1 = self.image[0].shape
                     s2 = data.shape
-                    #LAYER COLOR IS DIFFERENT:
+                    # LAYER COLOR IS DIFFERENT:
                     c1 = isColor(self.image[0])
                     c2 = isColor(data)
                     if c1 and not c2:
@@ -254,37 +246,36 @@ class ImageWidget(DisplayWidget, ImageView, PyqtgraphgDisplayBase):
                         self.image = toColor(self.image)
                         s1 = self.image[0].shape
                     if s1 != s2:
-                        #NEW LAYER SHAPE DOESNT FIT EXISTING:
+                        # NEW LAYER SHAPE DOESNT FIT EXISTING:
                         ###show DIALOG#####
                         d = DifferentShapeDialog(name, s1, s2)
                         d.exec_()
-                        
-                        r = d.opt                
+
+                        r = d.opt
                         if r == d.optNewDisplay:
                             self.moveLayerToNewImage = index
                             return
                         elif r == d.optCut:
-                            data =  data[0:s1[0],0:s1[1]]
+                            data = data[0:s1[0], 0:s1[1]]
                             if data.shape != s1:
                                 d = np.zeros(s1)
-                                d[0:s2[0], 0:s2[1]]=data
+                                d[0:s2[0], 0:s2[1]] = data
                                 data = d
                         elif r == d.optResize:
-                            data = cv2.resize(data, (s1[1],s1[0])) 
-                        
+                            data = cv2.resize(data, (s1[1], s1[0]))
+
                         elif r == d.optWarp:
-                            data = PerspectiveTransformation(self.image[-1]).fitImg(data)
-    
+                            data = PerspectiveTransformation(
+                                self.image[-1]).fitImg(data)
+
                     self.image = np.insert(self.image, index, data, axis=0)
 
             self.currentIndex = index
             self.setImage(self.image)
             return self.image[index]
 
-
     def insertMovedLayer(self, index):
         self.insertLayer(index, data=self._moved_layer)
-
 
     def addLayer(self, name=None, data=None, index=None):
         '''
@@ -300,7 +291,6 @@ class ImageWidget(DisplayWidget, ImageView, PyqtgraphgDisplayBase):
         if self.image is not None:
             self.setCurrentIndex(len(self.image))
 
-        
     def removeLayer(self, index, toMove=False):
         if self.moveLayerToNewImage is None or self.moveLayerToNewImage != index:
             if toMove:
@@ -310,27 +300,26 @@ class ImageWidget(DisplayWidget, ImageView, PyqtgraphgDisplayBase):
                     self._moved_layer = None
             self.image = np.delete(self.image, index, axis=0)
             s = self.image.shape[0]
-            if s==0:
-                self.setImage( np.zeros((1,3,3)))
+            if s == 0:
+                self.setImage(np.zeros((1, 3, 3)))
                 self.image = None
-            else:  
-                #TODO: has last index, if addWidget was called before
-                    #therefore index cannot be preserved when layers are limited
+            else:
+                # TODO: has last index, if addWidget was called before
+                    # therefore index cannot be preserved when layers are
+                    # limited
                 i = self.currentIndex
                 if index != 0 and i == index:
-                    i-=1
+                    i -= 1
                 self.setImage(self.image)
-                self.setCurrentIndex(i)  
-        #reset:
+                self.setCurrentIndex(i)
+        # reset:
         self.moveLayerToNewImage = None
-    
 
     def clear(self):
-        self.setImage( np.zeros((1,3,3)))
-        self.image = None    
+        self.setImage(np.zeros((1, 3, 3)))
+        self.image = None
         for name in self.cItems:
-            self.removeColorLayer(name) 
-           
+            self.removeColorLayer(name)
 
     def getData(self, index=None):
         '''
@@ -342,7 +331,6 @@ class ImageWidget(DisplayWidget, ImageView, PyqtgraphgDisplayBase):
             return self.image[index]
         return self.image
 
-         
     def update(self, data=None, index=None, label=None, **kwargs):
         '''
         update either the full image or an image layer
@@ -355,10 +343,10 @@ class ImageWidget(DisplayWidget, ImageView, PyqtgraphgDisplayBase):
                 except (ValueError, IndexError):
                     self.insertLayer(index, name=label, data=data)
             else:
-                #set all layers
-                if (data.ndim == 2 #single grayscale
-                        or data.ndim ==3 
-                        and data.shape[2] in (3,4)):#single color
+                # set all layers
+                if (data.ndim == 2  # single grayscale
+                        or data.ndim == 3
+                        and data.shape[2] in (3, 4)):  # single color
                     data = np.expand_dims(data, axis=0)
                 self.image = data
                 self._image_redefined = True
@@ -366,50 +354,48 @@ class ImageWidget(DisplayWidget, ImageView, PyqtgraphgDisplayBase):
         self._set_index = index
         self._changed = True
 
-                 
     def updateView(self, force=False):
         '''
         update the visual representation
         '''
         if self.image is not None and (force or self._changed):
-            
+
             if self._image_redefined or self._set_kwargs or self._firstTime:
                 self.setImage(self.image, **self._set_kwargs)
                 self._firstTime = False
                 self._image_redefined = False
-                
-            elif force or self._set_index == None or self._set_index == self.currentIndex:
-                self.imageDisp = None # needed by ImageView to set histogram levels
+
+            elif force or self._set_index is None or self._set_index == self.currentIndex:
+                self.imageDisp = None  # needed by ImageView to set histogram levels
                 self.updateImage(**self._set_kwargs)
                 if self.opts['autoLevels']:
                     self.autoLevels()
             self._changed = False
 
-
     def updateImage(self, autoHistogramRange=None):
         '''
-        overwrite original method to hide timeline when 
+        overwrite original method to hide timeline when
         3d image has only one layer
         '''
-        ## Redraw image on screen
+        # Redraw image on screen
         if self.image is None:
             return
-        
-        if autoHistogramRange == None:
+
+        if autoHistogramRange is None:
             autoHistogramRange = self.opts['autoHistogramRange']
-        
+
         image = self.getProcessedImage()
         if autoHistogramRange:
             self.ui.histogram.setHistogramRange(self.levelMin, self.levelMax)
         if self.axes['t'] is not None:
-            #show/hide timeline:
+            # show/hide timeline:
             self.ui.roiPlot.setVisible(
-                        self.image.shape[0]>1 and self._timeline_visible)
+                self.image.shape[0] > 1 and self._timeline_visible)
             image = image[self.currentIndex]
-            
+
         # ensure initial right scaling (not done when image is [0...1]
         # TODO: fix the origin bug
         if image.dtype == bool:
-            return self.imageItem.updateImage(image,levels=(0.,1.)) 
+            return self.imageItem.updateImage(image, levels=(0., 1.))
         else:
-            self.imageItem.updateImage(image)            
+            self.imageItem.updateImage(image)

@@ -13,13 +13,11 @@
 # serve to show the default.
 
 
-
-
 import sys
 import os
 
 
-#add package path:
+# add package path:
 #sys.path.insert(0, os.path.abspath("../"))
 
 # If extensions (or modules to document with autodoc) are in another directory,
@@ -28,10 +26,10 @@ import os
 #sys.path.insert(0, os.path.abspath('.'))
 pkg_dir = os.path.dirname(os.path.dirname(os.path.abspath('..')))
 for s in os.listdir(pkg_dir):
-    #add local code to sys.path
+    # add local code to sys.path
     f = os.path.join(pkg_dir, s)
     if os.path.isdir(f):
-        sys.path.insert(0,f)
+        sys.path.insert(0, f)
 # -- General configuration ------------------------------------------------
 
 # If your documentation needs a minimal Sphinx version, state it here.
@@ -44,7 +42,7 @@ extensions = [
     'sphinx.ext.autodoc',
     'sphinx.ext.todo',
     'sphinx.ext.viewcode',
-	'sphinxcontrib.napoleon'
+    'sphinxcontrib.napoleon'
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -218,25 +216,25 @@ htmlhelp_basename = 'dataArtistdoc'
 # -- Options for LaTeX output ---------------------------------------------
 
 latex_elements = {
-# The paper size ('letterpaper' or 'a4paper').
-#'papersize': 'letterpaper',
+    # The paper size ('letterpaper' or 'a4paper').
+    #'papersize': 'letterpaper',
 
-# The font size ('10pt', '11pt' or '12pt').
-#'pointsize': '10pt',
+    # The font size ('10pt', '11pt' or '12pt').
+    #'pointsize': '10pt',
 
-# Additional stuff for the LaTeX preamble.
-#'preamble': '',
+    # Additional stuff for the LaTeX preamble.
+    #'preamble': '',
 
-# Latex figure (float) alignment
-#'figure_align': 'htbp',
+    # Latex figure (float) alignment
+    #'figure_align': 'htbp',
 }
 
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-  ('index', 'dataArtist.tex', u'dataArtist Documentation',
-   u'Karl Bedrich', 'manual'),
+    ('index', 'dataArtist.tex', u'dataArtist Documentation',
+     u'Karl Bedrich', 'manual'),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of
@@ -279,9 +277,9 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-  ('index', 'dataArtist', u'dataArtist Documentation',
-   u'Karl Bedrich', 'dataArtist', 'One line description of project.',
-   'Miscellaneous'),
+    ('index', 'dataArtist', u'dataArtist Documentation',
+     u'Karl Bedrich', 'dataArtist', 'One line description of project.',
+     'Miscellaneous'),
 ]
 
 # Documents to append as an appendix to all manuals.
@@ -367,11 +365,11 @@ epub_exclude_files = ['search.html']
 #epub_use_index = True
 
 
-
 def skip(app, what, name, obj, skip, options):
     if name == "__init__":
         return False
     return skip
+
 
 def setup(app):
     app.connect("autodoc-skip-member", skip)

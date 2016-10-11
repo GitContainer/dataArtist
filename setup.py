@@ -62,8 +62,9 @@ setup(
         "exifread",
         "pywin32",
         "pygments",
-        "tifffile",# for tiffFileReader
-        "enum34", #neede by numba(llvmlite) ... and for some reason not installed 
+        "tifffile",  # for tiffFileReader
+        "enum34",
+        # neede by numba(llvmlite) ... and for some reason not installed
         # TO BE INSTALLED MANUALLY:
         # opencv
         # PyQt4
@@ -78,7 +79,7 @@ setup(
         'Topic :: Scientific/Engineering :: Information Analysis',
         'Topic :: Scientific/Engineering :: Visualization',
         'Topic :: Software Development :: Libraries :: Python Modules',
-        ],
+    ],
     description=package.__doc__,
     packages=find_packages(exclude=['tests*']),
     include_package_data=True,
@@ -86,14 +87,14 @@ setup(
     entry_points={
         'gui_scripts': [
             'dataArtist = dataArtist.gui:main',
-                        ]
-                  },    
+        ]
+    },
     long_description=(
         read('README.rst')  # + '\n\n' +
         # read('CHANGES.rst') + '\n\n' +
         # read('AUTHORS.rst')
-        )
     )
+)
 
 # remove the build
 # else old and non-existent files could come again in the installed pkg

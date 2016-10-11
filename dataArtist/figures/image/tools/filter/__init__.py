@@ -8,5 +8,5 @@ from .ZoomTo import ZoomTo
 from .ZDenoise import ZDenoise
 from .ExtractBackground import ExtractBackground
 
-color='yellow'
-show = {'simple':False, 'advanced':False}
+color = 'yellow'
+show = {'simple': False, 'advanced': False}

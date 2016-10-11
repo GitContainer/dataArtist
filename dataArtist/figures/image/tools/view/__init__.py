@@ -12,6 +12,6 @@ from .SwitchBetweenGridAndStackedView import SwitchBetweenGridAndStackedView
 from .ToPlot import ToPlot
 color = 'blue'
 show = True
-tools = ( LockView, Colorbar, Axes, TimeLine,
-          Transform, IsColor, Overlay,
-          SwitchBetweenGridAndStackedView, ToPlot)
+tools = (LockView, Colorbar, Axes, TimeLine,
+         Transform, IsColor, Overlay,
+         SwitchBetweenGridAndStackedView, ToPlot)

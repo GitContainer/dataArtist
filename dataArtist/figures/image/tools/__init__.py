@@ -12,8 +12,8 @@ from . import view
 
 # sequence = (general,view, measurement, correct
 
-#SETUP
+# SETUP
 import imgProcessor
-#DUE TO DIFFERENT BETWEEN OPENCV AND PYQTGRAPH:
+# DUE TO DIFFERENT BETWEEN OPENCV AND PYQTGRAPH:
 imgProcessor.ARRAYS_ORDER_IS_XY = True
 del imgProcessor

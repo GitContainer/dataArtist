@@ -8,5 +8,5 @@ from .PlotTrend import PlotTrend
 from .Slice import Slice
 from .Squeeze import Squeeze
 
-show=False
+show = False
 color = 'burlywood'

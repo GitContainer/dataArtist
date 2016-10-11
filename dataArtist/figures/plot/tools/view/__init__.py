@@ -16,4 +16,4 @@ from .Table import Table
 
 color = 'blue'
 show = True
-tools = (Reload, LockView,Axes,Legend, PlotStyle,ErrorBar, ToImage)
+tools = (Reload, LockView, Axes, Legend, PlotStyle, ErrorBar, ToImage)

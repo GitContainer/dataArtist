@@ -10,45 +10,42 @@ import pyqtgraph_karl.opengl as gl
 import pyqtgraph_karl as pg
 from pyqtgraph_karl import QtGui, QtPrintSupport, QtWidgets, QtCore
 
+
 class Grid(object):
+
     def __init__(self, parent):
         fc = pg.getConfigOption('foreground')
         self.x = gl.GLGridItem(color=fc)
         self.x.rotate(90, 0, 1, 0)
         self.x.translate(-10, 0, 0)
         parent.addItem(self.x)
-        #y
+        # y
         self.y = gl.GLGridItem(color=fc)
         self.y.rotate(90, 1, 0, 0)
         self.y.translate(0, -10, 0)
         parent.addItem(self.y)
-        #z
+        # z
         self.z = gl.GLGridItem(color=fc)
         self.z.translate(0, 0, -10)
         parent.addItem(self.z)
 
     def show(self):
         for plane in (self.x, self.y, self.z):
-            plane.show()      
+            plane.show()
 
     def hide(self):
         for plane in (self.x, self.y, self.z):
-            plane.hide() 
-
-
-
-
-
+            plane.hide()
 
 
 class View3d(gl.GLViewWidget):
+
     def __init__(self):
         gl.GLViewWidget.__init__(self)
         self.setBackgroundColor(pg.getConfigOption('background'))
         self.setCameraPosition(distance=40)
         self.grid = Grid(self)
-        
-        
+
 
 if __name__ == '__main__':
     app = QtWidgets.QApplication([])

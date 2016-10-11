@@ -8,7 +8,8 @@ PROFILE_IMPORT_SPEED = False
 
 
 if PROFILE_IMPORT_SPEED:
-    import cProfile, pstats
+    import cProfile
+    import pstats
     pr = cProfile.Profile()
     pr.enable()
 
@@ -17,15 +18,15 @@ import sys
 import os
 
 
-#main directory for all code:
+# main directory for all code:
 pkg_dir = os.path.dirname(os.path.dirname(os.path.abspath(os.curdir)))
 print(os.path.abspath(os.curdir))
 for s in os.listdir(pkg_dir):
-    #add local code to sys.path
+    # add local code to sys.path
     f = os.path.join(pkg_dir, s)
     if os.path.isdir(f):
         print(f)
-        sys.path.insert(0,f)
+        sys.path.insert(0, f)
 
 
 from dataArtist import gui

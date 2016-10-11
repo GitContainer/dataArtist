@@ -7,8 +7,7 @@ class Reload(Tool):
     Load or reload the displays data
     '''
     icon = 'reload.svg'
-    
-    
+
     def activate(self):
         if not self.display.reader:
             print('no input data to reload, updating view...')
