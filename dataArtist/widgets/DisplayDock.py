@@ -799,7 +799,7 @@ class _DisplayFigureList(ListParameter):
 
         ListParameter.__init__(self, **{
             self.sigValueChanged.connect(lambda param, value:
-                                         self.display.changeWidget(self._name_to_figure[value]))
+                                         self.display.changeWidget(self._name_to_figure[value]))})
 
     def __len__(self):
         return len(self._name_to_figure)
