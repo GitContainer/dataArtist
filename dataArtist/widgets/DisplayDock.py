@@ -1,3 +1,4 @@
+# coding=utf-8
 from __future__ import print_function
 
 import time
@@ -14,7 +15,6 @@ from fancywidgets.pyqtgraphBased.parametertree.parameterTypes \
 from fancytools.os.PathStr import PathStr
 from fancytools.fcollections.removeDuplicates import removeDuplicates
 
-
 from six import string_types
 
 # METADATA reader:
@@ -30,6 +30,7 @@ from dataArtist.items.axis import AxesContainer
 from dataArtist.widgets.docks import DockBase as Dock
 
 from dataArtist import figures
+
 FIGURES = inspect.getmembers(figures, inspect.isclass)
 del figures
 
@@ -117,43 +118,43 @@ class DisplayDock(Dock):
 
         # PARAMETERS:
         self.p = Parameter.create(
-            name='',
-            type='empty')
+                name='',
+                type='empty')
 
         # TAB DISPLAYING PREFERENCES AND INPUT INFORMATION:
         self.tab = _DisplayTab(self)
         # FILL PARAMETERS:
         self.pTitle = self.p.addChild({
-            'name': 'Title',
-                    'type': 'str',
-                    'value': ''})
+            'name':  'Title',
+            'type':  'str',
+            'value': ''})
         self.pTitle.sigValueChanged.connect(self._setWidgetTitle)
         pSize = self.pTitle.addChild({
-            'name': 'Size',
-                    'type': 'int',
-                    'value': 11})
+            'name':  'Size',
+            'type':  'int',
+            'value': 11})
         pSize.sigValueChanged.connect(
-            lambda param, size: self.widget.setTitleSize(size))
+                lambda param, size: self.widget.setTitleSize(size))
 
         self.pTitleFromLayer = self.pTitle.addChild({
-            'name': 'From layer',
-                    'type': 'bool',
-                    'value': False})
+            'name':  'From layer',
+            'type':  'bool',
+            'value': False})
         self.pTitleFromLayer.sigValueChanged.connect(
-            self._pTitleFromLayerChanged)
+                self._pTitleFromLayerChanged)
 
         self.pLimitLayers = self.p.addChild({
-            'name': 'Limit Layers',
-            'type': 'bool',
+            'name':  'Limit Layers',
+            'type':  'bool',
             'value': False})
         self.pLimitLayers.sigValueChanged.connect(self._pLimitLayersChanged)
 
         self.pMaxLayers = self.pLimitLayers.addChild({
-            'name': 'Max. Layers',
-                    'type': 'int',
-                    'value': 10,
-                    'visible': False,
-                    'limits': [1, 1e4]})
+            'name':    'Max. Layers',
+            'type':    'int',
+            'value':   10,
+            'visible': False,
+            'limits':  [1, 1e4]})
 
         self.pMaxLayers.sigValueChanged.connect(self._limitLayers)
 
@@ -166,7 +167,7 @@ class DisplayDock(Dock):
         # LIST OF ALL FITTING DISPLAY FIGURES:
         widgetList = _DisplayFigureList(self)
 
-        #UPDATE DATA FROM FILE USING SPECIFIED PREFERENCES: 
+        # UPDATE DATA FROM FILE USING SPECIFIED PREFERENCES:
         if self.reader:
             if self.reader.preferences:
                 self.p.addChild(self.reader.preferences)
@@ -174,13 +175,13 @@ class DisplayDock(Dock):
         # LIST OF ALL FITTING DISPLAY FIGURES:
         widgetList = _DisplayFigureList(self)
         if len(widgetList) > 1:
-            #only show available widgets if
-            #there are more than one: 
+            # only show available widgets if
+            # there are more than one:
             self.p.addChild(widgetList)
-        
+
         # INIT WIDGET
-        self.changeWidget(widgetList.getWidget())#, data, names)
-        
+        self.changeWidget(widgetList.getWidget())  # , data, names)
+
         # ADD DATA
         if len(names):
             if data is None and PathStr(names[0]).isfile():
@@ -195,7 +196,7 @@ class DisplayDock(Dock):
     def otherDisplaysOfSameType(self, includeThisDisplay=False):
         for d in self.workspace.displays():
             if (isinstance(d.widget, self.widget.__class__)
-                    and (includeThisDisplay or d.name() != self.name())):
+                and (includeThisDisplay or d.name() != self.name())):
                 yield d
 
     def _limitLayers(self, param, val):
@@ -230,7 +231,7 @@ class DisplayDock(Dock):
     def _setTitleFromCurrentLayer(self, index):
         try:
             self.widget.setTitle(
-                self.stack.childs[index].name())
+                    self.stack.childs[index].name())
         except IndexError:
             pass  # there are no layers
 
@@ -291,33 +292,32 @@ class DisplayDock(Dock):
     def shortName(self):
         return '[%s]' % self.number
 
-
-#     def _getNDataLayers(self, axes, data):
-#         '''
-#         define number of data layers interpreting [data] and it's [axes]
-#         '''
-#         l = len(axes)
-#         #get number of dimensions (nDim) and shape without the need of an ndarray:
-#         try:
-#             x = data
-#             shape = []
-#             while True:
-#                 shape.append(len(x))
-#                 x = x[0]
-#         except TypeError:
-#             ndim = len(shape)
-#         except IndexError:
-#             #has no layers jet
-#             return 0
-#         if l == ndim + 1:
-#             #stack with one layer or no stack:
-#             nlayers = 1
-#         elif l == ndim or l == ndim-1:
-#             #multiple layers:
-#             nlayers = shape[0]
-#         else:
-#             raise Exception("number of axes doesn't fit to data shape")
-#         return nlayers
+    #     def _getNDataLayers(self, axes, data):
+    #         '''
+    #         define number of data layers interpreting [data] and it's [axes]
+    #         '''
+    #         l = len(axes)
+    #         #get number of dimensions (nDim) and shape without the need of an ndarray:
+    #         try:
+    #             x = data
+    #             shape = []
+    #             while True:
+    #                 shape.append(len(x))
+    #                 x = x[0]
+    #         except TypeError:
+    #             ndim = len(shape)
+    #         except IndexError:
+    #             #has no layers jet
+    #             return 0
+    #         if l == ndim + 1:
+    #             #stack with one layer or no stack:
+    #             nlayers = 1
+    #         elif l == ndim or l == ndim-1:
+    #             #multiple layers:
+    #             nlayers = shape[0]
+    #         else:
+    #             raise Exception("number of axes doesn't fit to data shape")
+    #         return nlayers
 
     def mousePressEvent(self, event):
         '''
@@ -377,10 +377,10 @@ class DisplayDock(Dock):
                 nLayers = len(self.stack.childs)
                 # CASE 'l'
                 n = self.widget.getNLayers(value)
-#                 n = self._getNDataLayers(self.axes, value)
-#                 print nLayers, n,55555555555
-#                 if not n:
-#                     raise Exception("number of axes doesn't fit to data shape")
+                #                 n = self._getNDataLayers(self.axes, value)
+                #                 print nLayers, n,55555555555
+                #                 if not n:
+                # raise Exception("number of axes doesn't fit to data shape")
 
                 if nLayers == n:
                     # print value
@@ -413,8 +413,8 @@ class DisplayDock(Dock):
         create a new display with the same data and axes
         '''
         d = self.workspace.addDisplay(
-            origin=self,
-            title='Duplicate')
+                origin=self,
+                title='Duplicate')
         d.p.restoreState(self.p.saveState())
         d.widget.restoreState(self.widget.saveState())
         return d
@@ -485,8 +485,8 @@ class DisplayDock(Dock):
 
     def copyLayerToNewDisplay(self, index):
         self.workspace.addDisplay(
-            origin=self,
-            index=index)
+                origin=self,
+                index=index)
 
     def moveLayerToNewDisplay(self, index):
         self.copyLayerToNewDisplay(index)
@@ -526,18 +526,18 @@ class DisplayDock(Dock):
                               index=index, info=info, changes=changes)
         # WIDGET
         layer = self.widget.addLayer(name=name, data=data, **kwargs)
-        if not self.widget.moveLayerToNewImage is None:
+        if self.widget.moveLayerToNewImage is not None:
             print('Move this layer to new display')
             # couldn't add new layer to stack: create a new display to show it
             self.workspace.addDisplay(
-                origin=self,
-                index=len(self.filenames) - 1,
-                data=[data])
+                    origin=self,
+                    index=len(self.filenames) - 1,
+                    data=[data])
             self.stack.childs[-1].remove()
         else:
             # LIMIT LAYERS
             if (self.pLimitLayers.value()
-                    and len(self.stack.childs) > self.pMaxLayers.value()):
+                and len(self.stack.childs) > self.pMaxLayers.value()):
                 self.stack.childs[0].remove()
             # AUTOMATION
             self.sigNewLayer.emit(self)
@@ -548,7 +548,7 @@ class DisplayDock(Dock):
         # UNDO/REDO
         ur = self.workspace.gui.undoRedo
         if ur.isActive():
-            #index = kwargs.get('index', None)
+            # index = kwargs.get('index', None)
             widget = self.widget
             if backup is None:
                 data = widget.getData(index)
@@ -561,15 +561,15 @@ class DisplayDock(Dock):
             name += ": %s" % changes
 
             ur.add(
-                display=self,
-                name=name,
-                undoFn=lambda i=index, d=backup:
-                self.changeLayer(data=d, changes='undo', index=i,
-                                 backup=False),
-                redoFn=lambda d, i=index:
-                self.changeLayer(data=d, changes='redo', index=i,
-                                 backup=False),
-                dataFn=lambda i=index, w=widget:
+                    display=self,
+                    name=name,
+                    undoFn=lambda i=index, d=backup:
+                    self.changeLayer(data=d, changes='undo', index=i,
+                                     backup=False),
+                    redoFn=lambda d, i=index:
+                    self.changeLayer(data=d, changes='redo', index=i,
+                                     backup=False),
+                    dataFn=lambda i=index, w=widget:
                     w.getData(i).copy()
             )
 
@@ -591,14 +591,12 @@ class DisplayDock(Dock):
         self.stack.addChange(changes, index=index)
         self.sigLayerChanged.emit(self)
 
-
     def highlightLayer(self, ind):
         '''
         highlight layer of index [ind] in 'Layers' group
         '''
         item = next(iter(self.stack.childs[ind].items.items()))[0]
         item.treeWidget().setCurrentItem(item)
-
 
     def showToolBar(self, name):
         '''
@@ -631,7 +629,7 @@ class DisplayDock(Dock):
 
         filt = '*.' + ' *.'.join(self.reader.ftypes)
         fname = self.workspace.gui.dialogs.getOpenFileName(
-            filter=filt, directory=self.filenames[index].dirname())
+                filter=filt, directory=self.filenames[index].dirname())
         if fname is not None:
             self._readFiles([fname], self._updateFiles)
 
@@ -643,7 +641,7 @@ class DisplayDock(Dock):
     def layerIndex(self, filename, layername):
         for n, ch in enumerate(self.stack.childs):
             if ch.opts['filename'] == filename and ch.opts[
-                    'layername'] == layername:
+                'layername'] == layername:
                 return n
         return None
 
@@ -667,7 +665,7 @@ class DisplayDock(Dock):
                 if index is not None:
                     self.changeLayer(d,
                                      changes='reloaded at ' +
-                                     time.strftime("%c"),
+                                             time.strftime("%c"),
                                      index=index)
                 else:
                     # TODO: insert layer behind last filename layer
@@ -701,18 +699,15 @@ class DisplayDock(Dock):
                 self.addLayers(d, fnames, d)
 
     def saveState(self):
-        state = {}
-#         path += ('display',str(self.number))
+        state = {'stack':      self.stack.saveState(), 'automation': self.tab.automation.saveState(),
+                 'parameters': self.p.saveState(), 'dock': self.label.maximized}
+        #         path += ('display',str(self.number))
         # layers
-        state['stack'] = self.stack.saveState()
         # automation
-        state['automation'] = self.tab.automation.saveState()
         # parameters
-        state['parameters'] = self.p.saveState()
-#         session.addContentToSave(self.p.saveState(), *path+('parameters.txt',))
+        #         session.addContentToSave(self.p.saveState(), *path+('parameters.txt',))
         # dock
-        state['dock'] = self.label.maximized
-#         session.addContentToSave(self.label.maximized, *path+('dock.txt',))
+        #         session.addContentToSave(self.label.maximized, *path+('dock.txt',))
         # to init the current toolbars:
         self.clicked.emit(self)
         # widget
@@ -760,7 +755,7 @@ class _DisplayTab(QtWidgets.QSplitter):
 
     def __init__(self, display):
         QtWidgets.QSplitter.__init__(
-            self, QtCore.Qt.Orientation(0))  # 0=horiz, 1=vert)
+                self, QtCore.Qt.Orientation(0))  # 0=horiz, 1=vert)
         self.display = display
         self.automation = Automation(display, self)
         self.prefs = _PreferencesWidget(display)
@@ -803,9 +798,8 @@ class _DisplayFigureList(ListParameter):
         names, icons = self.getWidgetList()
 
         ListParameter.__init__(self, **{
-        self.sigValueChanged.connect(lambda param, value: 
-            self.display.changeWidget(self._name_to_figure[value]))
-
+            self.sigValueChanged.connect(lambda param, value:
+                                         self.display.changeWidget(self._name_to_figure[value]))
 
     def __len__(self):
         return len(self._name_to_figure)
@@ -830,8 +824,8 @@ class _DisplayFigureList(ListParameter):
                     icons.append(getattr(cls, 'icon', None))
             else:
                 print(
-                    "%s doens't have needed attribute 'dimensions'" %
-                    cls.__name__)
+                        "%s doens't have needed attribute 'dimensions'" %
+                        cls.__name__)
         return list(self._name_to_figure.keys()), icons
 
 
@@ -848,13 +842,13 @@ class _StackParameter(GroupParameter):
 
         mAll = QtWidgets.QMenu('All layers')
         mAll.addAction('Change').triggered.connect(
-            self.display.changeLayerFiles)
+                self.display.changeLayerFiles)
         mAll.addAction('Remove').triggered.connect(self.display.removeLayers)
 
         GroupParameter.__init__(self, **{
-            'name': '   Layers',
-                    'sliding': True,
-                    'addToContextMenu': [mAll]})
+            'name':             '   Layers',
+            'sliding':          True,
+            'addToContextMenu': [mAll]})
         # IF A LAYER IS MOVED:
         self.sigChildRemoved.connect(lambda parent, child, index, self=self:
                                      self.display.removeLayer(index,
@@ -903,13 +897,13 @@ class _StackParameter(GroupParameter):
         self.values = np.array([ch.value() for ch in self.childs])
         self.sigValuesChanged.emit(self.values)
 
-#
-#     def save(self, session, path):
-#         '''
-#         save parameter values to file 'stack.txt'
-#         '''
-#         session.addContentToSave(self.saveState(), *path+('stack.txt',))
-#
+    #
+    #     def save(self, session, path):
+    #         '''
+    #         save parameter values to file 'stack.txt'
+    #         '''
+    #         session.addContentToSave(self.saveState(), *path+('stack.txt',))
+    #
 
     def restoreState(self, state, **kwargs):
         '''
@@ -921,7 +915,7 @@ class _StackParameter(GroupParameter):
         self.blockSignals(False)
         self.sigChildAdded.disconnect(self._fnInsertRemovedLayer)
         # REBUILD STACK:
-#         l =  eval(session.getSavedContent(*path +('stack.txt',) )  )
+        #         l =  eval(session.getSavedContent(*path +('stack.txt',) )  )
         GroupParameter.restoreState(self, state, **kwargs)
         self.sigChildAdded.connect(self._fnInsertRemovedLayer)
 
@@ -954,20 +948,20 @@ class _StackParameter(GroupParameter):
             menu_entries.append(aFile)
         # CREATE AND ADD COPY-LAYER-TO OPTION TO PARAMETER:
         pLayer = self.addChild({
-            'type': 'float',
-            'highlight': True,
-            'name': name,
-            'value': self.display.axes.stackAxis.getNextStackValue(
+            'type':              'float',
+            'highlight':         True,
+            'name':              name,
+            'value':             self.display.axes.stackAxis.getNextStackValue(
                     PathStr(fname).basename()),
-            'expanded': False,
-            'removable': True,
+            'expanded':          False,
+            'removable':         True,
             'autoIncrementName': True,
-            'renamable': True,
-            'readonly': True,
-            'addToContextMenu': menu_entries,
+            'renamable':         True,
+            'readonly':          True,
+            'addToContextMenu':  menu_entries,
 
-            'filename': fname,
-            'layername': label,
+            'filename':          fname,
+            'layername':         label,
         })
         mCopy.aboutToShow.connect(lambda pLayer=pLayer, mCopy=mCopy, self=self:
                                   self.buildCopyToDisplayMenu(mCopy, pLayer, 'copy'))
@@ -991,8 +985,8 @@ class _StackParameter(GroupParameter):
                     finfo += self.getFileInfo(fname) + '\n'
                 except AttributeError:
                     pass
-                # finfo = '' #not possible to read from file because maybe not
-                # a filename
+                    # finfo = '' #not possible to read from file because maybe not
+                    # a filename
             dinfo = ''
             if data is not None:
                 try:
@@ -1010,17 +1004,17 @@ class _StackParameter(GroupParameter):
             # info is given as text
             # LAYER INFO
             pLayer.addChild({
-                'type': 'text',
-                'name': 'Info',
-                'value': info if info is not None else '',
+                'type':     'text',
+                'name':     'Info',
+                'value':    info if info is not None else '',
                 'readonly': True})
         # LAYER CHANGES
         pLayer.addChild({
-            'type': 'text',
-            'name': 'Changes',
-            #'TODO: every change through a tool/scripts operation to be added here',
-            'value': changes if changes else '',
-            #'readonly':True
+            'type':     'text',
+            'name':     'Changes',
+            # 'TODO: every change through a tool/scripts operation to be added here',
+            'value':    changes if changes else '',
+            # 'readonly':True
             'expanded': bool(changes)
         })
 
@@ -1058,7 +1052,7 @@ class _StackParameter(GroupParameter):
             m = self.display.moveLayerToNewDisplay
 
         menuCopy.addAction('NEW').triggered.connect(
-            lambda checked, paramFile=paramFile, m=m:
+                lambda checked, paramFile=paramFile, m=m:
                 m(paramFile.parent().children().index(paramFile)))
 
         # OTHER DISPLAYS:
@@ -1070,7 +1064,7 @@ class _StackParameter(GroupParameter):
         for d in self.display.workspace.displays():
             if d != self.display and d.widget.__class__ == self.display.widget.__class__:
                 menuCopy.addAction(d.name()).triggered.connect(
-                    lambda checked, paramFile=paramFile, d=d, m=m:
+                        lambda checked, paramFile=paramFile, d=d, m=m:
                         m(paramFile.parent().children().index(paramFile), d)
                 )
 
@@ -1097,9 +1091,10 @@ Last changed:\t%s''' % (n, f.filePath()[:-len(n)],
                         size,
                         f.lastModified().toString())
 
-    # TODO: not used at the moment
-    # but useful
-#     def getMetaData(self, filename):
+        # TODO: not used at the moment
+        # but useful
+
+# def getMetaData(self, filename):
 #         '''
 #         Find and format the meta data of [filename]
 #         '''

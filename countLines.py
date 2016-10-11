@@ -1,3 +1,4 @@
+# coding=utf-8
 '''
 Count coded lines of all projects
 '''

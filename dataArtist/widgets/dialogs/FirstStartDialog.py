@@ -1,7 +1,8 @@
+# coding=utf-8
 from appbase.dialogs.FirstStart import FirstStart
 from dataArtist.widgets.preferences import ChooseProfile
 
-from qtpy import QtGui,QtWidgets
+from qtpy import QtGui, QtWidgets
 
 
 class FirstStartDialog(FirstStart):

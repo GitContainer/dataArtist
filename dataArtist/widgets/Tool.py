@@ -1,3 +1,4 @@
+# coding=utf-8
 from __future__ import print_function
 import os
 import traceback
@@ -29,7 +30,7 @@ class _ProcessThread(QtCore.QThread):
         self.runfn = runfn
 
         self.sigDone.connect(self.done)
-        if not donefn is None:
+        if donefn is not None:
             self.sigDone.connect(donefn)
 
     def kill(self):
@@ -298,8 +299,7 @@ class Tool(QtWidgets.QToolButton):
     def _deactivate(self): pass
 
     def saveState(self):
-        state = {}
-        state['activated'] = self.isChecked()
+        state = {'activated': self.isChecked()}
         # self.saveToDict(l)
         try:
             state['menu'] = self.menu().p.saveState()

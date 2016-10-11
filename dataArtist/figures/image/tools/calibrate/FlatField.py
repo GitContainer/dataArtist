@@ -1,3 +1,4 @@
+# coding=utf-8
 from __future__ import print_function
 from imgProcessor.camera.flatField.flatFieldFromCalibration import flatFieldFromCalibration
 from imgProcessor.camera.flatField.FlatFieldFromImgFit import FlatFieldFromImgFit
@@ -40,7 +41,7 @@ class FlatField(ImageTool):
 %s
 
 'from normal images'
-%s''' % (flatFieldFromCalibration.__doc__, FlatFieldFromImgFit.__doc__) })
+%s''' % (flatFieldFromCalibration.__doc__, FlatFieldFromImgFit.__doc__)})
 
         self.pFitMethod = pMeasure.addChild({
             'name': 'Fit method',

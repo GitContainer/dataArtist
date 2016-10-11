@@ -1,3 +1,4 @@
+# coding=utf-8
 from __future__ import print_function
 
 import numpy as np
@@ -437,6 +438,8 @@ class CalibrationFile(GlobalTool):
         if self.pAutosave.value():
             self._saveToFile(self._cal_file_path)
 
+    # TODO: default argument is mutable: Default argument values are evaluated only once at function definition time, 
+    #   which means that modifying the default value of the argument will affect all subsequent calls of the function.
     def saveState(self, state={}):
         GlobalTool.saveState(self, state)
         state['cal dir'] = self._last_dir

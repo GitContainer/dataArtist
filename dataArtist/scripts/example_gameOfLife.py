@@ -1,3 +1,4 @@
+# coding=utf-8
 from builtins import range
 # This example shows the Conways GAME OF LIFE
 #==========================================
@@ -45,6 +46,7 @@ def processNeighbours(x, y, array):
 
 
 def update():
+    # TODO: processNeighbours, d really global?
     global sizeX, sizeY, processNeighbours, d, data
     for i in range(1, sizeX - 1):
         for j in range(1, sizeY - 1):

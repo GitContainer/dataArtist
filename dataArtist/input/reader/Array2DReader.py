@@ -1,3 +1,4 @@
+# coding=utf-8
 from __future__ import print_function
 import numpy as np
 import fancywidgets.pyqtgraphBased.parametertree.parameterTypes as pTypes
@@ -18,6 +19,7 @@ class Array2DReader(ReaderBase):
         ReaderBase.__init__(self, *args, **kwargs)
         self.preferences = _Preferences()
 
+    # TODO: does not match signature of overriden function
     @staticmethod
     def check(ftype, fname):
         return ftype in Array2DReader.ftypes

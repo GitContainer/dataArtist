@@ -1,3 +1,4 @@
+# coding=utf-8
 from builtins import str
 from builtins import range
 from fancywidgets.pyqtgraphBased.DockArea import DockArea

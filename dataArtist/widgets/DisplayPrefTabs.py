@@ -1,6 +1,7 @@
+# coding=utf-8
 from fancywidgets.pyQtBased.FwTabWidget import FwTabWidget
 
-from qtpy import  QtWidgets
+from qtpy import QtWidgets
 
 
 class DisplayPrefTabs(FwTabWidget):

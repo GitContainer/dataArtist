@@ -1,3 +1,4 @@
+# coding=utf-8
 from __future__ import division
 from builtins import range
 from past.utils import old_div
@@ -40,6 +41,7 @@ n.hideTitleBar()
 
 def update():
     # updates mandelbrod via varying variables
+    # TODO: mandelbrot really global?
     global l_val, l_inc, r_val, r_inc, t_val, t_inc, b_val, b_inc, mandelbrot, res, iterations
     n.l = mandelbrot(l_val, r_val, t_val, b_val, res[0], res[1], iterations)
     l_val += l_inc

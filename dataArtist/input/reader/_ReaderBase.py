@@ -1,3 +1,4 @@
+# coding=utf-8
 from __future__ import print_function
 import numpy as np
 
@@ -67,6 +68,7 @@ class ReaderBase(QtCore.QThread):
         '''
         return 100 * self.status() * float(self._curFile_n + 1) / len(self.filenames)
 
+    # TODO: does not match signature of overriden function
     def start(self, filenames):
         self.filenames = filenames
 

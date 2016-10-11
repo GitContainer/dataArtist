@@ -1,3 +1,4 @@
+# coding=utf-8
 from builtins import str
 import pyqtgraph_karl as pg
 from qtpy import QtGui, QtCore

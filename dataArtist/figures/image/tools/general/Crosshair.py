@@ -1,3 +1,4 @@
+# coding=utf-8
 from builtins import zip
 import pyqtgraph_karl as pg
 from qtpy import QtWidgets
@@ -55,7 +56,7 @@ class Crosshair(Tool):
         self.poiMarker = pg.ScatterPlotItem(pen='r', brush='r')
 
         w = self.display.widget
-        print (55)
+        print(55)
         w.sigTimeChanged.connect(self._updateValues)
         w.imageItem.sigImageChanged.connect(self._updateValues)
 
@@ -166,16 +167,16 @@ class Crosshair(Tool):
 
         for t in self.poiTextList:
             self.view.removeItem(t)
-        #self.poiMarker.clear()
+        # self.poiMarker.clear()
         self.view.removeItem(self.poiMarker)
 
         w = self.display.widget
         try:
             # FIXME: sometime method is not connected any more ...
             w.sigTimeChanged.disconnect(self._updateValues)
-            w.imageItem.sigImageChanged.disconnect(self._updateValues) 
-        except: pass
-
+            w.imageItem.sigImageChanged.disconnect(self._updateValues)
+        except:
+            pass
 
     def toggleShow(self):
         if self.actionHide.isChecked():

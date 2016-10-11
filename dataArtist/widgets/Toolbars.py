@@ -1,7 +1,8 @@
+# coding=utf-8
 from __future__ import print_function
 import traceback
 import importlib
-from qtpy import QtGui, QtWidgets, QtCore 
+from qtpy import QtGui, QtWidgets, QtCore
 import inspect
 
 ############################
@@ -128,7 +129,7 @@ class _ToolBar(QtWidgets.QToolBar):
 
         # BACKGROUND COLOR:
         c = getattr(pkg, 'color', None)
-        if not c is None:
+        if c is not None:
             # create a semi-transparent colour from
             # normal background color (grey)
             # and given color:

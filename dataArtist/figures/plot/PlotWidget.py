@@ -1,3 +1,4 @@
+# coding=utf-8
 from builtins import zip
 from builtins import range
 from builtins import object
@@ -148,7 +149,7 @@ class PlotWidget(DisplayWidget, pgPlotWidget, PyqtgraphgDisplayBase):
         self.removeItem(c)
 
     def insertLayer(self, index, name, data=None, **kwargs):
-        if not 'pen' in kwargs:
+        if 'pen' not in kwargs:
             kwargs['pen'] = (len(self.curves) % 10)
         plotItem = self.plot(name=name, **kwargs)
         if data is not None:

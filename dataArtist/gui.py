@@ -1,15 +1,16 @@
 #!/usr/bin/env python
+# coding=utf-8
 from __future__ import print_function
 
 import sys
 import os
-
 
 from qtpy import QtGui, QtWidgets, QtCore
 
 # FIXME: many array indices in pyqtgraph are not int
 # therefore numpy 1.11 shows many VisibleDeprecationWarning...
 import warnings
+
 warnings.simplefilter("ignore", DeprecationWarning)
 
 from appbase.MultiWorkspaceWindow import MultiWorkspaceWindow
@@ -28,7 +29,6 @@ from dataArtist.widgets.ProgressBar import ProgressBar
 from dataArtist.widgets.dialogs.FirstStartDialog import FirstStartDialog
 from dataArtist.widgets.GlobalTools import GlobalTools
 from dataArtist.widgets.StatusBar import StatusBar
-
 
 ##########
 # to allow to execute py code from a frozen environment
@@ -50,7 +50,7 @@ def _showActionToolTipInMenu(menu, action):
     # show tooltip on the right side of [menu]
     # QMenu normaly doesnt allow QActions to show tooltips...
     tip = action.toolTip()
-#             QtWidgets.QToolTip.showText(QtGui.QCursor.pos(), tip)
+    #             QtWidgets.QToolTip.showText(QtGui.QCursor.pos(), tip)
     p = menu.pos()
     p.setX(p.x() + 105)
     p.setY(p.y() - 21)
@@ -81,14 +81,14 @@ class Gui(MultiWorkspaceWindow):
         st = StatusBar()
         self.setStatusBar(st)
 
-#         def showOut(msg):
-#             if msg != '\n':
-#                 # after every message this new line character is emitted
-#                 # showing this hides the real message
-#                 st.showMessage(msg,9000)
-#         def showErr(msg):
-#             if msg != '\n':
-#                 st.showError(msg, 9000)
+        #         def showOut(msg):
+        #             if msg != '\n':
+        #                 # after every message this new line character is emitted
+        #                 # showing this hides the real message
+        #                 st.showMessage(msg,9000)
+        #         def showErr(msg):
+        #             if msg != '\n':
+        #                 st.showError(msg, 9000)
         s.streamOut.message.connect(st.showMessage)  # showOut)
         s.streamErr.message.connect(st.showError)  # showErr)
 
@@ -120,7 +120,7 @@ class Gui(MultiWorkspaceWindow):
         l['maximized'] = self.isMaximized()
         l['fullscreen'] = self.menuBar().ckBox_fullscreen.isChecked()
         l['showTools'] = self.menu_toolbars.a_show.isChecked()
-#         session.addContentToSave(l, 'gui.txt')
+        #         session.addContentToSave(l, 'gui.txt')
         # WORKSPACES
         sw = l['workspaces'] = {}
         for w in self.workspaces():
@@ -218,18 +218,18 @@ class Gui(MultiWorkspaceWindow):
         ).tab.automation.tabs.widgetByName(name)
         if not w:
             raise Exception(
-                'couldnt find script [%s] in the current display' %
-                name)
+                    'couldnt find script [%s] in the current display' %
+                    name)
         w.thread.start()
 
     def _appendMenubarAndPreferences(self):
         m = self.menuBar()
         m.setFixedHeight(25)
-#         m.setMaximumHeight(25)
+        #         m.setMaximumHeight(25)
 
         m.aboutWidget.setModule(dataArtist)
         m.aboutWidget.setInstitutionLogo(
-            MEDIA_FOLDER.join('institution_logo.svg'))
+                MEDIA_FOLDER.join('institution_logo.svg'))
 
         # hide the menu so toolbars can only be show/hidden via
         # gui->view->toolbars:
@@ -248,15 +248,15 @@ class Gui(MultiWorkspaceWindow):
         t.addTab(self.pref_import, 'Import')
         t.addTab(PreferencesCommunication(self), 'Communication')
         # APPEND MENUBAR
-        #MENU - FILE
+        # MENU - FILE
         f = m.menu_file
         p = f.action_preferences
         action_file = QtWidgets.QAction('&Import', f)
         action_file.triggered.connect(self.openFile)
         action_file.setShortcut(
-            QtGui.QKeySequence(
-                QtCore.Qt.CTRL +
-                QtCore.Qt.Key_I))
+                QtGui.QKeySequence(
+                        QtCore.Qt.CTRL +
+                        QtCore.Qt.Key_I))
         f.insertAction(p, action_file)
         f.insertSeparator(p)
         # MENU VIEW
@@ -265,7 +265,7 @@ class Gui(MultiWorkspaceWindow):
         aPrintView = QtWidgets.QAction('Print view', v)
         aPrintView.setCheckable(True)
         aPrintView.triggered.connect(
-            lambda checked: self.currentWorkspace().setPrintView(checked))
+                lambda checked: self.currentWorkspace().setPrintView(checked))
         v.addAction(aPrintView)
 
         # SHOW/HIDE history
@@ -321,44 +321,44 @@ class Gui(MultiWorkspaceWindow):
         # ACTION VIEW2CLIPBOARD
         aClipboard = QtWidgets.QAction('Copy view to clipboard', v)
         aClipboard.triggered.connect(
-            lambda checked: self.currentWorkspace().copyViewToClipboard())
+                lambda checked: self.currentWorkspace().copyViewToClipboard())
         v.addAction(aClipboard)
         # ACTION Display2CLIPBOARD
         aClipboard = QtWidgets.QAction('Copy active display to clipboard', v)
         aClipboard.triggered.connect(
-            lambda checked: self.currentWorkspace().copyCurrentDisplayToClipboard())
+                lambda checked: self.currentWorkspace().copyCurrentDisplayToClipboard())
         v.addAction(aClipboard)
-        #MENU - TOOLS
+        # MENU - TOOLS
         t = m.menu_tools = QtWidgets.QMenu('Dock')
         m.insertMenuBefore(m.menu_workspace, t)
         # ADD DISPLAY
         mDisplay = t.addMenu('Add Display')
         for i, name in (  # (1, 'Dot'),
-            (2, 'Graph'),
-            (3, 'Image/Video'),
-            #(4, 'Surface')
-            # TODO:
-            #(4, 'TODO: Surface'),
-            #(5, 'TODO: Volume')
+                (2, 'Graph'),
+                (3, 'Image/Video'),
+                # (4, 'Surface')
+                # TODO:
+                # (4, 'TODO: Surface'),
+                # (5, 'TODO: Volume')
         ):
             mDisplay.addAction('%sD - %s' % (i - 1, name)).triggered.connect(
-                lambda checked, i=i: self.currentWorkspace().addDisplay(axes=i))
+                    lambda checked, i=i: self.currentWorkspace().addDisplay(axes=i))
             # ADD TABLE
         t.addAction('Add Table').triggered.connect(
-            lambda: self.currentWorkspace().addTableDock())
+                lambda: self.currentWorkspace().addTableDock())
         # ADD NOTEPAD
         t.addAction('Add Notepad').triggered.connect(
-            lambda: self.currentWorkspace().addTextDock())
+                lambda: self.currentWorkspace().addTextDock())
         t.addSeparator()
         # DUPLICATE CURRENT DOCK
         t.addAction('Duplicate current display').triggered.connect(
-            self._duplicateCurrentDiplay)
+                self._duplicateCurrentDiplay)
         self._m_duplDisp = t.addMenu('Move current display to other workspace')
         self._m_duplDisp.aboutToShow.connect(self._fillMenuDuplicateToOtherWS)
-        #MENU - TOOLBARS
+        # MENU - TOOLBARS
         self.menu_toolbars = QtWidgets.QMenu('Toolbars', m)
         self.menu_toolbars.hovered[QtWidgets.QAction].connect(
-            lambda action, m=self.menu_toolbars: _showActionToolTipInMenu(m, action))
+                lambda action, m=self.menu_toolbars: _showActionToolTipInMenu(m, action))
         # self.connect(self.menu_toolbars, QtCore.SIGNAL("hovered(QAction *)"),
         #              lambda action, m=self.menu_toolbars:
         #                 _showActionToolTipInMenu(m, action))
@@ -376,21 +376,21 @@ class Gui(MultiWorkspaceWindow):
         m.insertMenuBefore(m.menu_workspace, self.menu_toolbars)
         # MENU HELP
         m.menu_help.addAction('User manual').triggered.connect(
-            lambda checked: os.startfile(HELP_FILE))
+                lambda checked: os.startfile(HELP_FILE))
         # TUTORIALS
         # not used at the moment
-#         self.m_tutorials = TutorialMenu(
-#                         tutorialFolder=PathStr.getcwd('dataArtist').join('tutorials'),
-#                         openFunction=self._openFnForTutorial,
-#                         saveFunction=self.app.session.blockingSave)
-#         m.menu_help.addMenu(self.m_tutorials)
+        #         self.m_tutorials = TutorialMenu(
+        #                         tutorialFolder=PathStr.getcwd('dataArtist').join('tutorials'),
+        #                         openFunction=self._openFnForTutorial,
+        #                         saveFunction=self.app.session.blockingSave)
+        #         m.menu_help.addMenu(self.m_tutorials)
 
         m.menu_help.addAction('Online tutorials').triggered.connect(
-            lambda checked: os.startfile(
-                'http://www.youtube.com/channel/UCjjngrC3jPdx1HL8zJ8yqLQ'))
+                lambda checked: os.startfile(
+                        'http://www.youtube.com/channel/UCjjngrC3jPdx1HL8zJ8yqLQ'))
         m.menu_help.addAction('Support').triggered.connect(
-            lambda checked: os.startfile(
-                'https://github.com/radjkarl/dataArtist/issues'))
+                lambda checked: os.startfile(
+                        'https://github.com/radjkarl/dataArtist/issues'))
 
     def _duplicateCurrentDiplay(self):
         d = self.currentWorkspace().getCurrentDisplay()
@@ -430,7 +430,7 @@ class Gui(MultiWorkspaceWindow):
         self.currentWorkspace().toggleShowSelectedToolbars(checked)
 
     # DRAG AND GROP
-    #<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+    # <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
     def keyPressEvent(self, event):
         if event.matches(QtGui.QKeySequence.Paste):
             self.dropEvent(QtWidgets.QApplication.clipboard())
@@ -438,7 +438,7 @@ class Gui(MultiWorkspaceWindow):
     def dragEnterEvent(self, event):
         m = event.mimeData()
         if (m.hasUrls() or
-            m.hasImage() or
+                m.hasImage() or
                 m.hasText()):
             event.setDropAction(QtCore.Qt.CopyAction)
             event.accept()
@@ -459,6 +459,7 @@ class Gui(MultiWorkspaceWindow):
                 for f in path:
                     # for all files in folder
                     _appendRecursive(path.join(f))
+
         # one or more files/folders are dropped
         for url in urls:
             if url.isLocalFile():
@@ -475,7 +476,7 @@ class Gui(MultiWorkspaceWindow):
         if m.hasHtml():
             (paths, data) = html2data(str(m.html()))
             self.currentWorkspace().addFiles(paths)
-            #raise NotImplementedError('direct import of data (like tables) from a browser is not implemented at the moment')
+            # raise NotImplementedError('direct import of data (like tables) from a browser is not implemented at the moment')
 
         # FILES
         elif m.hasUrls():
@@ -503,7 +504,8 @@ class Gui(MultiWorkspaceWindow):
                 self.currentWorkspace().addTableDock(text=txt)
             else:
                 self.currentWorkspace().addTextDock(text=txt)
-    #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+    # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
     @staticmethod
     def txtIsTable(txt):

@@ -1,3 +1,4 @@
+# coding=utf-8
 from __future__ import division
 from __future__ import print_function
 
@@ -240,6 +241,8 @@ class Selection(Tool):
             l.append((typ, name, state))
         return l
 
+    # TODO: default argument is mutable: Default argument values are evaluated only once at function definition time, 
+    #   which means that modifying the default value of the argument will affect all subsequent calls of the function.
     def saveState(self, state={}):
         state['activated'] = self.isChecked()
         state['paths'] = self._savePaths()
@@ -351,7 +354,7 @@ class Selection(Tool):
     def _addROI(self, cls, param, state):
         w = self.display.widget
         r = w.view.vb.viewRange()
-        if not 'pos' in state:
+        if 'pos' not in state:
             state['pos'] = ((r[0][0] + r[0][1]) / 2,
                             (r[1][0] + r[1][1]) / 2)
             state['size'] = [

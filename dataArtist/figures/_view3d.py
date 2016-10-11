@@ -1,3 +1,4 @@
+# coding=utf-8
 '''
 This module is still in development
 ... sometimes in the future it will give

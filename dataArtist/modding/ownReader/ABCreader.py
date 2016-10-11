@@ -1,3 +1,4 @@
+# coding=utf-8
 from dataArtist.input.reader._ReaderBase import ReaderBase
 
 import numpy as np
@@ -13,6 +14,7 @@ class ABCreader(ReaderBase):
     def __init__(self, *args, **kwargs):
         ReaderBase.__init__(self, *args, **kwargs)
 
+    # TODO: does not match signature of overriden function
     @staticmethod
     def check(ftype, fname):
         return ftype in ABCreader.ftypes

@@ -1,3 +1,4 @@
+# coding=utf-8
 from builtins import zip
 from builtins import object
 import weakref
@@ -20,8 +21,7 @@ class DisplayWidget(object):
             self.toolbars = Toolbars.build(weakref.proxy(self))
 
     def saveState(self):
-        state = {}
-        state['toolbars'] = [t.isSelected() for t in self.toolbars]
+        state = {'toolbars': [t.isSelected() for t in self.toolbars]}
         # tools
         state['tools'] = t = {}
         for name, tool in self.tools.items():

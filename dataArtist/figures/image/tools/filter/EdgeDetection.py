@@ -1,3 +1,4 @@
+# coding=utf-8
 from scipy.ndimage import sobel, laplace
 import numpy as np
 

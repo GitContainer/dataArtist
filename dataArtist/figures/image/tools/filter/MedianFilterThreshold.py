@@ -1,3 +1,4 @@
+# coding=utf-8
 from imgProcessor.filters.medianThreshold import medianThreshold
 
 from dataArtist.widgets.Tool import Tool

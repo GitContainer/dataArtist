@@ -1,3 +1,4 @@
+# coding=utf-8
 from __future__ import print_function
 import weakref
 
@@ -98,10 +99,8 @@ class Workspace(QtWidgets.QWidget):
                     c.setStyleSheet("")
 
     def saveState(self):
-        l = {}
+        l = {'middleSplitter': self.middle_splitter.sizes(), 'vertSplitter': self.vert_splitter.sizes()}
         # GENERAL
-        l['middleSplitter'] = self.middle_splitter.sizes()
-        l['vertSplitter'] = self.vert_splitter.sizes()
         # DISPLAYS
         d = self.displaydict()
         for number, display in d.items():

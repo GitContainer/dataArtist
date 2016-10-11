@@ -1,3 +1,4 @@
+# coding=utf-8
 from builtins import range
 from dataArtist.widgets.Tool import Tool
 from dataArtist.figures.image.tools.globals.CalibrationFile import CalibrationFile

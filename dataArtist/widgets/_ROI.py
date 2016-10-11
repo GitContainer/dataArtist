@@ -1,3 +1,4 @@
+# coding=utf-8
 import pyqtgraph_karl as pg
 
 from dataArtist.widgets.Tool import Tool
@@ -80,6 +81,8 @@ class ROIArea(pg.ROI):
     Base ROI object including a text item
     '''
 
+    # TODO: default argument is mutable: Default argument values are evaluated only once at function definition time, 
+    #   which means that modifying the default value of the argument will affect all subsequent calls of the function.
     def __init__(self, tool, masterDisplay, slaveDisplay, name,
                  index, pen='r', pos=[10, 10], size=[50, 50]):
 
@@ -161,6 +164,7 @@ class ROIArea(pg.ROI):
     def setupUpdateView(self, dummy):
         pass
 
+    # TODO: does not match signature of overriden function
     def show(self, show):
         '''
         show/hide ROI area and its textItem

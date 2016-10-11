@@ -1,3 +1,4 @@
+# coding=utf-8
 # create a new display with 3 dimensions:
 n = new(axes=['x', 'y', 'i'])
 

@@ -1,3 +1,4 @@
+# coding=utf-8
 # if docks are closed in pyqtgraph, memory is not released
 # this results in heavy RAM usage at some point
 # will have to fix this in the future

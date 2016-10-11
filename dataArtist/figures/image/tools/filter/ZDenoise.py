@@ -1,3 +1,4 @@
+# coding=utf-8
 from builtins import range
 import numpy as np
 from imgProcessor.transform.imgAverage import imgAverage

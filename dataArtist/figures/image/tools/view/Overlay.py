@@ -1,3 +1,4 @@
+# coding=utf-8
 from qtpy import QtWidgets
 # OWN
 from dataArtist.widgets.Tool import Tool

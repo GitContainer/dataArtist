@@ -1,27 +1,29 @@
+# coding=utf-8
 from __future__ import division
 from builtins import zip
 from past.utils import old_div
 
 from pyqtgraph_karl.widgets.MatplotlibWidget import MatplotlibWidget
 
-#import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 from matplotlib import cm
 
 
 class MatplotlibSurface(MatplotlibWidget):
     dimensions = (4,)
-   # axisOrientation = ['bottom', 'left']
-    #icon = 'trend.svg'
+
+    # axisOrientation = ['bottom', 'left']
+    # icon = 'trend.svg'
 
     def __init__(self, display, axes, data=None, names=None,
                  #                  uncertainty=None
                  ):
         MatplotlibWidget.__init__(self)  # size=(5.0, 4.0), dpi=100
-#         self.uncertainty = uncertainty
+        #         self.uncertainty = uncertainty
 
         self.toolbar.hide()
-      #  self.vbox.setContentsMargins(0, 0, 0, 0)
+        #  self.vbox.setContentsMargins(0, 0, 0, 0)
 
         s = self.surface = self.fig.add_subplot(111, projection='3d')
         a = display.axes
@@ -30,20 +32,20 @@ class MatplotlibSurface(MatplotlibWidget):
         s.azim = -90
         s.elev = -90
 
-       # s.auto_scale_xyz([0,480],[0,360],[0,3000])
+        # s.auto_scale_xyz([0,480],[0,360],[0,3000])
 
         a[0].p.sigValueChanged.connect(
-            lambda param, value: s.set_xlabel(value))
+                lambda param, value: s.set_xlabel(value))
         s.set_xlabel(a[0].p.value())
         a[1].p.sigValueChanged.connect(
-            lambda param, value: s.set_ylabel(value))
+                lambda param, value: s.set_ylabel(value))
         s.set_ylabel(a[1].p.value())
         a[2].p.sigValueChanged.connect(
-            lambda param, value: s.set_zlabel(value))
+                lambda param, value: s.set_zlabel(value))
         s.set_zlabel(a[2].p.value())
 
         self.data = []
-       # self.data = []
+        # self.data = []
         self.changed = False
 
         if names is not None and data is not None:
@@ -52,7 +54,7 @@ class MatplotlibSurface(MatplotlibWidget):
         self.draw()
 
         # UPDATE CURVE NAMES:
-       # display.stack.sigLayerNameChanged.connect(
+        # display.stack.sigLayerNameChanged.connect(
         # lambda index, txt, self=self:
         # self.surfaces[index].set_xlabel('X')(txt))
 
@@ -68,9 +70,8 @@ class MatplotlibSurface(MatplotlibWidget):
     def getData(self, index=None):
         pass
 
-
-#     def getUncertainty(self, index=None):
-#         pass
+    #     def getUncertainty(self, index=None):
+    #         pass
 
     def removeLayer(self, index, toMove=False):
         pass
@@ -78,24 +79,24 @@ class MatplotlibSurface(MatplotlibWidget):
     def insertLayer(self, index, name, data=None, pen=None):
         # data = 3darray[i,j,(x,y,z)]
         if data is not None:
-            #surface = self.fig.add_subplot(111, projection='3d')
+            # surface = self.fig.add_subplot(111, projection='3d')
 
-           # surface.set = lambda data: self.setSurface(surface, data)
+            # surface.set = lambda data: self.setSurface(surface, data)
 
             self.data.insert(index, data)
             self.changed = True
-           # surface._data = data
-          #  surface._changed = True
-           # self.data.insert(index, data)
+            # surface._data = data
+            #  surface._changed = True
+            # self.data.insert(index, data)
             # transpose to data = [x,y,z]
 
-        # return surface
+            # return surface
 
     def insertMovedLayer(self, index):
         pass
-        #self.addItem(self._movedCurve, params={})
-        #self.curves.insert(index, self._movedCurve)
-        #del self._movedCurve
+        # self.addItem(self._movedCurve, params={})
+        # self.curves.insert(index, self._movedCurve)
+        # del self._movedCurve
 
     def addLayer(self, name='unnamed', data=None, **kwargs):
         return self.insertLayer(len(self.data), name, data, **kwargs)
@@ -106,16 +107,16 @@ class MatplotlibSurface(MatplotlibWidget):
             #                 return
             if index is not None:
                 self.data[index] = data
-                #s = self.surfaces[index]
-                #s._data = data
+                # s = self.surfaces[index]
+                # s._data = data
             else:
                 self.data = data
             self.changed = True
             # print 222
-          #  else:
+            #  else:
 
-#     @staticmethod
-#     def setSurface(surface, data):
+        #     @staticmethod
+        #     def setSurface(surface, data):
 
     # , yRange=None, zRange=None):
     def updateView(self, force=False, xRange=None):
@@ -128,30 +129,31 @@ class MatplotlibSurface(MatplotlibWidget):
                     n = 1
                 data = d.transpose(2, 0, 1)
                 s.plot_surface(
-                    data[
+                        data[
                         0, ::n, ::n], data[
-                        1, ::n, ::n], data[
-                        2, ::n, ::n], cmap=cm.jet)
+                                      1, ::n, ::n], data[
+                                                    2, ::n, ::n], cmap=cm.jet)
 
-                #s._changed = False
-            #s.pbaspect = [1.0, 1.0, 1.0]
+                # s._changed = False
+            # s.pbaspect = [1.0, 1.0, 1.0]
             if xRange is not None:
                 s.set_xlim(xRange)
-#             if yRange != None:
-#                 s.set_ylim(yRange)
-#             if zRange != None:
-#                 if xRange:
-#                 s.get_zlim()
-#                 s.set_zlim(zRange)
+            #             if yRange != None:
+            #                 s.set_ylim(yRange)
+            #             if zRange != None:
+            #                 if xRange:
+            #                 s.get_zlim()
+            #                 s.set_zlim(zRange)
             s.pbaspect = [1, 1, 1]
             # else:
             #    s.set_zlim(s.get_zlim())
-        #    s.axis('equal')
+            #    s.axis('equal')
             # s.invert_zaxis()
             self.fig.tight_layout()
             self.draw()
             self.changed = False
-#             if d.changed:
+
+# if d.changed:
 #                 self.curves[n].updateItems()
 #                 d.changed = False
 

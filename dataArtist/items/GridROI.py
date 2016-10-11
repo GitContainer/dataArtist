@@ -1,3 +1,4 @@
+# coding=utf-8
 from __future__ import division
 from __future__ import absolute_import
 
@@ -17,6 +18,8 @@ class GridROI(pg.ROI):
     An ROI displaying mini ROIs of different shapes as a grid
     '''
 
+    # TODO: default argument is mutable: Default argument values are evaluated only once at function definition time, 
+    #   which means that modifying the default value of the argument will affect all subsequent calls of the function.
     def __init__(self, pos=[20, 20], size=[20, 20], grid=[4, 5],
                  shape='Rect', gap=[0, 0], subgrid=([], []),
                  subgrid_width=0.05, pen='w', **kwargs):

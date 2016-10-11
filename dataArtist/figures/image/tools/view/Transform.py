@@ -1,3 +1,4 @@
+# coding=utf-8
 from imgProcessor.transformations import transpose, rot90
 
 # OWN

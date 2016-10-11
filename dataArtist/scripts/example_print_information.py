@@ -1,3 +1,4 @@
+# coding=utf-8
 from __future__ import print_function
 from builtins import str
 print('print some information about the data of the current display:')

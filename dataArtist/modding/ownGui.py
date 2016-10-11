@@ -1,3 +1,4 @@
+# coding=utf-8
 '''
 This is an example of how to extend dataArtist with ...
    an own display class

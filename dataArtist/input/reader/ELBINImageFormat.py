@@ -1,4 +1,4 @@
-
+# coding=utf-8
 from imgProcessor.reader.elbin import elbin
 # OWN
 from dataArtist.input.reader._ReaderBase import ReaderBase, ReaderPreferences

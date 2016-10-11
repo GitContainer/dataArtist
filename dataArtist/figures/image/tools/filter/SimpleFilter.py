@@ -1,4 +1,4 @@
-
+# coding=utf-8
 
 from dataArtist.widgets.Tool import Tool
 

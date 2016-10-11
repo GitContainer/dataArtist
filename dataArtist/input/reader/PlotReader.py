@@ -1,3 +1,4 @@
+# coding=utf-8
 from __future__ import division
 from __future__ import print_function
 
@@ -261,7 +262,7 @@ class _CSVPreferences(pTypes.GroupParameter):
             'value': 'COMMA',
             'visible': False,
             'limits': list(self.separators.keys()),
-            'tip': '''the sign, that separates the values in one line e.g. '\t' for a tab'''} )
+            'tip': '''the sign, that separates the values in one line e.g. '\t' for a tab'''})
 
         self.pPrintFirstLines = self.addChild({
             'name': "Print 1st 10 lines",
@@ -279,7 +280,7 @@ class _CSVPreferences(pTypes.GroupParameter):
             'type': 'int',
             'value': int(10e6),
             'limits': [0, 1e10],
-            'tip': '''max. size(byte) loaded into RAM insert '0' to read the whole file'''} )
+            'tip': '''max. size(byte) loaded into RAM insert '0' to read the whole file'''})
 
 # TODO:
 #         self.pFIFO = self.addChild({

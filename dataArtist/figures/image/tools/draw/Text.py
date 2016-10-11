@@ -1,3 +1,4 @@
+# coding=utf-8
 from pyqtgraph_karl import TextItem as pgTextItem
 from qtpy import QtCore, QtWidgets
 from pyqtgraph_karl import functions as fn

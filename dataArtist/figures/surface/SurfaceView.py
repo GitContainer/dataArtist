@@ -1,3 +1,4 @@
+# coding=utf-8
 '''
 this module is still in development!
 
@@ -7,19 +8,16 @@ from __future__ import division
 from __future__ import print_function
 from past.utils import old_div
 
-
-
 import pyqtgraph_karl as pg
 import pyqtgraph_karl.opengl as gl
 import numpy as np
-
 
 # OWN
 from .._view3d import View3d
 
 
 class _SurfaceView(View3d):
-    #dimensions = (4)
+    # dimensions = (4)
 
     def __init__(self, data=None):
         View3d.__init__(self)
@@ -27,21 +25,22 @@ class _SurfaceView(View3d):
             self.setData(data)
 
     def setData(self, data):
-
         def psi(i, j, k, offset=(25, 25, 50)):
             x = i - offset[0]
             y = j - offset[1]
             z = k - offset[2]
-            th = np.arctan2(z, (x**2 + y**2)**0.5)
+            th = np.arctan2(z, (x ** 2 + y ** 2) ** 0.5)
             phi = np.arctan2(y, x)
-            r = (x**2 + y**2 + z ** 2)**0.5
+            r = (x ** 2 + y ** 2 + z ** 2) ** 0.5
             a0 = 1
+            # what is this forumla?
             ps = (old_div(1.,
-                          81.)) * 1. / (6. * np.pi)**0.5 * (old_div(1.,
-                                                                    a0))**(old_div(3,
-                                                                                   2)) * (old_div(r,
-                                                                                                  a0))**2 * np.exp(old_div(-r,
-                                                                                                                           (3 * a0))) * (3 * np.cos(th)**2 - 1)
+                          81.)) * 1. / (6. * np.pi) ** 0.5 * (old_div(1.,
+                                                                      a0)) ** (old_div(3,
+                                                                                       2)) * (old_div(r,
+                                                                                                      a0)) ** 2 * np.exp(
+                old_div(-r,
+                        (3 * a0))) * (3 * np.cos(th) ** 2 - 1)
             return ps
 
         data = np.abs(np.fromfunction(psi, (50, 50, 100)))
@@ -54,11 +53,11 @@ class _SurfaceView(View3d):
         colors[:, 3] = 0.2
         colors[:, 2] = np.linspace(0, 1, colors.shape[0])
         md.setFaceColors(colors)
-       # m1 = gl.GLMeshItem(meshdata=md, smooth=False, shader='balloon')
-       # m1.setGLOptions('additive')
+        # m1 = gl.GLMeshItem(meshdata=md, smooth=False, shader='balloon')
+        # m1.setGLOptions('additive')
 
         # w.addItem(m1)
-       # m1.translate(-25, -25, -20)
+        # m1.translate(-25, -25, -20)
 
         mesh = gl.GLMeshItem(meshdata=md, smooth=True, shader='balloon')
         mesh.setGLOptions('additive')

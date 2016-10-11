@@ -1,3 +1,4 @@
+# coding=utf-8
 from __future__ import division
 
 import pyqtgraph_karl as pg
@@ -44,20 +45,19 @@ class Drill(Tool):
         name = 'Drill[%s]' % str(self.n_slices + 1)
 
         x_axis = self.display.axes.copy(index=('stack', 0))
-        if (not self.slave or self.slave.isClosed()
-            ) or self.a_newDisplay.isChecked():
+        if (not self.slave or self.slave.isClosed()) or self.a_newDisplay.isChecked():
             self.slave = self.display.workspace.addDisplay(
-                axes=x_axis,
-                data=None,
-                title=name)
+                    axes=x_axis,
+                    data=None,
+                    title=name)
 
         # take middle of current position
         r = self.display.widget.view.vb.viewRange()
         p = (old_div((r[0][0] + r[0][1]), 2), old_div((r[1][0] + r[1][1]), 2))
 
         self._POIS.append(
-            _POI(self, name,
-                 p, pen=(self.n_slices % 6))
+                _POI(self, name,
+                     p, pen=(self.n_slices % 6))
         )
 
         self.n_slices += 1
@@ -92,13 +92,13 @@ class _POI(pg.ROI):
         self.plot = slave.addLayer(name=self._name, pen=pen)
         # LABEL
         self.text = pg.TextItem(
-            text=self._name,
-            color=(0, 0, 0),
-            html=None,
-            anchor=(0, 0),
-            border=None,
-            fill=pg.mkBrush(255, 255, 255, 80),
-            angle=0)
+                text=self._name,
+                color=(0, 0, 0),
+                html=None,
+                anchor=(0, 0),
+                border=None,
+                fill=pg.mkBrush(255, 255, 255, 80),
+                angle=0)
         # CONNECT
         self.slaveDock.closed.connect(lambda: self.toggleShow(False))
         self.sigRegionChanged.connect(self.updateView)

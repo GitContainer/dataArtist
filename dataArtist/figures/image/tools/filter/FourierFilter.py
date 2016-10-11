@@ -1,3 +1,4 @@
+# coding=utf-8
 from imgProcessor.filters.FourierFilter import FourierFilter as FourierFilterProc
 
 from dataArtist.widgets.Tool import Tool

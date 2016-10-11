@@ -1,3 +1,4 @@
+# coding=utf-8
 '''
 Widgets handling all dataArtist preferences
 '''

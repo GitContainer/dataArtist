@@ -1,3 +1,4 @@
+# coding=utf-8
 from __future__ import division
 
 import cv2
@@ -45,8 +46,6 @@ class ImageWidget(DisplayWidget, ImageView, PyqtgraphgDisplayBase):
         PyqtgraphgDisplayBase.__init__(self)
         DisplayWidget.__init__(self, **kwargs)
 
-
-        
         self.display = display
         self.moveLayerToNewImage = None
         self.cItems = OrderedDict()  # colorlayerItems
@@ -111,7 +110,8 @@ class ImageWidget(DisplayWidget, ImageView, PyqtgraphgDisplayBase):
     def close(self):
         self.sigTimeChanged.disconnect(self.display.highlightLayer)
 
-        self.clear()  # free memory        try:
+        self.clear()  # free memory
+        try:
             ImageView.close(self)
         except TypeError:
             pass

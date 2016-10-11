@@ -1,3 +1,4 @@
+# coding=utf-8
 from __future__ import division
 
 import pyqtgraph_karl as pg
@@ -11,6 +12,8 @@ class PseudoSquareROI(pg.ROI):
     ROI built by intersection of an ellipse and a rectangle.
     """
 
+    # TODO: default argument is mutable: Default argument values are evaluated only once at function definition time, 
+    #   which means that modifying the default value of the argument will affect all subsequent calls of the function.
     def __init__(self, pos, size=[1, 1], ratioEllispeRectangle=1.2, **args):
         self._ratioEllispeRectangle = ratioEllispeRectangle
 
@@ -38,8 +41,8 @@ class PseudoSquareROI(pg.ROI):
         a = x1 * ratioEllispeRectangle
         b = y2 * ratioEllispeRectangle
         # intersection coords in the 1st quadrant with center=(0,0):
-        y1 = ((1-(x1**2/a**2))*b**2)**0.5
-        x2 = ((1-(y2**2/b**2))*a**2)**0.5
+        y1 = ((1 - (x1**2 / a**2)) * b**2)**0.5
+        x2 = ((1 - (y2**2 / b**2)) * a**2)**0.5
 
         c = r.center()
         cx = c.x()
@@ -67,18 +70,19 @@ class PseudoSquareROI(pg.ROI):
 
     def _prepare(self):
         r = self.boundingRect()
-        r = QtCore.QRectF((r.x()/r.width()), (r.y()/r.height()), 1,1)
-        # get draw params:        self._edges, self._angles, self._alen = self._intersectionPointsAndAngles(
-            r, self._ratioEllispeRectangle)
+        r = QtCore.QRectF((r.x() / r.width()), (r.y() / r.height()), 1, 1)
+        # get draw params:        self._edges, self._angles, self._alen =
+        # self._intersectionPointsAndAngles(
+        #     r, self._ratioEllispeRectangle)
         # scale rect:
-        bl = r.bottomLeft()
-        tr = r.topRight()
-        size = tr - bl
-        newSize = size * self._ratioEllispeRectangle
-        ds = 0.5 * (newSize - size)
+        bl=r.bottomLeft()
+        tr=r.topRight()
+        size=tr - bl
+        newSize=size * self._ratioEllispeRectangle
+        ds=0.5 * (newSize - size)
         r.setBottomLeft(bl - ds)
         r.setTopRight(tr + ds)
-        self._rect = r
+        self._rect=r
 
     def paint(self, p, opt, widget):
         r = self.boundingRect()
@@ -100,10 +104,10 @@ class PseudoSquareROI(pg.ROI):
 
     def getMask(self, shape):
 
-        p = self.state['pos']
-        s = self.state['size']
-        center = p + s/2
-        a = self.state['angle']
+        p=self.state['pos']
+        s=self.state['size']
+        center=p + s / 2
+        a=self.state['angle']
         # opencv convention:
         shape = (shape[1], shape[0])
         arr1 = np.zeros(shape, dtype=np.uint8)
@@ -111,20 +115,11 @@ class PseudoSquareROI(pg.ROI):
 
         # draw rotated rectangle:
         vertices = np.int0(cv2.cv.BoxPoints((center, s, a)))
-        cv2.drawContours(arr1, [vertices],
-                         0,
-                         color=1,
-                         thickness=-1)
+        cv2.drawContours(arr1, [vertices], 0, color=1, thickness=-1)
         # draw ellipse:
-        cv2.ellipse(arr2,
-                    (int(center[0]), int(center[1])),
-                    (int(s[0] / 2 * self._ratioEllispeRectangle),
-                     int(s[1] / 2 * self._ratioEllispeRectangle)),
-                    int(a),
-                    startAngle=0,
-                    endAngle=360,
-                    color=1,
-                    thickness=-1)
+        cv2.ellipse(arr2, (int(center[0]), int(center[1])), (int(s[0] / 2 * self._ratioEllispeRectangle),
+                     int(s[1] / 2 * self._ratioEllispeRectangle)), int(a),
+                    startAngle=0, endAngle=360, color=1, thickness=-1)
         # bring both together:
         return np.logical_and(arr1, arr2).T
 

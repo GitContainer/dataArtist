@@ -1,3 +1,4 @@
+# coding=utf-8
 from fancywidgets.pyqtgraphBased.Dock import Dock
 
 from fancywidgets.pyQtBased.Table import Table

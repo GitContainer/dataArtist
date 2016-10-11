@@ -1,4 +1,4 @@
-
+# coding=utf-8
 # just copy and paste the imageDisplay for this example:
 from dataArtist.figures import PlotWidget
 

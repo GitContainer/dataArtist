@@ -1,8 +1,9 @@
+# coding=utf-8
 import numpy as np
 
 # OWN
-from fancywidgets.pyqtgraphBased.parametertree.parameterTypes import GroupParameterfrom dataArtist.input.reader._ReaderBase import ReaderBase
-
+from fancywidgets.pyqtgraphBased.parametertree.parameterTypes import GroupParameter
+from dataArtist.input.reader._ReaderBase import ReaderBase
 
 
 class NpyReader(ReaderBase):
@@ -35,15 +36,13 @@ class NpyReader(ReaderBase):
         return arr, labels
 
 
-
-
 class _Preferences(GroupParameter):
-    
+
     def __init__(self, name=' Numpy array import'):
-        
+
         GroupParameter.__init__(self, name=name)
 
         self.pMulti = self.addChild({
-                'name':'Contains multiple layers',
-                'type':'bool',
-                'value':False})
+            'name': 'Contains multiple layers',
+            'type': 'bool',
+            'value': False})

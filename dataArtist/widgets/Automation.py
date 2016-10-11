@@ -1,3 +1,4 @@
+# coding=utf-8
 from __future__ import division
 
 from qtpy import QtWidgets, QtCore, QtGui
@@ -144,13 +145,11 @@ class Automation(QtWidgets.QWidget):
             a.append(widget)
 
     def saveState(self):
-        state = {}
+        state = {'active':    self.btn_show.isChecked(), 'collect': self.btn_collect.isChecked(),
+                 'runOn':     str(self.cb_run_on.currentText()),
+                 'tabTitles': [str(self.tabs.tabText(tab)) for tab in self.tabs]}
         # BUTTONS
-        state['active'] = self.btn_show.isChecked()
-        state['collect'] = self.btn_collect.isChecked()
         #l['runOnNewInput'] = self.btn_run_new.isChecked()
-        state['runOn'] = str(self.cb_run_on.currentText())
-        state['tabTitles'] = [str(self.tabs.tabText(tab)) for tab in self.tabs]
         # SCRIPTS
         ss = state['scripts'] = []
         for tab in self.tabs:
@@ -266,7 +265,7 @@ class Automation(QtWidgets.QWidget):
             # move splitter:
             # smallest possible size of batchTab
             if l:
-                a = (l[i] - minSize)/ len(l)
+                a = (l[i] - minSize) / len(l)
                 for n, y in enumerate(l):
                     if n != i:
                         l[n] = y + a

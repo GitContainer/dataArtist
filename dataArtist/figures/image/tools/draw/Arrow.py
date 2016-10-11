@@ -1,3 +1,4 @@
+# coding=utf-8
 import pyqtgraph_karl as pg
 from qtpy import QtCore
 from pyqtgraph_karl import functions as fn
@@ -153,6 +154,9 @@ class Arrow(Tool):
 
 
 class _ArrowItem(pg.ArrowItem):
+
+    def __init__(self):
+        pass
 
     def hoverEvent(self, ev):
         ev.acceptDrags(QtCore.Qt.LeftButton)

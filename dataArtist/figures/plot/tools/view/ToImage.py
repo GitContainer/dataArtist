@@ -1,3 +1,4 @@
+# coding=utf-8
 import numpy as np
 from dataArtist.widgets.Tool import Tool
 from fancytools.math.avgMultiplePlots import bringPlotOverSameX

@@ -1,3 +1,4 @@
+# coding=utf-8
 from builtins import str
 from pyqtgraph_karl.functions import mkPen
 from qtpy import QtCore, QtGui
