@@ -40,15 +40,15 @@ class SignalToNoise(Tool):
             'name': 'Background image',
                     'value': '-',
                     'type': 'menu'})
-        self.pRefBg.aboutToShow.connect(lambda menu, d='_refBg', i='_refBg_i':
-                                        self.buildRefImgMenu(menu, d, i))
+        self.pRefBg.aboutToShow.connect(lambda menu, d='_refBg', 
+            i='_refBg_i': self.buildRefImgMenu(menu, d, i))
 
         self.pRefImg2 = pa.addChild({
             'name': 'Equivalent image',
                     'value': '-',
                     'type': 'menu'})
-        self.pRefImg2.aboutToShow.connect(lambda menu, d='_ref2', i='_ref2_i':
-                                          self.buildRefImgMenu(menu, d, i))
+        self.pRefImg2.aboutToShow.connect(lambda menu, d='_ref2', 
+            i='_ref2_i': self.buildRefImgMenu(menu, d, i))
 
         self.pShowMap = pa.addChild({
             'name': 'Show map',
@@ -63,7 +63,7 @@ class SignalToNoise(Tool):
 
         self.pAverage = pa.addChild({
             'name': 'Averaging method',
-                    'value': 'X75',
+                    'value': 'average',
                     'type': 'list',
                     'limits': ['average', 'X75', 'RMS']})
 
