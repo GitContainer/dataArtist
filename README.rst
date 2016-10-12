@@ -1,4 +1,4 @@
-# coding=utf-8**dataArtist** - *…scientific data processing made easy.*
+**dataArtist** - *…scientific data processing made easy.*
 
 .. image:: https://img.shields.io/badge/License-GPLv3-red.svg
 .. image:: https://img.shields.io/badge/python-3.5-blue.svg
