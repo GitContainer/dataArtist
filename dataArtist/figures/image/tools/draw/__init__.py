@@ -1,6 +1,8 @@
-from Arrow import Arrow
-from Freehand import Freehand
-from Text import Text
+# coding=utf-8
+from __future__ import absolute_import
+from .Arrow import Arrow
+from .Freehand import Freehand
+from .Text import Text
 
 color = 'orange'
-show=False
+show = False

@@ -1,18 +1,19 @@
-from pyqtgraph_karl.Qt import QtGui
+# coding=utf-8
+from qtpy import QtWidgets
 
 from fancywidgets.pyqtgraphBased.parametertree import ParameterTree, Parameter
 
 
-
-class ParameterMenu(QtGui.QMenu):
+class ParameterMenu(QtWidgets.QMenu):
     '''
     A QMenu embedding a ParameterTree
     '''
+
     def __init__(self, tool):
-        QtGui.QMenu.__init__(self, tool)
-        #embed parameterTree as a QWidgetAction:
-        a = QtGui.QWidgetAction(self)
-        
+        QtWidgets.QMenu.__init__(self, tool)
+        # embed parameterTree as a QWidgetAction:
+        a = QtWidgets.QWidgetAction(self)
+
         self.content = _MenuContent(tool)
         self.pTree = self.content.pTree
 #         self.header = self.content.header
@@ -26,85 +27,82 @@ class ParameterMenu(QtGui.QMenu):
 
         self.aboutToShow.connect(self.resizeToContent)
 
-    
+
 #     def save(self, session, path):
 #         l = self.p.saveState()
 #         session.addContentToSave(l, *path+('parameters.txt',))
-# 
-# 
+#
+#
 #     def restore(self, session, path):
-#         l =  eval(session.getSavedContent(*path +('parameters.txt',) ), 
+#         l =  eval(session.getSavedContent(*path +('parameters.txt',) ),
 #                   {'OrderedDict':OrderedDict})
 #         self.p.restoreState(l)
-    
-    
+
     def resizeToContent(self):
         '''
-        set a fixed minimum width and calculate the height from 
+        set a fixed minimum width and calculate the height from
         the height of all rows
         '''
         width = 350
         heightMax = 600
         height = 6
-        _iter = QtGui.QTreeWidgetItemIterator(self.pTree)
+        _iter = QtWidgets.QTreeWidgetItemIterator(self.pTree)
         while _iter.value():
             item = _iter.value()
-            height +=self.pTree.visualItemRect(item).height()
+            height += self.pTree.visualItemRect(item).height()
             _iter += 1
-        #limit height
+        # limit height
         if height >= heightMax:
-            height = heightMax   
-        self.pTree.setMinimumSize(width,height)
-        self.setMinimumSize(width,height+22)
+            height = heightMax
+        self.pTree.setMinimumSize(width, height)
+        self.setMinimumSize(width, height + 22)
 
 
-
-class _MenuContent(QtGui.QWidget):
+class _MenuContent(QtWidgets.QWidget):
     '''
-    Show: 
+    Show:
     Tool name - info sign  and activate button
     on top of the parameterTree
     '''
-    
-    def __init__(self, tool):
-        QtGui.QWidget.__init__(self)
 
-        l= QtGui.QVBoxLayout()
+    def __init__(self, tool):
+        QtWidgets.QWidget.__init__(self)
+
+        l = QtWidgets.QVBoxLayout()
         l.setContentsMargins(0, 0, 0, 0)
         l.setSpacing(2)
 
         self.setLayout(l)
-        
-        self.header = header = QtGui.QHBoxLayout()
+
+        self.header = header = QtWidgets.QHBoxLayout()
         header.setContentsMargins(5, 0, 5, 0)
 
-        label = QtGui.QLabel('<b> %s</b>' %tool.__class__.__name__)
+        label = QtWidgets.QLabel('<b> %s</b>' % tool.__class__.__name__)
 
         self.pTree = _Parameters(tool)
 
         header.addWidget(label)
         doc = getattr(tool, '__doc__', None)
         if doc:
-            doclabel = QtGui.QLabel('<i>   (?)</i>')
-            doclabel.setToolTip (doc)
+            doclabel = QtWidgets.QLabel('<i>   (?)</i>')
+            doclabel.setToolTip(doc)
             header.addWidget(doclabel, stretch=1)
 
         if hasattr(tool, 'activate'):
-            btn = QtGui.QPushButton('activate')
+            btn = QtWidgets.QPushButton('activate')
             btn.clicked.connect(tool.click)
             btn.setFixedHeight(15)
             btn.setFixedWidth(50)
             header.addWidget(btn)
- 
+
         l.addLayout(header)
         l.addWidget(self.pTree)
-        
 
 
 class _Parameters(ParameterTree):
 
     def __init__(self, tool):
         self.p = Parameter.create(
-                    name='', 
-                    type='empty')
+            name='',
+            type='empty')
         ParameterTree.__init__(self, self.p)
