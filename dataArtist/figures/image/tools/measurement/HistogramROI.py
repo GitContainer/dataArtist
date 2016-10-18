@@ -45,14 +45,12 @@ class HistogramROI(ROITool):
             'name': 'From',
             'type': 'float',
             'value': 0,
-            'limits': [0, 2**24],
             'visible': False})
 
         self.pRangeTo = self.pLimitRange.addChild({
             'name': 'To',
             'type': 'float',
             'value': 2**16,
-            'limits': [0, 2**24],
             'visible': False})
 
         # update view when parameters changed:
@@ -149,20 +147,33 @@ class _HistogramROIArea(ROIArea):
                 img_cut = img[x0:x1, y0:y1]
                 nBins = None
                 if self.tool.pLimitRange.value():
-                    img_cut[img_cut < f] = np.nan
-                    img_cut[img_cut > t] = np.nan
+                    r=(f,t)
                     nBins = int(t - f)
+                else:
+                    r=None
 
                 if self.tool.pLimitBins.value():
                     nBins = self.tool.pNBins.value()
 
-                elif not nBins:
-                    nBins = int(np.max(img_cut) - np.min(img_cut))
+                else:
+                    if not nBins:
+                        
+                        mx = np.max(img_cut)
+                        if np.isnan(mx):
+                            mx = np.nanmax(img_cut)
+                            mn = np.nanmin(img_cut)
+                        else:
+                            mn = np.min(img_cut)
+                      
+                        nBins = int(mx - mn)
+                        if r is None:
+                            r = (mn,mx)
                     if nBins < 100:
                         # e.g. when scaling 0-1
                         nBins = 100
-                hist, bin_edges = np.histogram(img_cut, nBins)
-                # TODO: take mean of the bin edges
+                hist, bin_edges = np.histogram(img_cut, nBins, range=r)
+                #take middle position instead of edges:
+                bin_edges += 0.5*(bin_edges[1]-bin_edges[0])
                 plot.setData(y=hist, x=bin_edges[:-1])
 
             except (IndexError, ValueError) as err:

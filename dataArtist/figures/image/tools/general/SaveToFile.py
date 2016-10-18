@@ -211,7 +211,9 @@ rendered: export the current display view'''})
 
     def _choosePath(self):
         filt = self.engine[self.pEngine.value()][1]
-        kwargs = dict(filter=filt, selectedFilter='png')
+        kwargs = dict(filter=filt,
+                     #  selectedFilter='png' #this option is not supported in PyQt5 any more
+                      )
         f = self.display.filenames[0]
         if f is not None:
             kwargs['directory'] = f.dirname()

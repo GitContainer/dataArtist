@@ -1,7 +1,7 @@
 # coding=utf-8
 from __future__ import division
 
-from imgProcessor.filters.fastNaNmedianFilter import fastNaNmedianFilter
+from imgProcessor.filters.fastNaNFilter import fastNaNFilter
 
 
 from dataArtist.widgets.Tool import Tool
@@ -25,7 +25,11 @@ class ExtractBackground(Tool):
             'type': 'int',
             'value': 30,
             'limits': [5, 1000]})
-
+        self.pFilter = pa.addChild({
+            'name': 'Filter Type',
+            'type': 'list',
+            'value': 'median',
+            'limits': ['median', 'mean']})
         self.pSetEvery = pa.addChild({
             'name': 'Set every',
             'type': 'bool',
@@ -48,6 +52,7 @@ class ExtractBackground(Tool):
         else:
             every = int(size / 3.5)
         for img in self.display.widget.image:
-            out.append(fastNaNmedianFilter(img, ksize=size, every=every))
+            out.append(fastNaNFilter(img, ksize=size, every=every, 
+                                     fn=self.pFilter.value()))
 
         self.handleOutput(out, title='Background')
