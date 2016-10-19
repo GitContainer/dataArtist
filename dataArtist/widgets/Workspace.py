@@ -99,7 +99,8 @@ class Workspace(QtWidgets.QWidget):
                     c.setStyleSheet("")
 
     def saveState(self):
-        l = {'middleSplitter': self.middle_splitter.sizes(), 'vertSplitter': self.vert_splitter.sizes()}
+        l = {'middleSplitter': self.middle_splitter.sizes(), 
+             'vertSplitter': self.vert_splitter.sizes()}
         # GENERAL
         # DISPLAYS
         d = self.displaydict()
@@ -107,8 +108,17 @@ class Workspace(QtWidgets.QWidget):
             d[number] = (display.name(), len(display.axes))
             l['display_%i' % number] = display.saveState()
         l['displays'] = d  # ={name:(name,nDim)}
-        if self.getCurrentDisplay():
-            l['currentDisplay'] = self.getCurrentDisplay().number
+        curD = self.getCurrentDisplay()
+        if curD:
+            l['currentDisplay'] = curD.number
+            #TOOLBARS
+            t = l['toolbars'] = {}
+            if curD.widget:
+                for bar in self._sortToolbars(curD.widget.toolbars):
+                    br = False
+                    if bar.isSelected():
+                        br = self.gui.toolBarBreak(bar) 
+                    t[bar.name] = (bar.isSelected(), br)
         else:
             l['currentDisplay'] = None
         l['nDisplays'] = self._n_displays
@@ -132,10 +142,6 @@ class Workspace(QtWidgets.QWidget):
         return l
 
     def restoreState(self, state):
-        #         path = ('workspace','%s' %self.number())
-        #         l =  session.getSavedContent(*path +('general.txt',) )
-        #         l = eval(l)
-        #         l = state['workspace_%i' %self.number()]
         # GENERAL
         self.middle_splitter.setSizes(state['middleSplitter'])
         self.vert_splitter.setSizes(state['vertSplitter'])
@@ -146,7 +152,7 @@ class Workspace(QtWidgets.QWidget):
             d.close()
         for number, (name, nDim) in state['displays'].items():
             d = self.addDisplay(number=number, axes=nDim)
-            self.changeToolBars(d)
+            #self.changeToolBars(d)
             d.setName(name)
             d.restoreState(state['display_%i' % number])
             if number == currN:
@@ -157,25 +163,25 @@ class Workspace(QtWidgets.QWidget):
         for name, content in state['tables'].items():
             dt = self.addTableDock(name=name)
             dt.widgets[0].importTable(content)
-#             p = session.getSavedFile(*path+('tables', '%s.csv' %n) )
-#             dt.widgets[0].restore(p)
         # NOTEPADS
         for t in self.notepads():
             t.close()
         for name, content in state['notepads'].items():
             dt = self.addTextDock(name=name)
-            dt.widgets[0].text.setHtml(content
-                                       #                                        session.getSavedContent(*path+(
-                                       #                                                     'notepads', '%s.html' %n) )
-                                       )
+            dt.widgets[0].text.setHtml(content)
         # LAYOUT
         if state['displayLayout']:
             self.area_middle.restoreState(state['displayLayout'])
         self._n_displays = state['nDisplays']
         if currentDisplay:
+            #TOOLBARS
+            for bar in currentDisplay.widget.toolbars:
+                issel, hasbreak = state['toolbars'][bar.name]
+                bar.setSelected(issel)
+                bar.hasBreak = hasbreak
             # remove old:
-            for bar in d.widget.toolbars:
-                self.gui.removeToolBar(bar)
+#             for bar in d.widget.toolbars:
+#                 self.gui.removeToolBar(bar)
             self.changeDisplay(currentDisplay)
 
     def integrateDisplay(self, display):
@@ -387,6 +393,10 @@ class Workspace(QtWidgets.QWidget):
         self.gui.addToolBarBreak(p)
         self.gui.addToolBar(p, newbar)
 
+    def _sortToolbars(self, bars):
+        return sorted(bars, key=lambda bar:
+                      (bar.pos().y(), bar.pos().x()))
+
     def changeToolBars(self, display):
         '''
         remove old and show new toolbars - if there are selected
@@ -404,8 +414,7 @@ class Workspace(QtWidgets.QWidget):
                     #                     bar.position = self.gui.toolBarArea(bar)
                     bar.hasBreak = self.gui.toolBarBreak(bar)
             # save order:
-            d.widget.toolbars = sorted(d.widget.toolbars, key=lambda bar:
-                                       (bar.pos().y(), bar.pos().x()))
+            d.widget.toolbars = d.widget.toolbars
             # remove old:
             for bar in d.widget.toolbars:
                 self.gui.removeToolBar(bar)
