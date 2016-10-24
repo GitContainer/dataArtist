@@ -7,11 +7,11 @@ from qtpy import QtGui
 import numpy as np
 
 from skimage.transform import resize
-from PIL import Image
+
 from fancywidgets.pyQtBased.Dialogs import Dialogs
 from imgProcessor.transformations import toUIntArray
-from imgProcessor.imgIO import out
-
+from imgProcessor.imgIO import transpose
+from imgProcessor.imgIO import imwrite
 from dataArtist.widgets.Tool import Tool
 
 
@@ -211,7 +211,9 @@ rendered: export the current display view'''})
 
     def _choosePath(self):
         filt = self.engine[self.pEngine.value()][1]
-        kwargs = dict(filter=filt, selectedFilter='png')
+        kwargs = dict(filter=filt,
+                     #  selectedFilter='png' #this option is not supported in PyQt5 any more
+                      )
         f = self.display.filenames[0]
         if f is not None:
             kwargs['directory'] = f.dirname()
@@ -308,8 +310,7 @@ rendered: export the current display view'''})
         Use pil.Image.fromarray(data).save() to save the image array
         '''
         def fn(path, img):
-            Image.fromarray(img.T).save(path)
-
+            imwrite(path, transpose(img), dtype=float)
         return self._export(fn)
 
     def exportCV2(self):
@@ -332,6 +333,6 @@ rendered: export the current display view'''})
                                   range=r,
                                   dtype={'8 bit': np.uint8,
                                          '16 bit': np.uint16}[self.pDType.value()])
-            cv2.imwrite(path, out(int_img))
+            cv2.imwrite(path, transpose(int_img))
 
         return self._export(fn)

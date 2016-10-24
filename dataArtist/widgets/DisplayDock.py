@@ -854,8 +854,8 @@ class _StackParameter(GroupParameter):
             'addToContextMenu': [mAll]})
         # IF A LAYER IS MOVED:
         self.sigChildRemoved.connect(lambda parent, child, index, self=self:
-                                     self.display.removeLayer(index,
-                                                              self.opts.get('aboutToMove', False)))
+                            self.display.removeLayer(index,
+                            self.opts.get('aboutToMove', False)))
         self._fnInsertRemovedLayer = lambda parent, child, index, self=self: \
             self.display.insertRemovedLayer(index)
         self.sigChildAdded.connect(self._fnInsertRemovedLayer)

@@ -1,5 +1,5 @@
 # coding=utf-8
-from builtins import zip
+import numpy as np
 import pyqtgraph_karl as pg
 from qtpy import QtWidgets
 
@@ -56,7 +56,6 @@ class Crosshair(Tool):
         self.poiMarker = pg.ScatterPlotItem(pen='r', brush='r')
 
         w = self.display.widget
-        print(55)
         w.sigTimeChanged.connect(self._updateValues)
         w.imageItem.sigImageChanged.connect(self._updateValues)
 
@@ -85,37 +84,36 @@ class Crosshair(Tool):
                 x, y = self.mouseCoord(evt)
                 if w.image is None:
                     return
-                if len(w.image.shape) > 2:
-                    icut = w.image[w.currentIndex]
+                
+                img = w.image[w.currentIndex]
+                s0,s1 = img.shape[:2]
+                ix = np.clip(int(x),0,s1-1)
+                iy = np.clip(int(y),0,s0-1)
+                z = img[ix, iy]
+
+                # set anchor of crosshair
+                if evt.y() - 30 > self.crosshair.boundingRect().height():
+                    self.anchorY = 1  # at upper corner
                 else:
-                    icut = w.image
-                try:
-                    ix, iy = int(x), int(y)
-                    z = icut[ix, iy]
+                    self.anchorY = 0
+                if (evt.x() + self.crosshair.boundingRect().width() >
+                        self.view.sceneBoundingRect().width()):
+                    self.anchorX = 1  # at right corner
+                else:
+                    self.anchorX = 0
+                # set relative position of crosshair
+                self.crosshair.anchor = pg.Point(
+                    (self.anchorX, self.anchorY))
+                # set absolute position of crosshair
+                self.crosshair.setPos(x, y)
+                # move crosshair-lines to mousepos.
+                self.vLine.setPos(x)
+                self.hLine.setPos(y)
 
-                    # set anchor of crosshair
-                    if evt.y() - 30 > self.crosshair.boundingRect().height():
-                        self.anchorY = 1  # at upper corner
-                    else:
-                        self.anchorY = 0
-                    if (evt.x() + self.crosshair.boundingRect().width() >
-                            self.view.sceneBoundingRect().width()):
-                        self.anchorX = 1  # at right corner
-                    else:
-                        self.anchorX = 0
-                    # set relative position of crosshair
-                    self.crosshair.anchor = pg.Point(
-                        (self.anchorX, self.anchorY))
-                    # set absolute position of crosshair
-                    self.crosshair.setPos(x, y)
-                    # move crosshair-lines to mousepos.
-                    self.vLine.setPos(x)
-                    self.hLine.setPos(y)
-
-                    self.poiText = self._getPOItext(x, y, z)
-                    self.crosshair.setText(self.poiText)
-                except IndexError:
-                    pass  # out of bounds
+                self.poiText = self._getPOItext(x, y, z)
+                self.crosshair.setText(self.poiText)
+                #except IndexError:
+                #    pass  # out of bounds
         # connect mouse-signals to new methods:
         self.scene.sigMouseMoved.connect(mouseMoved)
 
@@ -133,10 +131,13 @@ class Crosshair(Tool):
     def _updateValues(self):
         w = self.display.widget
         img = w.image[w.currentIndex]
+        s0,s1 = img.shape[:2]
         try:
             for t, d in zip(self.poiTextList, self.poiMarker.data):
                 x, y = d[0], d[1]
-                z = img[int(x), int(y)]
+                ix = np.clip(int(x),0,s1-1)
+                iy = np.clip(int(y),0,s0-1)
+                z = img[ix, iy]
                 t.setText(self._getPOItext(x, y, z))
         except IndexError:
             # method also called when display closed
