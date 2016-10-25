@@ -30,7 +30,7 @@ class NpyReader(ReaderBase):
     def open(self, filename):
         arr = np.load(filename)
         if self.preferences.pMulti.value():
-            labels = [str(i) for i in range(self.axes)]
+            labels = [str(i) for i in range(len(arr))]
         else:
             labels = None
         return arr, labels
@@ -45,4 +45,4 @@ class _Preferences(GroupParameter):
         self.pMulti = self.addChild({
             'name': 'Contains multiple layers',
             'type': 'bool',
-            'value': False})
+            'value': True if NpyReader.axes == 4 else False})
