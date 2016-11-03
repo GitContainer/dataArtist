@@ -33,8 +33,13 @@ class ScaleHistogram(Tool):
                 (lambda x: scaleSignal(x, backgroundToZero=True), [0, 1]),
             'Scale signal +/-3std':
                 (scaleSignal, [0, 1]),
+            'Maximum=1':
+                (lambda img: img/img.max(), None),
             'Average=1':
-                (self._fnSameAverage, None)}
+                (lambda img: img/img.mean(), None),
+            'Minimum=0, Maximum=1':
+                (self._scaleMinMax, [0,1]),
+                }
 
         self.pMethod = pa.addChild({
             'name': 'Method',
@@ -67,9 +72,11 @@ class ScaleHistogram(Tool):
         self._refImg = im[layernumber]
         self.pRefImg.setValue(layername)
 
-    def _fnSameAverage(self, img):
-        return img / img.mean()
-
+    @staticmethod
+    def _scaleMinMax(img):
+        mn,mx = img.min(), img.max()
+        return (img-mn)/(mx-mn)
+    
     def activate(self):
         img = self.display.widget.image
 

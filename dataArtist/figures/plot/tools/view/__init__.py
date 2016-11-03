@@ -13,8 +13,8 @@ from dataArtist.figures.image.tools.general.Reload import Reload
 from .ToImage import ToImage
 
 # from LinkView import LinkView
-from .Table import Table
+from .ToTable import ToTable
 
 color = 'blue'
 show = True
-tools = (Reload, LockView, Axes, Legend, PlotStyle, ErrorBar, ToImage)
+tools = (Reload, LockView, Axes, Legend, PlotStyle, ErrorBar, ToImage, ToTable)

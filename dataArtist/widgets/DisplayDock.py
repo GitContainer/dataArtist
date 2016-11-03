@@ -781,6 +781,7 @@ class _PreferencesWidget(QtWidgets.QWidget):
         except AttributeError:
             h.setSectionResizeMode(0, QtWidgets.QHeaderView.Stretch)
         h.setStretchLastSection(False)
+        
         # TITLE
         l.addWidget(QtWidgets.QLabel('<b>Preferences</b'))
         l.addWidget(pref)

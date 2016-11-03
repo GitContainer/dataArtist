@@ -70,7 +70,7 @@ class ImageWithOpenCV(ReaderBase):
                 labels = ['blue', 'green', 'red']
             else:
                 # rgb convention
-                img = cv2.cvtColor(img, cv2.cv.CV_BGR2RGB)
+                img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
 
         # change data type to float
         img = self.toFloat(img)
@@ -82,17 +82,7 @@ class _ImagePreferences(ReaderPreferences):
     def __init__(self, name=' Image import'):
 
         ReaderPreferences.__init__(self, name=name)
-#
-#         self.pToFloat = self.addChild({
-#                 'name':'transform to float',
-#                 'type':'bool',
-#                 'value':True})
-#         self.pForceFloat64 = self.pToFloat.addChild({
-#                 'name':'Force double precision (64bit)',
-#                 'type':'bool',
-#                 'value':False})
-#         self.pToFloat.sigValueChanged.connect(lambda p,v:
-#                       self.pForceFloat64.show(v))
+
         self.pGrey = self.addChild({
             'name': 'Force grayscale',
             'type': 'bool',

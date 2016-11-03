@@ -87,8 +87,8 @@ class Crosshair(Tool):
                 
                 img = w.image[w.currentIndex]
                 s0,s1 = img.shape[:2]
-                ix = np.clip(int(x),0,s1-1)
-                iy = np.clip(int(y),0,s0-1)
+                ix = np.clip(int(x),0,s0-1)
+                iy = np.clip(int(y),0,s1-1)
                 z = img[ix, iy]
 
                 # set anchor of crosshair
@@ -135,8 +135,8 @@ class Crosshair(Tool):
         try:
             for t, d in zip(self.poiTextList, self.poiMarker.data):
                 x, y = d[0], d[1]
-                ix = np.clip(int(x),0,s1-1)
-                iy = np.clip(int(y),0,s0-1)
+                ix = np.clip(int(x),0,s0-1)
+                iy = np.clip(int(y),0,s1-1)
                 z = img[ix, iy]
                 t.setText(self._getPOItext(x, y, z))
         except IndexError:

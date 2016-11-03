@@ -21,6 +21,8 @@ from dataArtist.figures.DisplayWidget import DisplayWidget
 from dataArtist.widgets.dialogs.DifferentShapeDialog import DifferentShapeDialog
 
 
+    
+
 class ImageWidget(DisplayWidget, ImageView, PyqtgraphgDisplayBase):
     '''
     A pyqtgraph.ImageView with methods to add/move/remove images

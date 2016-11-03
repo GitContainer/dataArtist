@@ -1,6 +1,8 @@
 # coding=utf-8
 from dataArtist.widgets.Tool import Tool
 
+from imgProcessor.interpolate.LinearInterpolateImageStack import LinearInterpolateImageStack
+
 from qtpy import QtWidgets
 
 
@@ -57,8 +59,7 @@ class TimeLine(Tool):
         w.setOpts(discreteTimeSteps=not v)
         
         if v:
-            from interpolate.interpolateImageStack import InterpolateImageStack
-            self.interpolator = InterpolateImageStack(w.image, bounds_error=False)
+            self.interpolator = LinearInterpolateImageStack(lambda :w.image, dynamic=True)
             w.timeLine.sigPositionChanged.connect(self._showInterpolatedImage)
 
         elif self.interpolator is not None:

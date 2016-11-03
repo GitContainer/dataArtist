@@ -73,7 +73,8 @@ class PerspectiveCorrection(Tool):
                     'type': 'str',
                     'readonly': True})
         self.pRefImgChoose.aboutToShow.connect(lambda menu:
-                                               self.buildOtherDisplayLayersMenu(menu, self._setRefImg))
+                                               self.buildOtherDisplayLayersMenu(
+                                                    menu, self._setRefImg))
 
         self.pRef.sigValueChanged.connect(self._pRefChanged)
 #         self.pSnap.sigValueChanged.connect(self._pSnapChanged)
