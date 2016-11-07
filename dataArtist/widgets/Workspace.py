@@ -402,6 +402,10 @@ class Workspace(QtWidgets.QWidget):
         remove old and show new toolbars - if there are selected
         apply position of last display.widget.toolbars
         '''
+        #will remove and add toolbars,
+        #if there's a 2nd row, prevent resize:
+        self.gui.setUpdatesEnabled(False)
+
         # only show/change toolbars is that button is checked:
         if not self.gui.menu_toolbars.a_show.isChecked():
             return
@@ -411,10 +415,10 @@ class Workspace(QtWidgets.QWidget):
             # save old layout
             for bar in d.widget.toolbars:
                 if bar.isSelected():
-                    #                     bar.position = self.gui.toolBarArea(bar)
+                    #bar.position = self.gui.toolBarArea(bar)
                     bar.hasBreak = self.gui.toolBarBreak(bar)
             # save order:
-            d.widget.toolbars = d.widget.toolbars
+            d.widget.toolbars = self._sortToolbars(d.widget.toolbars)
             # remove old:
             for bar in d.widget.toolbars:
                 self.gui.removeToolBar(bar)
@@ -437,11 +441,10 @@ class Workspace(QtWidgets.QWidget):
                     self.gui.addToolBar(QtCore.Qt.TopToolBarArea, bar)
                     if bar.hasBreak:
                         self.gui.insertToolBarBreak(bar)
-    #             if (# not self.gui.menu_toolbars.a_show.isChecked()
-    #                 not bar.isSelected() ):
-    #                 bar.hide()
-    #             else:
                     bar.show()
+
+        self.gui.setUpdatesEnabled(True)
+
 
     def addShowToolBarAction(self, menu):
         d = self._last_active_display
