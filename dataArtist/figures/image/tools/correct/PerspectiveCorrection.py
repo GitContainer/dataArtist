@@ -322,7 +322,7 @@ class PerspectiveCorrection(Tool):
                 if h == 0:
                     h = None
         # output size:
-        size = None
+        size = (None,None)
         if not self.pCalcOutSize.value():
             size = (self.pOutHeight.value(), self.pOutWidth.value())
 

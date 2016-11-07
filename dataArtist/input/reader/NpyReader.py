@@ -2,7 +2,7 @@
 import numpy as np
 
 # OWN
-from fancywidgets.pyqtgraphBased.parametertree.parameterTypes import GroupParameter
+from pyqtgraph_karl.parametertree.parameterTypes import GroupParameter
 from dataArtist.input.reader._ReaderBase import ReaderBase
 
 

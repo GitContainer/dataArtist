@@ -1,12 +1,11 @@
 # coding=utf-8
 from __future__ import division
 from __future__ import print_function
-
 from six import string_types
 
 import pyqtgraph_karl as pg
 
-from fancywidgets.pyqtgraphBased.parametertree import Parameter
+from pyqtgraph_karl.parametertree import Parameter
 
 
 class AxesContainer(list):

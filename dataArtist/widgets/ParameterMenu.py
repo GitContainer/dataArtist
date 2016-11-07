@@ -1,7 +1,7 @@
 # coding=utf-8
 from qtpy import QtWidgets
 
-from fancywidgets.pyqtgraphBased.parametertree import ParameterTree, Parameter
+from pyqtgraph_karl.parametertree import ParameterTree, Parameter
 
 
 class ParameterMenu(QtWidgets.QMenu):

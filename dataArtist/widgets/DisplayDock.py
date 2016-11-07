@@ -8,8 +8,8 @@ import numpy as np
 
 from qtpy import QtWidgets, QtCore
 
-from fancywidgets.pyqtgraphBased.parametertree import ParameterTree, Parameter
-from fancywidgets.pyqtgraphBased.parametertree.parameterTypes \
+from pyqtgraph_karl.parametertree import ParameterTree, Parameter
+from pyqtgraph_karl.parametertree.parameterTypes \
     import GroupParameter, ListParameter
 
 from fancytools.os.PathStr import PathStr
@@ -756,12 +756,14 @@ class _DisplayTab(QtWidgets.QSplitter):
     def __init__(self, display):
         QtWidgets.QSplitter.__init__(
                 self, QtCore.Qt.Orientation(0))  # 0=horiz, 1=vert)
+
         self.display = display
         self.automation = Automation(display, self)
         self.prefs = _PreferencesWidget(display)
         self.addWidget(self.automation)
         self.addWidget(self.prefs)
 
+        self.setStretchFactor(1, 1)
 
 class _PreferencesWidget(QtWidgets.QWidget):
     '''

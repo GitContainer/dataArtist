@@ -7,7 +7,7 @@ import numpy as np
 import pyqtgraph_karl as pg
 from qtpy import QtCore
 from pyqtgraph_karl import ImageView
-from pyqtgraph_karl.ordereddict import OrderedDict
+from collections import OrderedDict
 
 from fancytools.os.PathStr import PathStr
 from fancytools.utils.incrementName import incrementName
@@ -82,7 +82,7 @@ class ImageWidget(DisplayWidget, ImageView, PyqtgraphgDisplayBase):
 
         # hide buttons
         self.ui.roiBtn.hide()
-        self.ui.normBtn.hide()
+        self.ui.menuBtn.hide()
         # fixed height for time axis:
         self.ui.splitter.setSizes([self.height() - 35, 35])
         self.ui.splitter.setStretchFactor(0, 1)
@@ -372,7 +372,8 @@ class ImageWidget(DisplayWidget, ImageView, PyqtgraphgDisplayBase):
                 self._firstTime = False
                 self._image_redefined = False
 
-            elif force or self._set_index is None or self._set_index == self.currentIndex:
+            elif (force or self._set_index is None or 
+                  self._set_index == self.currentIndex):
                 self.imageDisp = None  # needed by ImageView to set histogram levels
                 self.updateImage(**self._set_kwargs)
                 if self.opts['autoLevels']:

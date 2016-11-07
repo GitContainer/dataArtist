@@ -71,9 +71,9 @@ class PseudoSquareROI(pg.ROI):
     def _prepare(self):
         r = self.boundingRect()
         r = QtCore.QRectF((r.x() / r.width()), (r.y() / r.height()), 1, 1)
-        # get draw params:        self._edges, self._angles, self._alen =
-        # self._intersectionPointsAndAngles(
-        #     r, self._ratioEllispeRectangle)
+        # get draw params:        
+        self._edges, self._angles, self._alen = self._intersectionPointsAndAngles(
+            r, self._ratioEllispeRectangle)
         # scale rect:
         bl=r.bottomLeft()
         tr=r.topRight()
@@ -114,7 +114,7 @@ class PseudoSquareROI(pg.ROI):
         arr2 = np.zeros(shape, dtype=np.uint8)
 
         # draw rotated rectangle:
-        vertices = np.int0(cv2.cv.BoxPoints((center, s, a)))
+        vertices = np.int0(cv2.boxPoints((center, s, a)))
         cv2.drawContours(arr1, [vertices], 0, color=1, thickness=-1)
         # draw ellipse:
         cv2.ellipse(arr2, (int(center[0]), int(center[1])), (int(s[0] / 2 * self._ratioEllispeRectangle),

@@ -9,7 +9,7 @@ from pyqtgraph import console
 
 from fancytools.os.PathStr import PathStr
 
-from fancywidgets.pyqtgraphBased.parametertree import Parameter
+from pyqtgraph_karl.parametertree import Parameter
 from fancywidgets.pyQtBased.FwTabWidget import FwTabWidget
 from fancywidgets.pyQtBased.CodeEditor import CodeEditor
 
@@ -61,7 +61,6 @@ class Automation(QtWidgets.QWidget):
         
         self.splitter = splitter
 
-
         self._collect = False
         self._activeWidgets = []
 
@@ -93,13 +92,15 @@ class Automation(QtWidgets.QWidget):
         self.btn_console.clicked.connect(self._toggleConsoleFirstTime)
         self.btn_console.clicked.connect(self.updateSize)
 
-
         self._hl.addWidget(self.btn_console)
 
         g = QtWidgets.QButtonGroup(self) 
         g.setExclusive(False)
         g.addButton(self.btn_scripts)
         g.addButton(self.btn_console)
+
+        self.splitter.setStretchFactor(0, 0)
+
 
 
     def _uncheckScripts(self, show):
@@ -311,12 +312,15 @@ class Automation(QtWidgets.QWidget):
         if self.btn_scripts.isChecked() or self.btn_console.isChecked():
             #resize to 50%
             s.setSizes(np.ones(len(l)) * np.mean(l))
+            self.splitter.setStretchFactor(0, 1)
+
         else:
             minSize = self.minimumHeight()
-            l[1]= np.sum(l)-minSize
+            l[1]= min(0,np.sum(l)-minSize)
             l[0]=minSize
             s.setSizes(l)
-            
+            self.splitter.setStretchFactor(0, 0)
+#             self.splitter.setStretchFactor(1, 1)
 
     def _toggleScripts(self, show):
         '''

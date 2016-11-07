@@ -1,7 +1,6 @@
 # coding=utf-8
-from builtins import str
-from builtins import range
-from fancywidgets.pyqtgraphBased.DockArea import DockArea
+
+from pyqtgraph_karl.dockarea.DockArea import DockArea
 
 from qtpy import QtWidgets
 from dataArtist.input.getFileReader import SUPPORTED_FTYPES
