@@ -121,9 +121,7 @@ class Automation(QtWidgets.QWidget):
         it accepts ...
         * all built-in functions, like 'dir'
         * already imported modules, like 'np', for numpy
-        * special dataArtist functions, like 'new', 'd', d.l, d.l0,...
-        
-        Click on 'Globals' in the right click menu for more information.
+        * special dataArtist functions, like d', d.l, d.l0,...
         '''.format(platform.python_version())
 
         namespace = _ExecGlobalsDict(self.display)
@@ -306,6 +304,10 @@ class Automation(QtWidgets.QWidget):
                 traceback.print_exc()
 
 
+    def minimumHeight(self):
+        return QtWidgets.QWidget.minimumHeight(self) + 10
+        
+
     def updateSize(self):
         s = self.splitter
         l = s.sizes()
@@ -316,8 +318,9 @@ class Automation(QtWidgets.QWidget):
 
         else:
             minSize = self.minimumHeight()
-            l[1]= min(0,np.sum(l)-minSize)
+            l[1]= max(0,np.sum(l)-minSize)
             l[0]=minSize
+            
             s.setSizes(l)
             self.splitter.setStretchFactor(0, 0)
 #             self.splitter.setStretchFactor(1, 1)
