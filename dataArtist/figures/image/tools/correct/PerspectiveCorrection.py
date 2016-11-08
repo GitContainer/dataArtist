@@ -73,7 +73,8 @@ class PerspectiveCorrection(Tool):
                     'type': 'str',
                     'readonly': True})
         self.pRefImgChoose.aboutToShow.connect(lambda menu:
-                                               self.buildOtherDisplayLayersMenu(menu, self._setRefImg))
+                                               self.buildOtherDisplayLayersMenu(
+                                                    menu, self._setRefImg))
 
         self.pRef.sigValueChanged.connect(self._pRefChanged)
 #         self.pSnap.sigValueChanged.connect(self._pSnapChanged)
@@ -321,7 +322,7 @@ class PerspectiveCorrection(Tool):
                 if h == 0:
                     h = None
         # output size:
-        size = None
+        size = (None,None)
         if not self.pCalcOutSize.value():
             size = (self.pOutHeight.value(), self.pOutWidth.value())
 

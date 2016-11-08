@@ -23,7 +23,7 @@ class SwitchBetweenGridAndStackedView(Tool):
         self.pRNRows = pa.addChild({
             'name': 'N rows',
             'type': 'int',
-            'value': 2,
+            'value': 4,
             'limits': [1, 100]})
         self.pRNRows.sigValueChanged.connect(self._gridParamChanged)
 

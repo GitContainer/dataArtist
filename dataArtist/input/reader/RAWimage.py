@@ -1,10 +1,9 @@
 # coding=utf-8
-from __future__ import division
 
 import numpy as np
 from collections import OrderedDict
 
-from fancywidgets.pyqtgraphBased.parametertree.parameterTypes import GroupParameter
+from pyqtgraph_karl.parametertree.parameterTypes import GroupParameter
 
 # OWN
 from dataArtist.input.reader._ReaderBase import ReaderBase

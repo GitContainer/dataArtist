@@ -6,7 +6,7 @@ import numpy as np
 from dataArtist.widgets.Tool import Tool
 
 
-class Table(Tool):
+class ToTable(Tool):
     '''
     export the values of all plots to a table
     '''

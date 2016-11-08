@@ -1,14 +1,11 @@
 # coding=utf-8
-from __future__ import division
-from __future__ import print_function
-
 import numpy as np
 from operator import itemgetter
 
 from qtpy import QtCore
-from pyqtgraph_karl.pgcollections import OrderedDict
+from collections import OrderedDict
 
-import fancywidgets.pyqtgraphBased.parametertree.parameterTypes as pTypes
+import pyqtgraph_karl.parametertree.parameterTypes as pTypes
 from fancytools.os.countLines import countLines
 
 # OWN

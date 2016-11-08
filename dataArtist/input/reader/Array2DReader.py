@@ -1,7 +1,7 @@
 # coding=utf-8
 from __future__ import print_function
 import numpy as np
-import fancywidgets.pyqtgraphBased.parametertree.parameterTypes as pTypes
+import pyqtgraph_karl.parametertree.parameterTypes as pTypes
 
 # OWN
 from dataArtist.input.reader._ReaderBase import ReaderBase

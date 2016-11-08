@@ -4,8 +4,8 @@ import numpy as np
 
 from qtpy import QtCore, QtWidgets
 
-from fancywidgets.pyqtgraphBased.parametertree import ParameterTree
-from fancywidgets.pyqtgraphBased.parametertree.parameterTypes import GroupParameter
+from pyqtgraph_karl.parametertree import ParameterTree
+from pyqtgraph_karl.parametertree.parameterTypes import GroupParameter
 
 
 class ReaderBase(QtCore.QThread):

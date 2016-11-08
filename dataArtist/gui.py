@@ -5,6 +5,10 @@ from __future__ import print_function
 import sys
 import os
 
+# from PyQt5  import QtGui
+# from PyQt5 import PYQT_VERSION_STR as PYQT_VERSION  # analysis:ignore
+# from PyQt5 import QT_VERSION_STR as QT_VERSION
+
 from qtpy import QtGui, QtWidgets, QtCore
 
 # FIXME: many array indices in pyqtgraph are not int
@@ -496,9 +500,9 @@ class Gui(MultiWorkspaceWindow):
                     i += 1
 
             self.currentWorkspace().addFiles(paths)
-
+        
         # TEXT/TABLES
-        if m.hasText():
+        elif m.hasText():
             txt = str(m.text())
             if self.txtIsTable(txt):
                 self.currentWorkspace().addTableDock(text=txt)
@@ -530,8 +534,8 @@ def main(name='dataArtist',
                       ftype=ftype,
                       icon=icon,
                       first_start_dialog=first_start_dialog)
-    app.setStyle("Plastique")  # looks better and shows splitter handle
-
+    #"Plastique" is not longer avail. in PyQt5
+    app.setStyle("Fusion")  # looks better and shows splitter handle
     win = Gui(title=name)
     s = app.session
     s.registerMainWindow(win)

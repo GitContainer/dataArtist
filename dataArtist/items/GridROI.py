@@ -382,7 +382,7 @@ class RectROI(pg.ROI, _CellBase):
         shape = (shape[1], shape[0])
         arr = np.zeros(shape, dtype=np.uint8)
         # draw rotated rectangle:
-        vertices = np.int0(cv2.cv.BoxPoints((center, s, a)))
+        vertices = np.int0(cv2.boxPoints((center, s, a)))
         cv2.drawContours(arr, [vertices],
                          0,
                          color=1,

@@ -1,5 +1,5 @@
 # coding=utf-8
-from fancywidgets.pyqtgraphBased.Dock import Dock
+from pyqtgraph_karl.dockarea.Dock import Dock
 
 from fancywidgets.pyQtBased.Table import Table
 from fancywidgets.pyQtBased.FwMinimalTextEditor import FwMinimalTextEditor

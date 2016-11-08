@@ -5,9 +5,11 @@ from qtpy import QtWidgets, QtCore, QtGui
 import numpy as np
 import traceback
 
+from pyqtgraph import console
+
 from fancytools.os.PathStr import PathStr
 
-from fancywidgets.pyqtgraphBased.parametertree import Parameter
+from pyqtgraph_karl.parametertree import Parameter
 from fancywidgets.pyQtBased.FwTabWidget import FwTabWidget
 from fancywidgets.pyQtBased.CodeEditor import CodeEditor
 
@@ -55,19 +57,92 @@ class Automation(QtWidgets.QWidget):
         self.display = display
         display.sigLayerChanged.connect(self.toggleDataChanged)
         display.sigNewLayer.connect(self.toggleNewData)
-
+        self.setMinimumHeight(30)
+        
         self.splitter = splitter
-
-        refreshR = 20
 
         self._collect = False
         self._activeWidgets = []
-        # BUTTON: OF/OFF
-        self.btn_show = QtWidgets.QRadioButton('Console')
-        f = self.btn_show.font()
+
+        # LAYOUT
+        layout = QtWidgets.QVBoxLayout()
+        layout.setAlignment(QtCore.Qt.AlignTop)
+        # setMargin removed. obsolete, doesn't do anything, not even in PyQt4
+        self.setLayout(layout)
+        self._hl = QtWidgets.QHBoxLayout()
+        layout.addLayout(self._hl)
+
+        
+        # BUTTON: show/hide 'Scripts'
+        self.btn_scripts = QtWidgets.QRadioButton('Scripts')
+        f = self.btn_scripts.font()
         f.setBold(True)
-        self.btn_show.setFont(f)
-        self.btn_show.clicked.connect(self._toggleShow)
+        self.btn_scripts.setFont(f)
+        self.btn_scripts.clicked.connect(self._uncheckConsole)
+        self.btn_scripts.clicked.connect(self._toggleScriptsFirstTime)
+        self.btn_scripts.clicked.connect(self.updateSize)
+        self._hl.addWidget(self.btn_scripts)
+
+        # BUTTON: show/hide 'Console'
+        self.btn_console = QtWidgets.QRadioButton('Console')
+        f = self.btn_console.font()
+        f.setBold(True)
+        self.btn_console.setFont(f)
+        self.btn_console.clicked.connect(self._uncheckScripts)
+        self.btn_console.clicked.connect(self._toggleConsoleFirstTime)
+        self.btn_console.clicked.connect(self.updateSize)
+
+        self._hl.addWidget(self.btn_console)
+
+        g = QtWidgets.QButtonGroup(self) 
+        g.setExclusive(False)
+        g.addButton(self.btn_scripts)
+        g.addButton(self.btn_console)
+
+        self.splitter.setStretchFactor(0, 0)
+
+
+
+    def _uncheckScripts(self, show):
+        if show and self.btn_scripts.isChecked():
+            self._toggleScripts(False)
+            self.btn_scripts.setChecked(False)
+
+
+    def _uncheckConsole(self, show):
+        if show and self.btn_console.isChecked():
+            self._toggleConsole(False)
+            self.btn_console.setChecked(False)
+
+
+    def _toggleConsoleFirstTime(self):
+
+        txt = '''This is a Python {} console.
+        it accepts ...
+        * all built-in functions, like 'dir'
+        * already imported modules, like 'np', for numpy
+        * special dataArtist functions, like d', d.l, d.l0,...
+        '''.format(platform.python_version())
+
+        namespace = _ExecGlobalsDict(self.display)
+        
+        self.console = console.ConsoleWidget(namespace=namespace, text=txt)
+        self.console.ui.exceptionBtn.hide()
+        self.layout().addWidget(self.console)        
+
+        #update connections:
+        self.btn_console.clicked.disconnect(self._toggleConsoleFirstTime)
+        self.btn_console.clicked.connect(self._toggleConsole)
+
+
+    def _toggleConsole(self, show):
+        self.console.setVisible(show)
+        
+
+    def _toggleScriptsFirstTime(self):
+        #build scripts layout
+        refreshR = 20
+
         # COMBOBOX: IMPORT
         self.combo_import = QtWidgets.QComboBox()
         self.combo_import.addItems((
@@ -111,19 +186,13 @@ class Automation(QtWidgets.QWidget):
         self.btn_run_now = QtWidgets.QPushButton('Run')
         self.btn_run_now.setCheckable(True)
         self.btn_run_now.clicked.connect(self.toggle)
-        # LAYOUT
-        layout = QtWidgets.QVBoxLayout()
-        layout.setAlignment(QtCore.Qt.AlignTop)
-# setMargin removed. obsolete, doesn't do anything, not even in PyQt4
-        self.setLayout(layout)
-        # top layout
-        hl = QtWidgets.QHBoxLayout()
-        hl.addWidget(self.btn_show)
-        hl.addWidget(self.btn_collect)
-        # fill layout
-        layout.addLayout(hl)
-        layout.addWidget(self.combo_import)
-        layout.addWidget(self.tabs)
+
+        self._hl.addWidget(self.btn_collect)
+        l = self.layout()
+        l.addWidget(self.combo_import)
+        l.addWidget(self.tabs)
+        
+        self.tabs.show()
 
         hl2 = QtWidgets.QHBoxLayout()
         hl2.addWidget(self.label_run_on)
@@ -132,10 +201,13 @@ class Automation(QtWidgets.QWidget):
         hl2.addWidget(self.sb_refreshrate)
         hl2.insertStretch(1, 0)
         hl2.insertStretch(2, 0)
-        layout.addLayout(hl2)
-        layout.addWidget(self.btn_run_now)
+        l.addLayout(hl2)
+        l.addWidget(self.btn_run_now)
 
-        self._toggleShow(False)  # automation disabled by default
+        #update connections:
+        self.btn_scripts.clicked.disconnect(self._toggleScriptsFirstTime)
+        self.btn_scripts.clicked.connect(self._toggleScripts)
+
 
     def checkWidgetIsActive(self, widget):
         # bring widget into list of updated widgets
@@ -145,7 +217,7 @@ class Automation(QtWidgets.QWidget):
             a.append(widget)
 
     def saveState(self):
-        state = {'active':    self.btn_show.isChecked(), 'collect': self.btn_collect.isChecked(),
+        state = {'active':    self.btn_scripts.isChecked(), 'collect': self.btn_collect.isChecked(),
                  'runOn':     str(self.cb_run_on.currentText()),
                  'tabTitles': [str(self.tabs.tabText(tab)) for tab in self.tabs]}
         # BUTTONS
@@ -163,8 +235,8 @@ class Automation(QtWidgets.QWidget):
     def restoreState(self, state):
         #         l =  eval(session.getSavedContent(*path +('automation.txt',) ) )
         # BUTTONS
-        self.btn_show.setChecked(state['active'])
-        self._toggleShow(state['active'])
+        self.btn_scripts.setChecked(state['active'])
+        self._toggleScripts(state['active'])
         self.btn_collect.setChecked(state['collect'])
         # self.btn_run_new.setChecked(l['runOnNewInput'])
         self.cb_run_on.setCurrentIndex([self.cb_run_on.itemText(i)
@@ -231,15 +303,38 @@ class Automation(QtWidgets.QWidget):
             except Exception:
                 traceback.print_exc()
 
-    def _toggleShow(self, show):
+
+    def minimumHeight(self):
+        return QtWidgets.QWidget.minimumHeight(self) + 10
+        
+
+    def updateSize(self):
+        s = self.splitter
+        l = s.sizes()
+        if self.btn_scripts.isChecked() or self.btn_console.isChecked():
+            #resize to 50%
+            s.setSizes(np.ones(len(l)) * np.mean(l))
+            self.splitter.setStretchFactor(0, 1)
+
+        else:
+            minSize = self.minimumHeight()
+            l[1]= max(0,np.sum(l)-minSize)
+            l[0]=minSize
+            
+            s.setSizes(l)
+            self.splitter.setStretchFactor(0, 0)
+#             self.splitter.setStretchFactor(1, 1)
+
+    def _toggleScripts(self, show):
         '''
         Show/hide all widgets within Automation except of the on/off switch
         And move the horizontal splitter according to the space needed
         '''
-        s = self.splitter
-        l = s.sizes()
-        minSize = 7.0
-        i = s.indexOf(self)
+        #s = self.splitter
+        #l = s.sizes()
+        #minSize = 7.0
+        #i = s.indexOf(self)
+        #self.updateSize()
 
         if show:
             self.tabs.show()
@@ -252,7 +347,7 @@ class Automation(QtWidgets.QWidget):
             self.sb_refreshrate.show()
             # move splitter:
             # assume equal sizes for all to calc the splitter size
-            s.setSizes(np.ones(len(l)) * np.mean(l))
+            #s.setSizes(np.ones(len(l)) * np.mean(l))
         else:
             self.tabs.hide()
             self.btn_run_now.hide()
@@ -264,14 +359,14 @@ class Automation(QtWidgets.QWidget):
             self.sb_refreshrate.hide()
             # move splitter:
             # smallest possible size of batchTab
-            if l:
-                a = (l[i] - minSize) / len(l)
-                for n, y in enumerate(l):
-                    if n != i:
-                        l[n] = y + a
-                    else:
-                        l[n] = minSize
-                s.setSizes(l)
+#             if l:
+#                 a = (l[i] - minSize) / len(l)
+#                 for n, y in enumerate(l):
+#                     if n != i:
+#                         l[n] = y + a
+#                     else:
+#                         l[n] = minSize
+#                 s.setSizes(l)
 
     def _setRunning(self):
         '''update button'''
@@ -318,14 +413,14 @@ class Automation(QtWidgets.QWidget):
         '''
         toggle run settings allow running for new data
         '''
-        if self.btn_show.isChecked() and self.cb_run_on.currentIndex() == 1:  # =new data
+        if self.btn_scripts.isChecked() and self.cb_run_on.currentIndex() == 1:  # =new data
             self.toggle()
 
     def toggleDataChanged(self):
         '''
         toggle run settings allow running for data changed
         '''
-        if self.btn_show.isChecked() and self.cb_run_on.currentIndex() == 2:  # =data changed
+        if self.btn_scripts.isChecked() and self.cb_run_on.currentIndex() == 2:  # =data changed
             self.toggle()
 
 
@@ -341,11 +436,11 @@ class ScriptTab(CodeEditor):
         CodeEditor.__init__(self, automation.display.workspace.gui.dialogs)
         # THREAD to run the script within:
         self.thread = _Thread(self, automation, refreshrate)
-        self.editor.setToolTip('''This is a Python {} console.
+        self.editor.setToolTip('''This is a Python {} script.
 it accepts ...
 * all built-in functions, like 'dir'
 * already imported modules, like 'np', for numpy
-* special dataArtist functions, like 'new', 'd' ...
+* special dataArtist functions, like 'new', 'd', d.l, d.l0, d1,l0, new, timed ...
 
 Click on 'Globals' in the right click menu for more information.
 '''.format(platform.python_version()))
@@ -400,8 +495,9 @@ class _ExecGlobalsDict(dict):
         self.display = display
         knownArgs = {'np': np,
                      'd': display,
-                     'QtGui': QtGui,
-                     'QtCore': QtCore}
+                     #'QtGui': QtGui,
+                     #'QtCore': QtCore
+                     }
         self.update(knownArgs)
         self.update(BUILTINS_DICT)
 

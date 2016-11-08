@@ -1,7 +1,7 @@
 # coding=utf-8
 from __future__ import division
 
-from imgProcessor.filters.fastNaNFilter import fastNaNFilter
+from imgProcessor.filters.fastFilter import fastFilter
 
 
 from dataArtist.widgets.Tool import Tool
@@ -52,7 +52,7 @@ class ExtractBackground(Tool):
         else:
             every = int(size / 3.5)
         for img in self.display.widget.image:
-            out.append(fastNaNFilter(img, ksize=size, every=every, 
+            out.append(fastFilter(img, ksize=size, every=every, 
                                      fn=self.pFilter.value()))
 
         self.handleOutput(out, title='Background')
