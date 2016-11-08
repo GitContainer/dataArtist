@@ -16,27 +16,16 @@ class ParameterMenu(QtWidgets.QMenu):
 
         self.content = _MenuContent(tool)
         self.pTree = self.content.pTree
-#         self.header = self.content.header
 
         a.setDefaultWidget(self.content)
         self.addAction(a)
         self.p = self.pTree.p
 
-        self.p.opts['master'] = tool
+        self.p.tool = tool
         tool.param = self.p.param
 
         self.aboutToShow.connect(self.resizeToContent)
 
-
-#     def save(self, session, path):
-#         l = self.p.saveState()
-#         session.addContentToSave(l, *path+('parameters.txt',))
-#
-#
-#     def restore(self, session, path):
-#         l =  eval(session.getSavedContent(*path +('parameters.txt',) ),
-#                   {'OrderedDict':OrderedDict})
-#         self.p.restoreState(l)
 
     def resizeToContent(self):
         '''

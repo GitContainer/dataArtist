@@ -461,7 +461,7 @@ Options are...
         # TOOL-PARAMETER
         elif isinstance(widget, Parameter):
             topParam, path = widget.path()
-            tool = topParam.opts['master']
+            tool = topParam.tool
             self.editor.appendPlainText("d.tools['%s'].param('%s').setValue('XXX')" % (
                 tool.__class__.__name__, path[2:]))
 

@@ -1,6 +1,4 @@
 # coding=utf-8
-from __future__ import print_function
-
 import time
 import inspect
 import weakref
@@ -53,7 +51,7 @@ class DisplayDock(Dock):
 
     def __init__(self, number, workspace, origin=None, index=None,
                  names=None, title='', data=None, axes=None, info=None,
-                 changes=None, openfiles=True):
+                 changes=None, openfiles=True, docktitle=None):
         '''
         ============   ===============================================
         Arguments      Description
@@ -94,9 +92,8 @@ class DisplayDock(Dock):
         elif isinstance(names, string_types):
             names = [names]
             one_layer = True
-
-        docktitle = self._getDockTitle(title, number, names)
-
+        if docktitle is None:
+            docktitle = self._getDockTitle(title, number, names)
         # INIT SUPER CLASS
         Dock.__init__(self, docktitle)
 
@@ -164,8 +161,9 @@ class DisplayDock(Dock):
                                   weakref.proxy(self.stack))
         # ADD AXES PARAMETERS:
         self.p.addChild(self.axes.p)
+        
         # LIST OF ALL FITTING DISPLAY FIGURES:
-        widgetList = _DisplayFigureList(self)
+#         widgetList = _DisplayFigureList(self)
 
         # UPDATE DATA FROM FILE USING SPECIFIED PREFERENCES:
         if self.reader:
@@ -699,8 +697,11 @@ class DisplayDock(Dock):
                 self.addLayers(d, fnames, d)
 
     def saveState(self):
-        state = {'stack':      self.stack.saveState(), 'automation': self.tab.automation.saveState(),
-                 'parameters': self.p.saveState(), 'dock': self.label.maximized}
+
+        state = {'stack':      self.stack.saveState(), 
+                 'automation': self.tab.automation.saveState(),
+                 'parameters': self.p.saveState(), 
+                 'dock': self.label.maximized}
         #         path += ('display',str(self.number))
         # layers
         # automation
@@ -855,6 +856,7 @@ class _StackParameter(GroupParameter):
             'name':             '   Layers',
             'sliding':          True,
             'addToContextMenu': [mAll]})
+        
         # IF A LAYER IS MOVED:
         self.sigChildRemoved.connect(lambda parent, child, index, self=self:
                             self.display.removeLayer(index,
@@ -922,6 +924,7 @@ class _StackParameter(GroupParameter):
         self.sigChildAdded.disconnect(self._fnInsertRemovedLayer)
         # REBUILD STACK:
         #         l =  eval(session.getSavedContent(*path +('stack.txt',) )  )
+        
         GroupParameter.restoreState(self, state, **kwargs)
         self.sigChildAdded.connect(self._fnInsertRemovedLayer)
 
@@ -942,7 +945,6 @@ class _StackParameter(GroupParameter):
         # ADD OPTIONS TO THE CONTEXT MENU:
         mCopy = QtWidgets.QMenu('Copy')
         mMove = QtWidgets.QMenu('Move')
-
         if not fname or not PathStr(fname).isfile():
             fname = None
 
@@ -958,13 +960,13 @@ class _StackParameter(GroupParameter):
             'highlight':         True,
             'name':              name,
             'value':             self.display.axes.stackAxis.getNextStackValue(
-                    PathStr(fname).basename()),
+                                                    PathStr(fname).basename()),
             'expanded':          False,
             'removable':         True,
             'autoIncrementName': True,
             'renamable':         True,
             'readonly':          True,
-            'addToContextMenu':  menu_entries,
+           # 'addToContextMenu':  menu_entries,
 
             'filename':          fname,
             'layername':         label,
@@ -978,7 +980,8 @@ class _StackParameter(GroupParameter):
         pLayer.sigValueChanged.connect(self._valuesChanged)
         # EMIT LAYERNAMESCHANGED:
         pLayer.sigNameChanged.connect(lambda param, val, self=self:
-                                      self.sigLayerNameChanged.emit(param.parent().children().index(param), val))
+                                      self.sigLayerNameChanged.emit(
+                                      param.parent().children().index(param), val))
         # CHECK WHETHER INSERTED LAYER COMES FROM A MOVED ONE:
         self.sigChildAdded.connect(self._fnInsertRemovedLayer)
         # ADD LAYER INFO

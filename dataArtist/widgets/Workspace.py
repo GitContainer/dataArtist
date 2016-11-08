@@ -151,9 +151,9 @@ class Workspace(QtWidgets.QWidget):
         for d in self.displays():
             d.close()
         for number, (name, nDim) in state['displays'].items():
-            d = self.addDisplay(number=number, axes=nDim)
+            d = self.addDisplay(number=number, axes=nDim, docktitle=name)
             #self.changeToolBars(d)
-            d.setName(name)
+#             d.setName(name)
             d.restoreState(state['display_%i' % number])
             if number == currN:
                 currentDisplay = d
