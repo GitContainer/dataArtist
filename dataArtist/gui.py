@@ -535,7 +535,7 @@ def main(name='dataArtist',
                       icon=icon,
                       first_start_dialog=first_start_dialog)
     #"Plastique" is not longer avail. in PyQt5
-    app.setStyle("Fusion")  # looks better and shows splitter handle
+    app.setStyle("fusion")  # looks better and shows splitter handle
     win = Gui(title=name)
     s = app.session
     s.registerMainWindow(win)

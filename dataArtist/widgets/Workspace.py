@@ -499,14 +499,14 @@ class Workspace(QtWidgets.QWidget):
         return display
 
     def copyViewToClipboard(self):
-        p = QtGui.QPixmap.grabWidget(self.area_middle)
+        p = self.area_middle.grab()#QtGui.QPixmap.grabWidget(self.area_middle)
         QtWidgets.QApplication.clipboard().setPixmap(p)
         print('Copied view to clipboard.')
 
     def copyCurrentDisplayToClipboard(self):
         d = self.getCurrentDisplay()
         if d is not None:
-            p = QtGui.QPixmap.grabWidget(d)
+            p = d.grab()#QtGui.QPixmap.grabWidget(d)
             QtWidgets.QApplication.clipboard().setPixmap(p)
             print('Copied current display to clipboard.')
 

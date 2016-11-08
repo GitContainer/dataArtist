@@ -53,6 +53,10 @@ class LockView(Tool):
             if d.name() != self.display.name():
                 #                 a = ag.addAction(QtWidgets.QAction(d.name(),menu, checkable=True))
                 a = QtWidgets.QAction(d.name(), menu, checkable=True)
+                
+                cb = QtWidgets.QCheckBox(d.name(), menu)
+                a =  QtWidgets.QWidgetAction(menu)
+                a.setDefaultWidget(cb)
                 menu.addAction(a)
                 # IS LINKED?:
                 vb2 = d.widget.view.vb
@@ -63,9 +67,9 @@ class LockView(Tool):
                 linked = False
                 if (vb_linked == vb2) or (vb2_linked == vb):
                     linked = True
-                    a.setChecked(True)
+                    cb.setChecked(True)
 
-                a.triggered.connect(lambda checked, d=d, linked=linked:
+                cb.clicked.connect(lambda checked, d=d, linked=linked:
                                     self._linkView(d, linked))
 
     def _linkView(self, display, linked):
