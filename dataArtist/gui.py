@@ -322,16 +322,27 @@ class Gui(MultiWorkspaceWindow):
         v.aboutToShow.connect(setupPref)
         v.addAction(aPref)
 
+        mcopy = v.addMenu('Copy to clipboard')
         # ACTION VIEW2CLIPBOARD
-        aClipboard = QtWidgets.QAction('Copy view to clipboard', v)
+        aClipboard = QtWidgets.QAction('All displays', v)
         aClipboard.triggered.connect(
                 lambda checked: self.currentWorkspace().copyViewToClipboard())
-        v.addAction(aClipboard)
+        aClipboard.setShortcut(QtGui.QKeySequence('Ctrl+Shift+F12'))
+        mcopy.addAction(aClipboard)
         # ACTION Display2CLIPBOARD
-        aClipboard = QtWidgets.QAction('Copy active display to clipboard', v)
+        aClipboard = QtWidgets.QAction('Active Display', v)
         aClipboard.triggered.connect(
                 lambda checked: self.currentWorkspace().copyCurrentDisplayToClipboard())
-        v.addAction(aClipboard)
+        aClipboard.setShortcut(QtGui.QKeySequence('Ctrl+F12'))
+        mcopy.addAction(aClipboard)
+
+        # ACTION Display2CLIPBOARD
+        aClipboard = QtWidgets.QAction('Active Display Item', v)
+        aClipboard.triggered.connect(
+                lambda checked: self.currentWorkspace().copyCurrentDisplayItemToClipboard())
+        aClipboard.setShortcut(QtCore.Qt.Key_F12)
+        mcopy.addAction(aClipboard)
+
         # MENU - TOOLS
         t = m.menu_tools = QtWidgets.QMenu('Dock')
         m.insertMenuBefore(m.menu_workspace, t)

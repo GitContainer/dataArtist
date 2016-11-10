@@ -219,7 +219,7 @@ rendered: export the current display view'''})
             kwargs['directory'] = f.dirname()
 
         path = self._dialogs.getSaveFileName(**kwargs)
-        if path and path != '.':
+        if path:
             self.pPath.setValue(path)
 
     def activate(self):
@@ -254,9 +254,9 @@ rendered: export the current display view'''})
             if self.pOnlyImage.value():
                 item = d.widget.imageItem
                 b = item.sceneBoundingRect().toRect()
-                w = QtGui.QPixmap.grabWidget(d.widget, b)
+                w = d.widget.grab(b)#QtGui.QPixmap.grabWidget(d.widget, b)
             else:
-                w = QtGui.QPixmap.grabWidget(d)
+                w = d.grab()#QtGui.QPixmap.grabWidget(d)
             w.save(path2)
             print('Saved image under %s' % path2)
 

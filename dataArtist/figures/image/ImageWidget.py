@@ -65,7 +65,7 @@ class ImageWidget(DisplayWidget, ImageView, PyqtgraphgDisplayBase):
         self._moved_layer = None
         self._set_kwargs = {}
 
-        self.setOpts(discreteTimeSteps=True)
+        self.opts['discreteTimeSteps'] = True
 
         # make splitter an unchangeable small grey line:
         s = self.ui.splitter

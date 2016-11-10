@@ -1,7 +1,8 @@
 # coding=utf-8
 from qtpy import QtWidgets
 
-from pyqtgraph_karl.parametertree import ParameterTree, Parameter
+from pyqtgraph_karl.parametertree import Parameter
+from dataArtist.widgets.ParameterTree import ParameterTree
 
 
 class ParameterMenu(QtWidgets.QMenu):
@@ -94,4 +95,4 @@ class _Parameters(ParameterTree):
         self.p = Parameter.create(
             name='',
             type='empty')
-        ParameterTree.__init__(self, self.p)
+        ParameterTree.__init__(self, self.p, showHeader=False)

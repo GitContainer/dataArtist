@@ -5,8 +5,8 @@ import weakref
 import numpy as np
 
 from qtpy import QtWidgets, QtCore
-
-from pyqtgraph_karl.parametertree import ParameterTree, Parameter
+from dataArtist.widgets.ParameterTree import ParameterTree
+from pyqtgraph_karl.parametertree import Parameter
 from pyqtgraph_karl.parametertree.parameterTypes \
     import GroupParameter, ListParameter
 
@@ -966,7 +966,7 @@ class _StackParameter(GroupParameter):
             'autoIncrementName': True,
             'renamable':         True,
             'readonly':          True,
-           # 'addToContextMenu':  menu_entries,
+            'addToContextMenu':  menu_entries,
 
             'filename':          fname,
             'layername':         label,

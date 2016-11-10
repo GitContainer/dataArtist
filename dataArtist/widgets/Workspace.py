@@ -506,9 +506,18 @@ class Workspace(QtWidgets.QWidget):
     def copyCurrentDisplayToClipboard(self):
         d = self.getCurrentDisplay()
         if d is not None:
-            p = d.grab()#QtGui.QPixmap.grabWidget(d)
+            p = d.widget.grab()#QtGui.QPixmap.grabWidget(d)
             QtWidgets.QApplication.clipboard().setPixmap(p)
             print('Copied current display to clipboard.')
+
+    def copyCurrentDisplayItemToClipboard(self):
+        d = self.getCurrentDisplay()
+        if d is not None:
+            b = d.widget.item.sceneBoundingRect().toRect()
+            p = d.widget.grab(b)#QtGui.QPixmap.grabWidget(d.widget, b)
+            QtWidgets.QApplication.clipboard().setPixmap(p)
+            print('Copied current display item to clipboard.')
+    
 
     def setCurrentDisplayToImportDisplay(self):
         '''
