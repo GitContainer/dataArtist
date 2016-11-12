@@ -498,12 +498,16 @@ class _ExecGlobalsDict(dict):
                 except KeyError:
                     raise Exception("display %s doesn't exist" % n)
             raise e
+    
+    @property
+    def displaydict(self):
+        return self.display.workspace.displaydict()
 
-    def setup(self):
-        '''
-        get all current displays
-        '''
-        self.displaydict = self.display.workspace.displaydict()
+#     def setup(self):
+#         '''
+#         get all current displays
+#         '''
+#         self.displaydict = self.display.workspace.displaydict()
 
 
 class _Thread(QtCore.QThread):
@@ -588,7 +592,7 @@ class _Thread(QtCore.QThread):
         self._done = False
 
         self._timers = []
-        self._globals.setup()
+        #self._globals.setup()
 
         self._widgetUpdateTimer.start()
         try:

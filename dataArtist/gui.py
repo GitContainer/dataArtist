@@ -247,8 +247,11 @@ class Gui(MultiWorkspaceWindow):
         m.setCornerWidget(self.gTools)
 
         # APPEND PREFERENCES
+        pView = PreferencesView(self)
+        pView.setColorTheme('bright')
+        
         t = m.file_preferences.tabs
-        t.addTab(PreferencesView(self), 'View')
+        t.addTab(pView, 'View')
         t.addTab(self.pref_import, 'Import')
         t.addTab(PreferencesCommunication(self), 'Communication')
         # APPEND MENUBAR

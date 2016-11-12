@@ -5,7 +5,7 @@ Widgets handling all dataArtist preferences
 from builtins import str
 
 from qtpy import QtWidgets, QtCore
-import pyqtgraph_karl
+import pyqtgraph_karl as pg
 
 from dataArtist.components.RabbitMQServer import RabbitMQServer
 from dataArtist.components.WatchFolder import WatchFolder
@@ -250,7 +250,7 @@ class PreferencesView(QtWidgets.QWidget):
 
         self.combo_colorTheme = QtWidgets.QComboBox()
         hlayout.addWidget(self.combo_colorTheme)
-        self.combo_colorTheme.addItems(('dark', 'bright'))
+        self.combo_colorTheme.addItems(('bright', 'dark'))
         self.combo_colorTheme.currentIndexChanged.connect(lambda i, self=self:
                                                           self.setColorTheme(self.combo_colorTheme.currentText()))
 
@@ -262,7 +262,7 @@ class PreferencesView(QtWidgets.QWidget):
         layout.addWidget(combo_profile)
 
     def _setAntialiasting(self, val):
-        pyqtgraph_karl.setConfigOption('antialias', bool(val))
+        pg.setConfigOption('antialias', bool(val))
         for ws in self.gui.workspaces():
             ws.reload()
 
@@ -275,12 +275,12 @@ class PreferencesView(QtWidgets.QWidget):
 
     def setColorTheme(self, theme):
         if theme == 'dark':
-            pyqtgraph_karl.setConfigOption('foreground', 'w')
-            pyqtgraph_karl.setConfigOption('background', 'k')
+            pg.setConfigOption('foreground', 'w')
+            pg.setConfigOption('background', 'k')
 
         elif theme == "bright":
-            pyqtgraph_karl.setConfigOption('foreground', 'k')
-            pyqtgraph_karl.setConfigOption('background', 'w')
+            pg.setConfigOption('foreground', 'k')
+            pg.setConfigOption('background', 'w')
         else:
             raise AttributeError('theme %s unknown' % theme)
 
@@ -328,8 +328,8 @@ class PreferencesImport(QtWidgets.QWidget):
 #                                      'in import display'))
         self.combo_import.addItems(('SPLIT into MULTIPLE displays',
                                     'ALL in NEW display',
-                                    'ALL in CURRENT display',
-                                    'ALL in IMPORT display'))
+                                    'ADD to CURRENT display',
+                                    'ADD to IMPORT display'))
 
         self.combo_import.setCurrentIndex(self.importFilesPolicy)
         self.combo_import.currentIndexChanged.connect(self._importChanged)

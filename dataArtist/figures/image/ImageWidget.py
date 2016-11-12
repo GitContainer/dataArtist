@@ -67,11 +67,7 @@ class ImageWidget(DisplayWidget, ImageView, PyqtgraphgDisplayBase):
 
         self.opts['discreteTimeSteps'] = True
 
-        # make splitter an unchangeable small grey line:
-        s = self.ui.splitter
-        s.handle(1).setEnabled(False)
-        s.setStyleSheet("QSplitter::handle{background-color: grey}")
-        s.setHandleWidth(2)
+
 
         # TODO: better would be to init imageView with given histrogramAxis
         #      ... but this is easier:
@@ -89,6 +85,10 @@ class ImageWidget(DisplayWidget, ImageView, PyqtgraphgDisplayBase):
         # Remove ROI plot:
         self.ui.roiPlot.setMouseEnabled(False, False)
         self.ui.roiPlot.hide()
+
+        #default color set
+        self.ui.histogram.item.gradient.loadPreset('flame')
+        
 
         if data is not None:
             self.update(data)
