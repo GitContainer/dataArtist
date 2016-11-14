@@ -54,7 +54,6 @@ class Crosshair(Tool):
 
     def build(self):
         self.poiMarker = pg.ScatterPlotItem(pen='r', brush='r')
-
         w = self.display.widget
         w.sigTimeChanged.connect(self._updateValues)
         w.imageItem.sigImageChanged.connect(self._updateValues)
@@ -168,8 +167,10 @@ class Crosshair(Tool):
 
         for t in self.poiTextList:
             self.view.removeItem(t)
-        # self.poiMarker.clear()
-        self.view.removeItem(self.poiMarker)
+        self.poiMarker.clear()
+#         self.view.removeItem(self.poiMarker)
+#         del self.poiMarker
+        
 
         w = self.display.widget
         try:

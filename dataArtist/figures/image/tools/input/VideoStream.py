@@ -70,7 +70,7 @@ class VideoStream(Tool):
             if self.pGrayscale.value():
                 img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
             else:
-                img = cv2.cvtColor(img, cv2.cv.CV_BGR2RGB)
+                img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
             img = cv2.transpose(img)
             if self.pFloat.value():
                 img = toFloatArray(img)

@@ -248,7 +248,7 @@ class Gui(MultiWorkspaceWindow):
 
         # APPEND PREFERENCES
         pView = PreferencesView(self)
-        pView.setColorTheme('bright')
+        #pView.setColorTheme('bright')
         
         t = m.file_preferences.tabs
         t.addTab(pView, 'View')

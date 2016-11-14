@@ -87,7 +87,8 @@ class ImageWidget(DisplayWidget, ImageView, PyqtgraphgDisplayBase):
         self.ui.roiPlot.hide()
 
         #default color set
-        self.ui.histogram.item.gradient.loadPreset('flame')
+        #NO: only gray works also with color images
+        #self.ui.histogram.item.gradient.loadPreset('flame')
         
 
         if data is not None:

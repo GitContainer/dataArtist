@@ -209,12 +209,12 @@ Changes are only effective after restarting the program.'''
         items = ('simple', 'advanced')
         cb.addItems(items)
         try:
-            cb.setCurrentIndex(items.index(session.app_opts['profile']))
+            cb.setCurrentIndex(items.index(session.opts['profile']))
         except KeyError:
-            session.app_opts['profile'] = 'simple'
+            session.opts['profile'] = 'simple'
             pass
         cb.currentIndexChanged.connect(lambda i:
-                                       session.app_opts.__setitem__(
+                                       session.opts.__setitem__(
                                            'profile', str(cb.currentText())))
 
         l = QtWidgets.QHBoxLayout()
@@ -250,30 +250,53 @@ class PreferencesView(QtWidgets.QWidget):
 
         self.combo_colorTheme = QtWidgets.QComboBox()
         hlayout.addWidget(self.combo_colorTheme)
-        self.combo_colorTheme.addItems(('bright', 'dark'))
-        self.combo_colorTheme.currentIndexChanged.connect(lambda i, self=self:
-                                                          self.setColorTheme(self.combo_colorTheme.currentText()))
+        self.combo_colorTheme.addItems(('dark', 'bright'))
+        self.combo_colorTheme.currentIndexChanged.connect(self._colorThemeChanged)
 
         self.check_antialiasting = QtWidgets.QCheckBox('Antialiasting')
         layout.addWidget(self.check_antialiasting)
-        self.check_antialiasting.stateChanged.connect(self._setAntialiasting)
+        self.check_antialiasting.stateChanged.connect(self._antialiastingChanged)
 
         combo_profile = ChooseProfile(session)
         layout.addWidget(combo_profile)
+        
+        btn = QtWidgets.QPushButton('Make default')
+        btn.clicked.connect(self._makeDefault)
+        layout.addWidget(btn)
+        
+        p = session.opts.get('pview', None)
+        if p is not None:
+            self._restore(p)
 
-    def _setAntialiasting(self, val):
-        pg.setConfigOption('antialias', bool(val))
+    def _makeDefault(self):
+        d = {}
+        self._save(d)
+        self.gui.app.session.opts['pview'] = d
+
+    def _antialiastingChanged(self, val):
+        val = bool(val)
+        #make change session independent: 
+#         self.gui.app.session.opts['pview']['antialias'] = val
+        
+        pg.setConfigOption('antialias', val)
         for ws in self.gui.workspaces():
             ws.reload()
 
     def _save(self, state):
         state['pview'] = {
-            'colorTheme': self.combo_colorTheme.currentIndex()}
+            'colorTheme': self.combo_colorTheme.currentIndex(),
+            'antialias':self.check_antialiasting.isChecked()}
 
     def _restore(self, state):
-        self.combo_colorTheme.setCurrentIndex(state['pview']['colorTheme'])
-
-    def setColorTheme(self, theme):
+        p = state['pview']
+        self.combo_colorTheme.setCurrentIndex(p['colorTheme'])
+        self.check_antialiasting.setChecked(p['antialias'])
+        
+    def _colorThemeChanged(self, index):
+        theme = self.combo_colorTheme.currentText()
+        #make change session independent: 
+#         self.gui.app.session.opts['pview']['colorTheme'] = index
+        
         if theme == 'dark':
             pg.setConfigOption('foreground', 'w')
             pg.setConfigOption('background', 'k')

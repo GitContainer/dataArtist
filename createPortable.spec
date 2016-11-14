@@ -41,7 +41,7 @@ a = Analysis(['dataArtist\\gui_pyinstaller.py'],
                  os.path.join(pkg_dir,'dataartist')],
                  
              hiddenimports=[
-
+                #'qtpy',
                  #'mpl_toolkits.mplot3d',#3d surface plot with matplotlib
                  'scipy.linalg._decomp_u',#???for tool: createSpatialSensitivity Array
 
@@ -88,9 +88,6 @@ a.binaries = a.binaries - TOC([
 
 
 
-
-
-
 pyz = PYZ(a.pure)
 
 #make exe file:
@@ -100,7 +97,7 @@ exe = EXE(pyz,
       name='dataArtist.exe',
       debug=False,
       strip=None,
-      upx=True,#should be disabled for PtQt4 according to https://groups.google.com/forum/#!topic/pyinstaller/GEL1QQfpHLI
+      upx=False,#should be disabled for PtQt4 according to https://groups.google.com/forum/#!topic/pyinstaller/GEL1QQfpHLI
       console=False, 
       icon=os.path.join(pkg_dir,'dataartist','dataArtist','media','logo.ico')
       )

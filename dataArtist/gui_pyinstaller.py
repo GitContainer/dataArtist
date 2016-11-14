@@ -1,13 +1,8 @@
 # coding=utf-8
-'''
-Created on 2 Oct 2016
 
-@author: elkb4
-'''
 import ctypes
-import os
+# import os
 import sys
-
 
 # this is a temporary workaround around the following error:
 # MKL FATAL ERROR: cannot load neither mkl_vml_def.dll nor mkl_vml_avx2.dll
