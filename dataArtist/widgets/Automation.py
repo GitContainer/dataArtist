@@ -101,6 +101,14 @@ class Automation(QtWidgets.QWidget):
 
         self.splitter.setStretchFactor(0, 0)
 
+        self.cb_run_on = QtWidgets.QComboBox()
+        self.cb_run_on.addItems(['-', 'New Data', 'Data Changed'])
+
+        self.tabs = FwTabWidget()
+        self.tabs.hide()
+        self.tabs.setTabsAddable(True)
+        self.tabs.setTabsClosable(True)
+        self.tabs.setTabsRenamable(True)
 
 
     def _uncheckScripts(self, show):
@@ -128,6 +136,7 @@ class Automation(QtWidgets.QWidget):
         
         self.console = console.ConsoleWidget(namespace=namespace, text=txt)
         self.console.ui.exceptionBtn.hide()
+        self.console.input.sigExecuteCmd.connect(self.display.widget.updateView)
         self.layout().addWidget(self.console)        
 
         #update connections:
@@ -160,18 +169,10 @@ class Automation(QtWidgets.QWidget):
         self.btn_collect.setCheckable(True)
         self.btn_collect.clicked.connect(self.collectWidgets)
         # TABWIDGET: SCRIPT
-        self.tabs = FwTabWidget()
-        self.tabs.hide()
-        self.tabs.setTabsAddable(True)
-        self.tabs.setTabsClosable(True)
-        self.tabs.setTabsRenamable(True)
-
         self.tabs.defaultTabWidget = lambda: ScriptTab(self, refreshR)
         self.tabs.addEmptyTab('New')
         # BUTTON: RUN AT NEW INPUT
         self.label_run_on = QtWidgets.QLabel('Activate on')
-        self.cb_run_on = QtWidgets.QComboBox()
-        self.cb_run_on.addItems(['-', 'New Data', 'Data Changed'])
 
         # SPINBOX REFRESHRATE
         self.label_refresh = QtWidgets.QLabel('Refresh rate:')
@@ -217,7 +218,8 @@ class Automation(QtWidgets.QWidget):
             a.append(widget)
 
     def saveState(self):
-        state = {'active':    self.btn_scripts.isChecked(), 'collect': self.btn_collect.isChecked(),
+        state = {'scriptOn':    self.btn_scripts.isChecked(), 
+                 'consoleOn':   self.btn_console.isChecked(),
                  'runOn':     str(self.cb_run_on.currentText()),
                  'tabTitles': [str(self.tabs.tabText(tab)) for tab in self.tabs]}
         # BUTTONS
@@ -235,9 +237,9 @@ class Automation(QtWidgets.QWidget):
     def restoreState(self, state):
         #         l =  eval(session.getSavedContent(*path +('automation.txt',) ) )
         # BUTTONS
-        self.btn_scripts.setChecked(state['active'])
-        self._toggleScripts(state['active'])
-        self.btn_collect.setChecked(state['collect'])
+        self.btn_scripts.setChecked(state['scriptOn'])
+#         self._toggleScripts(state['active'])
+        self.btn_console.setChecked(state['consoleOn'])
         # self.btn_run_new.setChecked(l['runOnNewInput'])
         self.cb_run_on.setCurrentIndex([self.cb_run_on.itemText(i)
                                         for i in range(self.cb_run_on.count())].index(
@@ -247,7 +249,6 @@ class Automation(QtWidgets.QWidget):
         ss = state['scripts']
         for n, title in enumerate(state['tabTitles']):
             tab = self.tabs.addEmptyTab(title)
-# txt = ss[n]#session.getSavedContent(*path+('scripts', '%s.txt' %n))
             tab.editor.setPlainText(ss[n])
 
     def collectWidgets(self):
@@ -315,7 +316,6 @@ class Automation(QtWidgets.QWidget):
             #resize to 50%
             s.setSizes(np.ones(len(l)) * np.mean(l))
             self.splitter.setStretchFactor(0, 1)
-
         else:
             minSize = self.minimumHeight()
             l[1]= max(0,np.sum(l)-minSize)
@@ -323,19 +323,13 @@ class Automation(QtWidgets.QWidget):
             
             s.setSizes(l)
             self.splitter.setStretchFactor(0, 0)
-#             self.splitter.setStretchFactor(1, 1)
+
 
     def _toggleScripts(self, show):
         '''
         Show/hide all widgets within Automation except of the on/off switch
         And move the horizontal splitter according to the space needed
         '''
-        #s = self.splitter
-        #l = s.sizes()
-        #minSize = 7.0
-        #i = s.indexOf(self)
-        #self.updateSize()
-
         if show:
             self.tabs.show()
             self.btn_run_now.show()
@@ -345,9 +339,6 @@ class Automation(QtWidgets.QWidget):
             self.combo_import.show()
             self.label_refresh.show()
             self.sb_refreshrate.show()
-            # move splitter:
-            # assume equal sizes for all to calc the splitter size
-            #s.setSizes(np.ones(len(l)) * np.mean(l))
         else:
             self.tabs.hide()
             self.btn_run_now.hide()
@@ -357,16 +348,7 @@ class Automation(QtWidgets.QWidget):
             self.combo_import.hide()
             self.label_refresh.hide()
             self.sb_refreshrate.hide()
-            # move splitter:
-            # smallest possible size of batchTab
-#             if l:
-#                 a = (l[i] - minSize) / len(l)
-#                 for n, y in enumerate(l):
-#                     if n != i:
-#                         l[n] = y + a
-#                     else:
-#                         l[n] = minSize
-#                 s.setSizes(l)
+
 
     def _setRunning(self):
         '''update button'''
@@ -479,7 +461,7 @@ Options are...
         # TOOL-PARAMETER
         elif isinstance(widget, Parameter):
             topParam, path = widget.path()
-            tool = topParam.opts['master']
+            tool = topParam.tool
             self.editor.appendPlainText("d.tools['%s'].param('%s').setValue('XXX')" % (
                 tool.__class__.__name__, path[2:]))
 
@@ -516,12 +498,16 @@ class _ExecGlobalsDict(dict):
                 except KeyError:
                     raise Exception("display %s doesn't exist" % n)
             raise e
+    
+    @property
+    def displaydict(self):
+        return self.display.workspace.displaydict()
 
-    def setup(self):
-        '''
-        get all current displays
-        '''
-        self.displaydict = self.display.workspace.displaydict()
+#     def setup(self):
+#         '''
+#         get all current displays
+#         '''
+#         self.displaydict = self.display.workspace.displaydict()
 
 
 class _Thread(QtCore.QThread):
@@ -606,7 +592,7 @@ class _Thread(QtCore.QThread):
         self._done = False
 
         self._timers = []
-        self._globals.setup()
+        #self._globals.setup()
 
         self._widgetUpdateTimer.start()
         try:

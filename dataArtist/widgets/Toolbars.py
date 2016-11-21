@@ -103,7 +103,7 @@ class _ToolBar(QtWidgets.QToolBar):
         if isinstance(show, dict):
             # whether to show/hide a toolbar depends on the chosen profile:
             session = QtWidgets.QApplication.instance().session
-            profile = session.app_opts.get('profile', None)
+            profile = session.opts.get('profile', None)
             show = show.get(profile, False)
         if self.widget.__class__.selectedToolbars.get(name, None) is None:
             self.widget.__class__.selectedToolbars[name] = [show,

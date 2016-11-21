@@ -87,13 +87,17 @@ class Colorbar(Tool):
         self._actions = []
 
         for d in self.display.otherDisplaysOfSameType():
-            a = QtWidgets.QAction(d.name(), menu, checkable=True)
+            cb = QtWidgets.QCheckBox(d.name(), menu)
+            a =  QtWidgets.QWidgetAction(menu)
+            a.setDefaultWidget(cb)
             menu.addAction(a)
-            self._actions.append(a)
+#             a = QtWidgets.QAction(d.name(), menu, checkable=True)
+#             menu.addAction(a)
+            self._actions.append(cb)
 
             if d in self._linked_displays:
-                a.setChecked(True)
-            a.triggered.connect(lambda checked, d=d, self=self:
+                cb.setChecked(True)
+            cb.clicked.connect(lambda checked, d=d, self=self:
                                 self._linkColorbar(d, checked))
 
     def _linkColorbar(self, display, dolink=True):
@@ -102,7 +106,6 @@ class Colorbar(Tool):
         '''
         master = self.display.widget.ui.histogram
         slave = display.widget.ui.histogram
-
         if dolink:
             self.setChecked(True)
             self._linked_displays.append(display)

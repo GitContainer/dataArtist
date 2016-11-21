@@ -348,6 +348,7 @@ class PerspectiveCorrection(Tool):
                              for h in r0.handles]) + r0.pos()
             pts1 = np.array([(h['pos'].y(), h['pos'].x())
                              for h in r1.handles]) + r1.pos()
+            #TODO: embed in PyerspectiveCorrection
             M = cv2.getAffineTransform(
                 pts0.astype(
                     np.float32), pts1.astype(

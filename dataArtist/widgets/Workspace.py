@@ -151,9 +151,9 @@ class Workspace(QtWidgets.QWidget):
         for d in self.displays():
             d.close()
         for number, (name, nDim) in state['displays'].items():
-            d = self.addDisplay(number=number, axes=nDim)
+            d = self.addDisplay(number=number, axes=nDim, docktitle=name)
             #self.changeToolBars(d)
-            d.setName(name)
+#             d.setName(name)
             d.restoreState(state['display_%i' % number])
             if number == currN:
                 currentDisplay = d
@@ -499,16 +499,25 @@ class Workspace(QtWidgets.QWidget):
         return display
 
     def copyViewToClipboard(self):
-        p = QtGui.QPixmap.grabWidget(self.area_middle)
+        p = self.area_middle.grab()#QtGui.QPixmap.grabWidget(self.area_middle)
         QtWidgets.QApplication.clipboard().setPixmap(p)
         print('Copied view to clipboard.')
 
     def copyCurrentDisplayToClipboard(self):
         d = self.getCurrentDisplay()
         if d is not None:
-            p = QtGui.QPixmap.grabWidget(d)
+            p = d.widget.grab()#QtGui.QPixmap.grabWidget(d)
             QtWidgets.QApplication.clipboard().setPixmap(p)
             print('Copied current display to clipboard.')
+
+    def copyCurrentDisplayItemToClipboard(self):
+        d = self.getCurrentDisplay()
+        if d is not None:
+            b = d.widget.item.sceneBoundingRect().toRect()
+            p = d.widget.grab(b)#QtGui.QPixmap.grabWidget(d.widget, b)
+            QtWidgets.QApplication.clipboard().setPixmap(p)
+            print('Copied current display item to clipboard.')
+    
 
     def setCurrentDisplayToImportDisplay(self):
         '''

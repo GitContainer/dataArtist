@@ -1,8 +1,10 @@
 # coding=utf-8
 from __future__ import division
 from __future__ import print_function
-
-import pika
+try:
+    import pika
+except ImportError:
+    print("couldn't import pika - you wont be able to use the RabbitMQ data server")
 from qtpy import QtCore, QtWidgets
 
 

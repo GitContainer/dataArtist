@@ -21,7 +21,7 @@ class ImageWithOpenCV(ReaderBase):
               'png',  # Portable Network Graphics
               'pbm', 'pgm', 'ppm',  # Portable image format
               'sr', 'ras',  # Sun rasters
-              'tiff', 'tif'  # TIFF files
+              'tiff', 'tif', 'tiffr',  # TIFF files
               )
 
     def __init__(self, *args, **kwargs):

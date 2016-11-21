@@ -1,7 +1,8 @@
 # coding=utf-8
 from qtpy import QtWidgets
 
-from pyqtgraph_karl.parametertree import ParameterTree, Parameter
+from pyqtgraph_karl.parametertree import Parameter
+from dataArtist.widgets.ParameterTree import ParameterTree
 
 
 class ParameterMenu(QtWidgets.QMenu):
@@ -16,27 +17,16 @@ class ParameterMenu(QtWidgets.QMenu):
 
         self.content = _MenuContent(tool)
         self.pTree = self.content.pTree
-#         self.header = self.content.header
 
         a.setDefaultWidget(self.content)
         self.addAction(a)
         self.p = self.pTree.p
 
-        self.p.opts['master'] = tool
+        self.p.tool = tool
         tool.param = self.p.param
 
         self.aboutToShow.connect(self.resizeToContent)
 
-
-#     def save(self, session, path):
-#         l = self.p.saveState()
-#         session.addContentToSave(l, *path+('parameters.txt',))
-#
-#
-#     def restore(self, session, path):
-#         l =  eval(session.getSavedContent(*path +('parameters.txt',) ),
-#                   {'OrderedDict':OrderedDict})
-#         self.p.restoreState(l)
 
     def resizeToContent(self):
         '''
@@ -105,4 +95,4 @@ class _Parameters(ParameterTree):
         self.p = Parameter.create(
             name='',
             type='empty')
-        ParameterTree.__init__(self, self.p)
+        ParameterTree.__init__(self, self.p, showHeader=False)

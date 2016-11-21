@@ -21,6 +21,13 @@ class TimeLine(Tool):
 
         pa = self.setParameterMenu()
 
+        pSync = pa.addChild({
+            'name': 'Synchronize',
+            'value': 'Display',
+            'type': 'menu',
+            'highlight': True})
+        pSync.aboutToShow.connect(self._buildLinkView)
+
         pCont = pa.addChild({
             'name': 'Continous',
             'value': False,
@@ -29,12 +36,6 @@ class TimeLine(Tool):
         
         pCont.sigValueChanged.connect(self.setContinous)
 
-        pSync = pa.addChild({
-            'name': 'Synchronize',
-            'value': 'Display',
-            'type': 'menu',
-            'highlight': True})
-        pSync.aboutToShow.connect(self._buildLinkView)
 
     def _buildLinkView(self, menu):
         '''
@@ -45,11 +46,15 @@ class TimeLine(Tool):
 
         for d in self.display.workspace.displays():
             if d.name() != self.display.name():
-                a = QtWidgets.QAction(d.name(), menu, checkable=True)
+                
+                cb = QtWidgets.QCheckBox(d.name(), menu)
+                a =  QtWidgets.QWidgetAction(menu)
+                a.setDefaultWidget(cb)
                 menu.addAction(a)
+                
                 if d in self._connected:
-                    a.setChecked(True)
-                a.triggered.connect(lambda checked, d=d:
+                    cb.setChecked(True)
+                cb.clicked.connect(lambda checked, d=d:
                                     self._linkView(d, checked))
 
     

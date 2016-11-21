@@ -247,8 +247,11 @@ class Gui(MultiWorkspaceWindow):
         m.setCornerWidget(self.gTools)
 
         # APPEND PREFERENCES
+        pView = PreferencesView(self)
+        #pView.setColorTheme('bright')
+        
         t = m.file_preferences.tabs
-        t.addTab(PreferencesView(self), 'View')
+        t.addTab(pView, 'View')
         t.addTab(self.pref_import, 'Import')
         t.addTab(PreferencesCommunication(self), 'Communication')
         # APPEND MENUBAR
@@ -322,16 +325,27 @@ class Gui(MultiWorkspaceWindow):
         v.aboutToShow.connect(setupPref)
         v.addAction(aPref)
 
+        mcopy = v.addMenu('Copy to clipboard')
         # ACTION VIEW2CLIPBOARD
-        aClipboard = QtWidgets.QAction('Copy view to clipboard', v)
+        aClipboard = QtWidgets.QAction('All displays', v)
         aClipboard.triggered.connect(
                 lambda checked: self.currentWorkspace().copyViewToClipboard())
-        v.addAction(aClipboard)
+        aClipboard.setShortcut(QtGui.QKeySequence('Ctrl+Shift+F12'))
+        mcopy.addAction(aClipboard)
         # ACTION Display2CLIPBOARD
-        aClipboard = QtWidgets.QAction('Copy active display to clipboard', v)
+        aClipboard = QtWidgets.QAction('Active Display', v)
         aClipboard.triggered.connect(
                 lambda checked: self.currentWorkspace().copyCurrentDisplayToClipboard())
-        v.addAction(aClipboard)
+        aClipboard.setShortcut(QtGui.QKeySequence('Ctrl+F12'))
+        mcopy.addAction(aClipboard)
+
+        # ACTION Display2CLIPBOARD
+        aClipboard = QtWidgets.QAction('Active Display Item', v)
+        aClipboard.triggered.connect(
+                lambda checked: self.currentWorkspace().copyCurrentDisplayItemToClipboard())
+        aClipboard.setShortcut(QtCore.Qt.Key_F12)
+        mcopy.addAction(aClipboard)
+
         # MENU - TOOLS
         t = m.menu_tools = QtWidgets.QMenu('Dock')
         m.insertMenuBefore(m.menu_workspace, t)
@@ -535,7 +549,7 @@ def main(name='dataArtist',
                       icon=icon,
                       first_start_dialog=first_start_dialog)
     #"Plastique" is not longer avail. in PyQt5
-    app.setStyle("Fusion")  # looks better and shows splitter handle
+    app.setStyle("fusion")  # looks better and shows splitter handle
     win = Gui(title=name)
     s = app.session
     s.registerMainWindow(win)

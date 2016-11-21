@@ -16,7 +16,7 @@ class StackedTifImages(ImageWithOpenCV):
           created with imageJ
     '''
     axes = ['x', 'y', '']
-    ftypes = ('tiff', 'tif')
+    ftypes = ('tiff', 'tif', 'tiff')
     preferred = True
 
     def __init__(self, *args, **kwargs):
