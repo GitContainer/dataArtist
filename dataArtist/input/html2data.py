@@ -1,5 +1,4 @@
 # coding=utf-8
-from __future__ import print_function
 
 import lxml.html
 import urllib.request  # , urllib.parse, urllib.error
@@ -8,7 +7,6 @@ import tempfile
 from fancytools.os.PathStr import PathStr
 
 
-TMP_IMG_DIR = PathStr(tempfile.mkdtemp('tmpImgDir'))
 
 
 def html2data(html):
@@ -23,7 +21,9 @@ def html2data(html):
         # get the scr-path of the image:
         imgsrc = img.get('src')
         fname = PathStr(imgsrc).basename()
-        fpath = TMP_IMG_DIR.join(fname)
+        if not hasattr(html2data, 'TMP_IMG_DIR'):
+            html2data.TMP_IMG_DIR = PathStr(tempfile.mkdtemp('tmpImgDir'))
+        fpath = html2data.TMP_IMG_DIR.join(fname)
         # download the image in a temporary folder:
         urllib.request.urlretrieve(imgsrc, fpath)
         paths.append(fpath)

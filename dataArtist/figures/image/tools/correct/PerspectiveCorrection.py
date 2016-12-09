@@ -328,8 +328,8 @@ class PerspectiveCorrection(Tool):
 
         # INIT:
         self.pc = PC(img.shape,
-                     obj_width_mm=w,
-                     obj_height_mm=h,
+                     obj_width_mm=h,
+                     obj_height_mm=w,
                      cameraMatrix=c,
                      do_correctIntensity=self.pCorrViewFactor.value(),
                      new_size=size

@@ -217,7 +217,7 @@ class PlotReader(ReaderBase):
 
     def status(self):
         # read lines over all lines
-        return old_div(float(self.n_line), self.nLines)
+        return self.n_line/ self.nLines
 
 
 class _CSVPreferences(pTypes.GroupParameter):

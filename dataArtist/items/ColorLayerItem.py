@@ -134,7 +134,7 @@ class ColorLayerItem(pg.ImageItem):
             if self.histogramPos == mn:
                 x = 0
             else:
-                x = old_div((self.histogramPos - mn), (mx - mn))
+                x = (self.histogramPos - mn)/ (mx - mn)
             self.color = self.histogram.gradient.getColor(x).rgb()
             self.updateLayer()
         else:

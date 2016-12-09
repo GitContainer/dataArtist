@@ -5,21 +5,18 @@ from __future__ import print_function
 import sys
 import os
 
-# from PyQt5  import QtGui
-# from PyQt5 import PYQT_VERSION_STR as PYQT_VERSION  # analysis:ignore
-# from PyQt5 import QT_VERSION_STR as QT_VERSION
-
 from qtpy import QtGui, QtWidgets, QtCore
 
 # FIXME: many array indices in pyqtgraph are not int
 # therefore numpy 1.11 shows many VisibleDeprecationWarning...
-import warnings
-
-warnings.simplefilter("ignore", DeprecationWarning)
+# import warnings
+# warnings.simplefilter("ignore", DeprecationWarning)
 
 from appbase.MultiWorkspaceWindow import MultiWorkspaceWindow
 from appbase.Application import Application
 from fancytools.os.PathStr import PathStr
+from imgProcessor.reader.qImageToArray import qImageToArray
+
 # from interactiveTutorial.TutorialMenu import TutorialMenu
 
 # OWN
@@ -104,6 +101,7 @@ class Gui(MultiWorkspaceWindow):
         self.progressBar = ProgressBar(st)
         st.setSizeGripEnabled(False)
 
+        
     def isEmpty(self):
         return (self.centralWidget().count() == 1
                 and not self.currentWorkspace().displays())
@@ -487,13 +485,12 @@ class Gui(MultiWorkspaceWindow):
         return l
 
     def dropEvent(self, event):
-        '''what to do is sth. if dropped'''
         m = event.mimeData()
-
+        w = self.currentWorkspace()
         # HTML CONTENT
         if m.hasHtml():
             (paths, data) = html2data(str(m.html()))
-            self.currentWorkspace().addFiles(paths)
+            w.addFiles(paths)
             # raise NotImplementedError('direct import of data (like tables) from a browser is not implemented at the moment')
 
         # FILES
@@ -512,16 +509,19 @@ class Gui(MultiWorkspaceWindow):
                     paths.pop(i)
                 else:
                     i += 1
-
-            self.currentWorkspace().addFiles(paths)
+            w.addFiles(paths)
         
         # TEXT/TABLES
         elif m.hasText():
             txt = str(m.text())
             if self.txtIsTable(txt):
-                self.currentWorkspace().addTableDock(text=txt)
+                w.addTableDock(text=txt)
             else:
-                self.currentWorkspace().addTextDock(text=txt)
+                w.addTextDock(text=txt)
+
+        elif m.hasImage():
+            i = QtGui.QImage(m.imageData())
+            w.addDisplay(data=[qImageToArray(i)])
 
     # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 

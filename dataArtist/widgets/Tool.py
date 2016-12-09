@@ -12,6 +12,7 @@ from dataArtist.widgets.ParameterMenu import ParameterMenu
 
 # ICONFOLDER = PathStr.getcwd('dataArtist').join("media","icons")
 import dataArtist
+from PyQt5.QtWidgets import QToolButton
 ICONFOLDER = PathStr(dataArtist.__file__).dirname().join('media', 'icons')
 del dataArtist
 
@@ -98,6 +99,12 @@ class Tool(QtWidgets.QToolButton):
             self.setPopupMode(QtWidgets.QToolButton.InstantPopup)
 
         self.clicked.connect(self.toggle)
+
+
+
+
+
+
 
     def showGlobalTool(self, toolCls):
         g = self.display.workspace.gui.gTools
@@ -272,7 +279,36 @@ class Tool(QtWidgets.QToolButton):
     def setParameterMenu(self):
         self._menu = ParameterMenu(self)
         self.setMenu(self._menu)
+        self._menu.aboutToShow.connect(self._highlightCurrentTool)
         return self._menu.p
+
+
+    def _highlightCurrentTool(self):
+        '''
+        often you'll setup a tool within its menu
+        then return to your image and then execute that tool.
+        but which tool was it?
+        with this method the last tool whose menu was called will be
+        drawn slightly darker to help you remember.
+        '''
+        bar = self.parent()
+        #reset last highlighted tool:
+        for tool in bar.findChildren(QToolButton):
+            if tool.property('modified') == 'True':
+                tool.setProperty('modified', 'False')  
+                tool.style().unpolish(tool)
+                tool.style().polish(tool)
+                tool.update()
+
+        #highlight current tool
+        self.setProperty('modified', 'True')
+        tbar = self.parent()
+        color = tbar.palette().color(tbar.backgroundRole())
+        color = color.darker(120)
+
+        self.setStyleSheet(self.styleSheet() + """QToolButton[modified = "True"] {  
+        background-color: %s;}""" %color.name())
+ 
 
     def addAction(self, *args):
         '''

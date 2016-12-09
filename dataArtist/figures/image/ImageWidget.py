@@ -65,7 +65,7 @@ class ImageWidget(DisplayWidget, ImageView, PyqtgraphgDisplayBase):
         self._moved_layer = None
         self._set_kwargs = {}
 
-        self.opts['discreteTimeSteps'] = True
+        self.opts['discreteTimeLine'] = True
 
 
 
@@ -94,6 +94,11 @@ class ImageWidget(DisplayWidget, ImageView, PyqtgraphgDisplayBase):
         if data is not None:
             self.update(data)
             self.updateView()
+
+
+    def setOpts(self, **opts):
+        self.opts.update(opts)
+
 
     @staticmethod
     def getNLayers(data):

@@ -34,9 +34,9 @@ class ScaleHistogram(Tool):
             'Scale signal +/-3std':
                 (scaleSignal, [0, 1]),
             'Maximum=1':
-                (lambda img: img/img.max(), None),
+                (lambda img: img/np.nanmax(img), None),
             'Average=1':
-                (lambda img: img/img.mean(), None),
+                (lambda img: img/np.nanmean(img), None),
             'Minimum=0, Maximum=1':
                 (self._scaleMinMax, [0,1]),
                 }
@@ -59,14 +59,15 @@ class ScaleHistogram(Tool):
             'readonly': True})
 
         self.pRefImgChoose.aboutToShow.connect(lambda menu:
-                                               self.buildOtherDisplayLayersMenu(menu, self._setRefImg))
+                    self.buildOtherDisplayLayersMenu(menu, self._setRefImg))
 
         self.pMethod.sigValueChanged.connect(
             lambda p, v: self.pRefImgChoose.show(v == 'Reference image'))
 
     def _setRefImg(self, display, layernumber, layername):
         '''
-        extract the reference image and -name from a given display and layer number
+        extract the reference image and -name from a
+        given display and layer number
         '''
         im = display.widget.image
         self._refImg = im[layernumber]
