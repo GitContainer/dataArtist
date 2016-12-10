@@ -5,7 +5,7 @@ try:
     import pika
 except ImportError:
     print("couldn't import pika - you wont be able to use the RabbitMQ data server")
-from qtpy import QtCore, QtWidgets
+from qtpy import QtCore
 
 
 class RabbitMQServer(object):
@@ -20,16 +20,16 @@ class RabbitMQServer(object):
 
         self.opts = {'refreshrate': 1000,  # ms
                      'host': 'localhost',
-                     'timeout': 1,  # ms
+                    # 'timeout': 1,  # ms
                      'corfirmPosts': False
                      }
 
         self.listenTo = {'addFile': self.gui.addFilePath,
-                         'changeActiveDisplay': lambda number:
-                         self.gui.currentWorkspace().changeDisplayNumber(number),
+                         'changeActiveDisplay': self.gui.changeActiveDisplay,
                          'showDisplay': self.gui.showDisplay,
                          'runScriptFromName': self.gui.runScriptFromName,
                          }
+
 
     def start(self):
         '''
@@ -38,56 +38,46 @@ class RabbitMQServer(object):
         '''
         self.configure()
         self.timer = QtCore.QTimer()
-        self.timer.timeout.connect(self.checkInbox)
+        self.timer.timeout.connect(self.connection.process_data_events)
         self.timer.start(self.opts['refreshrate'])
 
-    def checkInbox(self):
-        '''
-        Check all self.listentO keys
-           and execute connected method
-        '''
-        for promise, action in list(self.promises.items()):
-            msg_result = self.client.wait(promise,
-                                          # wait for 10ms
-                                          timeout=self.opts['timeout'] / 1000)
-            if msg_result:
-                # MESSAGE RECEIVED
-                b = msg_result['body']
-                if self.opts['corfirmPosts']:
-                    # PRINT CONFIRMATION
-                    print(" [R] %s -> '%s'" % (msg_result['routing_key'], b))
-                if b == 'STOP':
-                    # stop listening to that channel:
-                    self.promises.pop(promise)
-                else:
-                    action(b)
 
     def configure(self):
-        self.client = pika.BlockingConnection("amqp://%s/" % self.opts['host'])
-        try:
-            promise = self.client.connect()
-        except Exception:
-            raise Exception(
-                "Couldn't connect to RabbitMQ. Please visit https://www.rabbitmq.com/download.html and install it.")
-        self.client.wait(promise)
-
-        self.promises = {}
-        for name, action in self.listenTo.items():
+        parameters = pika.URLParameters("amqp://%s/" % self.opts['host'])
+        self.connection = pika.BlockingConnection(parameters)
+        self.channel = self.connection.channel()
+        for name in self.listenTo.keys():
             # INITITALIZE ALL QUEUES
-            promise = self.client.queue_declare(queue=name)
-            self.client.wait(promise)
-            consume_promise = self.client.basic_consume(
-                queue=name, no_ack=True)
-            self.promises[consume_promise] = action
+            self.channel.queue_declare(queue=name)
+            self.channel.basic_consume(
+                queue=name, no_ack=True,
+                consumer_callback=self.on_message)
+
+
+    def on_message(self, channel, method_frame, header_frame, body):
+        key = method_frame.routing_key
+        if self.opts['corfirmPosts']:
+            print(" [R] %s -> '%s'" % (key, body))
+        action = self.listenTo[key]
+        action(body)
+#         channel.basic_ack(delivery_tag=method_frame.delivery_tag)
+
 
     def stop(self):
         if self.timer is not None and self.timer.isActive():
             self.timer.stop()
-            self.client.close()
+            self.channel.stop_consuming()
+            self.connection.close()
 
 
 if __name__ == '__main__':
-    app = QtWidgets.QApplication([])
-    r = RabbitMQServer(None)
-    r.start()
-    app.exec_()
+    #send a message:
+    parameters = pika.URLParameters("amqp://localhost/")
+    connection = pika.BlockingConnection(parameters)
+    channel = connection.channel()
+    channel.basic_publish(exchange='',
+                          routing_key='addFile',
+                          body='TEST/FILE/PATH.txt',
+                          #pika.BasicProperties(content_type='text/plain',
+                         #                      delivery_mode=1)
+                          )

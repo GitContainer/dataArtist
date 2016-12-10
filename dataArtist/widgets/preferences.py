@@ -78,6 +78,8 @@ class PreferencesCommunication(QtWidgets.QWidget):
         self.cb_allowRabbit = QtWidgets.QCheckBox(
             'Allow inter-process communication\nusing the RabbitMQ server')
         self.cb_allowRabbit.toggled.connect(self._allowRabbitMQchanged)
+        self.cb_allowRabbit.toggled.connect(self.updateGeometry)
+
         hlayout.addWidget(self.cb_allowRabbit)
 
         self.cb_confirm = QtWidgets.QCheckBox('Confirm received messages')
@@ -108,13 +110,13 @@ class PreferencesCommunication(QtWidgets.QWidget):
                                          rab.opts.__setitem__('host', val))
         gl.addWidget(self.le_host, 1, 1)
 
-        gl.addWidget(QtWidgets.QLabel('timeout [msec]'), 2, 0)
-        self.sb_timeout = QtWidgets.QSpinBox()
-        self.sb_timeout.setRange(0, 1000)
-        self.sb_timeout.setValue(rab.opts['timeout'])
-        self.sb_timeout.valueChanged.connect(lambda val:
-                                             rab.opts.__setitem__('timeout', val))
-        gl.addWidget(self.sb_timeout, 2, 1)
+#         gl.addWidget(QtWidgets.QLabel('timeout [msec]'), 2, 0)
+#         self.sb_timeout = QtWidgets.QSpinBox()
+#         self.sb_timeout.setRange(0, 1000)
+#         self.sb_timeout.setValue(rab.opts['timeout'])
+#         self.sb_timeout.valueChanged.connect(lambda val:
+#                                              rab.opts.__setitem__('timeout', val))
+#         gl.addWidget(self.sb_timeout, 2, 1)
 
         gl.addWidget(QtWidgets.QLabel(
             '<b>....listen to queues named:</b>'), 3, 0)
@@ -122,12 +124,28 @@ class PreferencesCommunication(QtWidgets.QWidget):
             gl.addWidget(QtWidgets.QLabel(queue), 4 + n, 0)
             gl.addWidget(QtWidgets.QLabel(action.__doc__), 4 + n, 1)
 
+
+
+#     def minimumSizeHint(self):
+        
+
     def _watchFolderChanged(self, checked):
         self._folder_opts.setVisible(checked)
-        if checked and self._wf_folderEdit.text() != '-':
-            self._wf.start()
+        if checked:
+            if self._wf_folderEdit.text() != '-':
+                self._wf.start()
+            #update size
+            tt = self.gui.menuBar().file_preferences
+            s = tt.minimumSize()
+            h,w = s.height(), s.width()
+            tt.setMinimumSize(w, h+400)
         else:
             self._wf.stop()
+            #update size
+            tt = self.gui.menuBar().file_preferences
+            s = tt.minimumSize()
+            h,w = s.height(), s.width()
+            tt.setMinimumSize(w, h-400)
 
     def _wf_refRateChanged(self, rate):
         self._wf.opts['refreshrate']
@@ -158,11 +176,24 @@ class PreferencesCommunication(QtWidgets.QWidget):
                 self.cb_allowRabbit.setChecked(False)
                 self.cb_allowRabbit.setEnabled(False)
                 return
+
+            #update size
+            tt = self.gui.menuBar().file_preferences
+            s = tt.minimumSize()
+            h,w = s.height(), s.width()
+            tt.setMinimumSize(w+600, h+600)
+       
         else:
             self.rabbitMQServer.stop()
+            #update size
+            tt = self.gui.menuBar().file_preferences
+            s = tt.minimumSize()
+            h,w = s.height(), s.width()
+            tt.setMinimumSize(w-600, h-600)
+
         self._rab_opts.setVisible(checked)
         self.cb_confirm.setVisible(checked)
-        self.adjustSize()
+
 
     def _save(self, state):
         # TODO: add server.opts.[activated]

@@ -161,6 +161,7 @@ class Gui(MultiWorkspaceWindow):
     def addFilePath(self, filepath):
         '''
         create a new display for one ore more given file paths
+        INPUT: "Path/To/File.txt"
         '''
         if filepath:
             return self.currentWorkspace().addFiles([PathStr(filepath)])
@@ -173,10 +174,24 @@ class Gui(MultiWorkspaceWindow):
         if filepaths:
             return self.currentWorkspace().addFiles(filepaths)
 
+    def changeActiveDisplay(self, arg):
+        '''
+        change the active display
+        INPUT: "[displaynumber]"
+            e.g.:
+            "4" --> make display 4 active display
+        '''
+        number = int(arg)
+        self.currentWorkspace().changeDisplayNumber(number)
+
+
     def showDisplay(self, arg):
         '''
         show display as frame-less window
-        '[displaynumber], [area]' = (x,y,width,height)
+        INPUT: "[displaynumber], [(x,y,width,height)]'
+            e.g.:
+            "4, (0,0,100,200)" --> show display 4 at position 0,0 with size 100,200
+            "3, False" --> hide display 3
         '''
         displaynumber, pos = eval(arg)
         if not pos:
@@ -213,8 +228,11 @@ class Gui(MultiWorkspaceWindow):
 
     def runScriptFromName(self, name):
         '''
-        run a console script identified by name
+        run an open script, identified by name
         in the current display
+        INPUT: "[scriptname]"
+            e.g.:
+            'New' --> run a script, called 'New' in the current active display
         '''
         w = self.currentWorkspace().getCurrentDisplay(
         ).tab.automation.tabs.widgetByName(name)
