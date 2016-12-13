@@ -16,7 +16,7 @@ class Legend(Tool):
         pFrame = pa.addChild({
             'name': 'Show frame',
             'type': 'bool',
-            'value': l.drawFrame})
+            'value': l.frame})
         pFrame.sigValueChanged.connect(self._drawFrame)
 
         pOrientation = pa.addChild({
@@ -30,7 +30,7 @@ class Legend(Tool):
 
     def _drawFrame(self, param, show):
         l = self.display.widget.view.legend
-        l.drawFrame = show
+        l.frame = show
         l.update()
 
     def activate(self):

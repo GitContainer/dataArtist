@@ -223,7 +223,7 @@ class _ScaleEditor(QtWidgets.QWidget):
 
         l2 = float(self.editor.text())
 
-        scale = old_div(l2, l1)
+        scale = l2/l1
         self.tool.scale = scale
         self.textItem.setText('~ %s (scale:%s)' % (l2, scale))
 

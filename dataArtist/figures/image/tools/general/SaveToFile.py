@@ -9,7 +9,7 @@ import numpy as np
 from skimage.transform import resize
 
 from fancywidgets.pyQtBased.Dialogs import Dialogs
-from imgProcessor.transformations import toUIntArray
+from imgProcessor.transformations import toUIntArray, isColor
 from imgProcessor.imgIO import transpose
 from imgProcessor.imgIO import imwrite
 from dataArtist.widgets.Tool import Tool
@@ -333,6 +333,9 @@ rendered: export the current display view'''})
                                   range=r,
                                   dtype={'8 bit': np.uint8,
                                          '16 bit': np.uint16}[self.pDType.value()])
+            if isColor(int_img):
+                int_img = cv2.cvtColor(int_img, cv2.COLOR_RGB2BGR)
+            
             cv2.imwrite(path, transpose(int_img))
 
         return self._export(fn)

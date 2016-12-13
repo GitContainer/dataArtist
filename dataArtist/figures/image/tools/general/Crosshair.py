@@ -164,14 +164,11 @@ class Crosshair(Tool):
 
     def reset(self):
         self._first_time = True
-
         for t in self.poiTextList:
             self.view.removeItem(t)
         self.poiMarker.clear()
 #         self.view.removeItem(self.poiMarker)
 #         del self.poiMarker
-        
-
         w = self.display.widget
         try:
             # FIXME: sometime method is not connected any more ...

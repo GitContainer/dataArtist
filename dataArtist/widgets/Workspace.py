@@ -542,6 +542,7 @@ class Workspace(QtWidgets.QWidget):
             print('Unset current display [%s] as import display' % d.number)
         self._import_display = None
 
+
     def addFiles(self, names):
         '''
         check the importPolicy: if = ask: show import dialog to ask user

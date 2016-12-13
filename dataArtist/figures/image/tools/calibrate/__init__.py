@@ -1,5 +1,5 @@
 # coding=utf-8
-from __future__ import absolute_import
+
 from .LensDistortion import LensDistortion
 from .RelativeSharpness import RelativeSharpness
 from .FlatField import FlatField
@@ -11,7 +11,6 @@ from .DeconvolutionBalance import DeconvolutionBalance
 tools = (RelativeSharpness, NoiseLevelFunction,
          DarkCurrent, FlatField, PointSpreadFunction,
          DeconvolutionBalance, LensDistortion)
-# position='top'
 secondRow = True
 color = 'pink'
 show = {'simple': False, 'advanced': True}

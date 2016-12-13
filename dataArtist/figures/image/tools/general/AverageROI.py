@@ -235,10 +235,14 @@ class _ROI1d(_ROIAverage):
             # DATA
             try:
                 dataorig = img[x0:x1, y0:y1]
-                if dataorig.ndim == 3:  # color
-                    data = np.mean(dataorig, axis=(self.av_dir, 2))
+                if dataorig.dtype.kind == 'f' and np.any(np.sum(dataorig)):
+                    mean = np.nanmean
                 else:
-                    data = dataorig.mean(axis=self.av_dir)
+                    mean = np.mean
+                if dataorig.ndim == 3:  # color
+                    data = mean(dataorig, axis=(self.av_dir, 2))
+                else:
+                    data = mean(dataorig,axis=self.av_dir)
 
                 if self.av_dir == 1:
                     xvals = np.linspace(x0, x1, len(data))
@@ -314,21 +318,24 @@ class _ROI0d(_ROIAverage):
         self.plot = self.slaveDisplay.addLayer(
             label=name,
             info='averaged',
-            pen=self._pen)
+            pen=self._pen,
+            symbolBrush=self._pen)
 
         if self.tool.pStd.value():
             name = 'Standard Deviation[%s]' % str(len(self.tool.ROIs) + 1)
             self.stdPlot = self.tool.stdSlave.addLayer(
                 label=name,
                 info='stDev',
-                pen=self._pen)
+                pen=self._pen,
+                symbolBrush=self._pen)
 
         if self.tool.pRMS.value():
             name = 'RMS[%s]' % str(len(self.tool.ROIs) + 1)
             self.rmsPlot = self.tool.rmsSlave.addLayer(
                 label=name,
                 info='root mean square',
-                pen=self._pen)
+                pen=self._pen,
+                symbolBrush=self._pen)
 
     def updateView(self):
         x_vals = self.tool.display.stack.values
