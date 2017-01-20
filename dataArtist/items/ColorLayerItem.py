@@ -85,9 +85,11 @@ class ColorLayerItem(pg.ImageItem):
 
     def updateLayer(self):
         # fill the color layer with the color:
-        self.qimage.fill(self.color)
+        #self.qimage.fill(self.color)
         # add the alpha layer again because it is deleted after .fill:
-        self.qimage.setAlphaChannel(self.qalpha)
+        self.qimage = self.qalpha
+        
+        #self.qimage.setAlphaChannel(self.qalpha)
         self.vb.updateViewRange()
 
     def _mkQImg(self):
@@ -105,7 +107,17 @@ class ColorLayerItem(pg.ImageItem):
 
         if np.isnan(mn):
             mn, mx = np.nanmin(im), np.nanmax(im) / a
-        argb, alpha = pg.functions.makeARGB(im, levels=[mn, mx])
+        
+        cc = QtGui.QColor(self.color)
+        r,g,b = cc.red(), cc.green(), cc.blue()
+        
+        data = np.empty(shape=(im.shape[0],im.shape[1],4 ), dtype=np.float32)
+        data[...,0] = r/255
+        data[...,1] = g/255
+        data[...,2] = b/255
+        data[...,3] = im
+
+        argb, alpha = pg.functions.makeARGB(data, levels=[mn, mx])
         qalpha = pg.functions.makeQImage(argb, alpha, transpose=True)
         qalpha.convertToFormat(QtGui.QImage.Format_Indexed8)
         return qalpha

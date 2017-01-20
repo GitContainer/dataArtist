@@ -44,7 +44,7 @@ class ScaleHistogram(Tool):
         self.pMethod = pa.addChild({
             'name': 'Method',
             'type': 'list',
-            'value': 'Scale signal +/-3std',
+            'value': 'Average=1',
             'limits': list(self._methods.keys())})
 
         self.pRefImgChoose = self.pMethod.addChild({

@@ -64,8 +64,8 @@ class Gui(MultiWorkspaceWindow):
     The main class to be called to create an instance of dataArtist
     '''
 
-    def __init__(self, title='dataArtist'):
-        MultiWorkspaceWindow.__init__(self, Workspace, title)
+    def __init__(self, title='dataArtist', workspaceCls=Workspace):
+        MultiWorkspaceWindow.__init__(self, workspaceCls, title)
 
         s = self.app.session
         self.resize(605, 550)

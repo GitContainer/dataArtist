@@ -72,12 +72,11 @@ class RabbitMQServer(object):
 
 if __name__ == '__main__':
     #send a message:
+    import pika
     parameters = pika.URLParameters("amqp://localhost/")
     connection = pika.BlockingConnection(parameters)
     channel = connection.channel()
     channel.basic_publish(exchange='',
                           routing_key='addFile',
-                          body='TEST/FILE/PATH.txt',
-                          #pika.BasicProperties(content_type='text/plain',
-                         #                      delivery_mode=1)
+                          body='TEST/FILE/PATH.txt'
                           )

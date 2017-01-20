@@ -93,9 +93,11 @@ class SignalToNoise(Tool):
         fill the menu with all available images within other displays
         '''
         menu.clear()
-
+        
         def setRefImg(display, layernumber, layername):
-            menu.setTitle(layername[:20])
+            if len(layername)>20:
+                layername = layername[:20] + '...'
+            menu.setTitle(layername)
             self.__setattr__(refDisplay, display)
             self.__setattr__(refLayerIndex, layernumber)
 
