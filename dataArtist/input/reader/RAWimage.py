@@ -9,13 +9,7 @@ from pyqtgraph_karl.parametertree.parameterTypes import GroupParameter
 from dataArtist.input.reader._ReaderBase import ReaderBase
 
 
-STR_TO_DTYPE = OrderedDict((('8-bit', 'u1'),
-                            ('16-bit Signed', 'i2'),
-                            ('16-bit Unsigned', 'u2'),
-                            ('32-bit Signed', 'i4'),
-                            ('32-bit Unsigned', 'u4'),
-                            ('32-bit Real/floating point', 'f4'),
-                            ))
+from imgProcessor.reader.RAW import RAW, STR_TO_DTYPE
 
 
 class RAWimage(ReaderBase):
@@ -35,18 +29,8 @@ class RAWimage(ReaderBase):
     def open(self, filename):
         p = self.preferences
 
-        dt = STR_TO_DTYPE[p.pDType.value()]
-        if not p.pLittleEndian.value():
-            dt = '>' + dt
-
-        s0, s1 = p.pWidth.value(), p.pHeight.value()
-        arr = np.fromfile(filename, dtype=dt, count=s0 * s1)
-        try:
-            arr = arr.reshape(s0, s1)  # , order='F'
-        except ValueError:
-            # array shape doesn't match actual size
-            s1 = arr.shape[0] // s0
-            arr = arr.reshape(s0, s1)
+        arr = RAW(filename, p.pWidth.value(), p.pHeight.value(), 
+                  p.pDType.value(), p.pLittleEndian.value())
 
         arr = self.toFloat(arr)
 
@@ -72,12 +56,12 @@ class _Preferences(GroupParameter):
         self.pWidth = self.addChild({
             'name': 'Width',
             'type': 'int',
-            'value': 1024,
+            'value': 640,
             'unit': 'pixels'})
         self.pHeight = self.addChild({
             'name': 'Height',
             'type': 'int',
-            'value': 1024,
+            'value': 480,
             'unit': 'pixels'})
         self.pToFloat = self.addChild({
             'name': 'transform to float',

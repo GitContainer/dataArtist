@@ -180,16 +180,16 @@ class GridROI(pg.ROI):
                     c.setSize(size)
             self._setCellPos(self.state['pos'], True)
 
-    def setAngle(self, angle, update=True, finish=True):
+    def setAngle(self, angle, **kwargs):
         for c in self.cells:
-            c.setAngle(angle, update, finish)
+            c.setAngle(angle, **kwargs)
             for line in c.subgrid:
-                line.setAngle(angle, update, finish)
+                line.setAngle(angle, **kwargs)
         self._setCellPos(self.state['pos'])
-        pg.ROI.setAngle(self, angle, update, finish)
+        pg.ROI.setAngle(self, angle, **kwargs)
 
-    def setPos(self, pos, update=True, finish=True):
-        pg.ROI.setPos(self, pos, update, finish)
+    def setPos(self, pos, **kwargs):
+        pg.ROI.setPos(self, pos, **kwargs)
         self._setCellPos(pos)
 
     def setSubGrid(self, s):
