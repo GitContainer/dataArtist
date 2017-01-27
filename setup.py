@@ -93,7 +93,8 @@ setup(
         read('README.rst')  # + '\n\n' +
         # read('CHANGES.rst') + '\n\n' +
         # read('AUTHORS.rst')
-    )
+    ),
+    zip_safe=False,
 )
 
 # remove the build
