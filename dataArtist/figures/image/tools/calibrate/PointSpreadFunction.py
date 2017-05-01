@@ -34,7 +34,7 @@ class PointSpreadFunction(Tool):
 
         self.createResultInDisplayParam(pMeasure)
 
-        #TODO: implement other methods:
+        # TODO: implement other methods:
         self.pMethod = pMeasure.addChild({
             'name': 'Method',
             'type': 'list',
@@ -102,6 +102,7 @@ class PointSpreadFunction(Tool):
             return
         out = self.sharp.psf(filter_below=v)
         self.outDisplay.widget.update(out)
+        self.outDisplay.widget.updateView()
 
     def _setBoundaries(self, param):
         if not self.quadROI:
@@ -116,7 +117,7 @@ class PointSpreadFunction(Tool):
         w = self.display.widget
 #         s = w.image.shape[1:3]
         r = self.display.widget.view.vb.viewRange()
-        p = ((r[0][0] + r[0][1])/ 2, (r[1][0] + r[1][1])/ 2)
+        p = ((r[0][0] + r[0][1]) / 2, (r[1][0] + r[1][1]) / 2)
         s = [(r[0][1] - r[0][0]) * 0.1, (r[1][1] - r[1][0]) * 0.1]
 
         # if w.image.ndim == 3:
@@ -160,7 +161,7 @@ class PointSpreadFunction(Tool):
         x0 = p.x()
         y0 = p.y()
         # has to be y,x due to different conventions:
-        corners = np.array([(h['pos'].y() + y0, h['pos'].x() + x0)
+        corners = np.array([(h['pos'].x() + x0, h['pos'].y() + y0)
                             for h in self.quadROI.handles])
 
         std = self.pShowStd.value()

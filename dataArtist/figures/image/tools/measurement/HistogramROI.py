@@ -144,36 +144,36 @@ class _HistogramROIArea(ROIArea):
         for img, plot in zip(simg, self.plots):
             # DATA
             try:
-                img_cut = img[x0:x1, y0:y1]
+                img_cut = img[y0:y1, x0:x1]
                 nBins = None
                 if self.tool.pLimitRange.value():
-                    r=(f,t)
+                    r = (f, t)
                     nBins = int(t - f)
                 else:
-                    r=None
+                    r = None
 
                 if self.tool.pLimitBins.value():
                     nBins = self.tool.pNBins.value()
 
                 else:
                     if not nBins:
-                        
+
                         mx = np.max(img_cut)
                         if np.isnan(mx):
                             mx = np.nanmax(img_cut)
                             mn = np.nanmin(img_cut)
                         else:
                             mn = np.min(img_cut)
-                      
+
                         nBins = int(mx - mn)
                         if r is None:
-                            r = (mn,mx)
+                            r = (mn, mx)
                     if nBins < 100:
                         # e.g. when scaling 0-1
                         nBins = 100
                 hist, bin_edges = np.histogram(img_cut, nBins, range=r)
-                #take middle position instead of edges:
-                bin_edges += 0.5*(bin_edges[1]-bin_edges[0])
+                # take middle position instead of edges:
+                bin_edges += 0.5 * (bin_edges[1] - bin_edges[0])
                 plot.setData(y=hist, x=bin_edges[:-1])
 
             except (IndexError, ValueError) as err:

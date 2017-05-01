@@ -103,7 +103,7 @@ class DarkCurrent(ImageTool):
     def _startAsFunction(self):
         x = self.display.stack.values
         imgs = self.getImageOrFilenames()
-        mx = self.calFileTool.curCal.coeffs['max value']
+        mx = 2**self.calFileTool.curCal.coeffs['depth'] - 1
         # TODO: include rmse,maxExpTime
         inter, slope, rmse = getDarkCurrentFunction(x, imgs, mxIntensity=mx)
         return inter, slope

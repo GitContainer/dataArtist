@@ -13,7 +13,8 @@ from fancytools.os.PathStr import PathStr
 import os
 
 # OWN
-from dataArtist.widgets.Tool import Tool
+from dataArtist.widgets.ImageTool import ImageTool
+
 from dataArtist.figures.image.tools.globals.CalibrationFile import CalibrationFile
 from dataArtist.items.UnregGridROI import UnregGridROI
 
@@ -24,7 +25,7 @@ PATTERN_FILE = PathStr(
 del dataArtist
 
 
-class LensDistortion(Tool):
+class LensDistortion(ImageTool):
     '''
     Calibrate the camera through interpreting chessboard images
     [also works with un-loaded image stack]
@@ -32,7 +33,7 @@ class LensDistortion(Tool):
     icon = 'chessboard.svg'
 
     def __init__(self, imageDisplay):
-        Tool.__init__(self, imageDisplay)
+        ImageTool.__init__(self, imageDisplay)
 
         self.calFileTool = self.showGlobalTool(CalibrationFile)
 
@@ -253,16 +254,14 @@ True: Images are taken every time the first layer is updated
                 # ACTIVATE WHEN IMAGE CHANGES
                 w.item.sigImageChanged.connect(self._addImgStream)
         else:
-            # READ IMAGE STACK
-                # check conditions:
-            if len(self.display.filenames) < 10:
-                print('having less than 10 images can result in erroneous results')
+            img = self.getImageOrFilenames()
+            img_loaded = isinstance(img[0], np.ndarray)
 
-            img = w.image
-            img_loaded = True
-            if img is None:  # calibration images not loaded
-                img_loaded = False
-                img = self.display.filenames
+            # check conditions:
+            if len(img) < 10:
+                print(
+                    'having less than 10 images can result in \
+ erroneous results')
 
             out = []
             d = self.pDrawChessboard.value()

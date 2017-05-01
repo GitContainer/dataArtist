@@ -75,6 +75,13 @@ class CalibrationFile(GlobalTool):
 #             })
 #         pUnload.sigActivated.connect(self._unloadCalibration)
 
+        self.pDepth = self.pCal.addChild({
+            'name': 'Bit Depth',
+            'type': 'str',
+            'value': '',
+            'visible': False,
+            'readonly': True})
+
         self.pLight = self.pCal.addChild({
             'name': 'Light spectra',
             'type': 'list',
@@ -190,12 +197,14 @@ class CalibrationFile(GlobalTool):
             self.calibrations.append(c)
 
             name = a.args['camera name']
-            c.setCamera(name, a.args['bit depth'])
+            depth = a.args['bit depth']
+            c.setCamera(name, depth)
             self.calibrations.append(c)
             self.pModified.setValue(True)
             l = list(self.pCal.opts['limits'])
             l.append(name)
             self.pCal.setLimits(l)
+            self.pDepth.setValue(depth)
             [p.show() for p in self.pCal.childs]
 
     def _loadFromFile(self):
@@ -409,6 +418,8 @@ class CalibrationFile(GlobalTool):
     def _updateInfo(self):
         c = self.curCal
         self.pCal.setValue(c.coeffs['name'])
+        self.pDepth.setValue(c.coeffs['depth'])
+
         # needs to be copy of list - otherwise limits would not be updated:
         l_new = list(c.coeffs['light spectra'])
         self.pLight.setLimits(l_new)
