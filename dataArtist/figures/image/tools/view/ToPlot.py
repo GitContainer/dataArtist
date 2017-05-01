@@ -27,16 +27,16 @@ class ToPlot(Tool):
         d = self.display
         _, s1, s2 = d.widget.image.shape
 
-        x = np.arange(s1)
-        if self.pMax.value() < s2:
-            y = np.linspace(0, s2 - 1, self.pMax.value(), dtype=int)
+        x = np.arange(s2)
+        if self.pMax.value() < s1:
+            y = np.linspace(0, s1 - 1, self.pMax.value(), dtype=int)
         else:
-            y = range(s2)
+            y = range(s1)
 
         names = [str(val) for val in y]
 
         for n, im in enumerate(d.widget.image):
-            vals = [(x, im[:, i]) for i in y]
+            vals = [(x, im[i]) for i in y]
 
             d = self.display.workspace.addDisplay(
                 axes=2,

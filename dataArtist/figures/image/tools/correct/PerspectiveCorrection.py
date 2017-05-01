@@ -6,16 +6,27 @@ import numpy as np
 import pyqtgraph_karl as pg
 import cv2
 #from imgProcessor.QuadDetection import QuadDetection, ObjectNotFound
-from imgProcessor.features.QuadDetection import QuadDetection
+# from imgProcessor.features.QuadDetection import QuadDetection
+from dataArtist.items.PerspectiveGridROI import PerspectiveGridROI
 
 from imgProcessor.camera.PerspectiveCorrection \
     import PerspectiveCorrection as PC
 
-from fancytools.spatial.closestNonZeroIndex import closestNonZeroIndex
+# from fancytools.spatial.closestNonZeroIndex import closestNonZeroIndex
 
 # OWN
 from dataArtist.widgets.Tool import Tool
 from dataArtist.figures.image.tools.globals.CalibrationFile import CalibrationFile
+
+
+# PROPRIETARY
+try:
+    from PROimgProcessor.transform.subPixelAlignment import subPixelAlignment
+    from PROimgProcessor.GridDetection import CrystModule
+
+except ImportError:
+    subPixelAlignment = None
+    CrystModule = None
 
 
 class PerspectiveCorrection(Tool):
@@ -31,10 +42,10 @@ class PerspectiveCorrection(Tool):
 
         self.quadROI = None
         self.outDisplay = None
-        self.outDisplayViewFactor = None
+#         self.outDisplayViewFactor = None
         self._refPn = []
 
-        self._cLayerLines = None
+#         self._cLayerLines = None
 
         pa = self.setParameterMenu()
 
@@ -52,15 +63,59 @@ class PerspectiveCorrection(Tool):
             'value': 'Object profile',
             'limits': ['Object profile', 'Reference image', 'Reference points']})
         # HOMOGRAPHY THROUGH QUAD
+        self.pBorder = self.pRef.addChild({
+            'name': 'Border',
+            'type': 'int',
+            'value': 0,
+            'limits': (0, 1000)})
+        pro = CrystModule is not None
         self.pManual = self.pRef.addChild({
             'name': 'Manual object detection',
             'type': 'bool',
-            'value': False})
-#         self.pSnap = self.pManual.addChild({
-#             'name':'Snap at edges',
-#             'type':'bool',
-#             'value':False,
-#             'visible':False})
+            'value': not pro,
+            'readonly': not pro
+        })
+        self.pCells = self.pRef.addChild({
+            'name': 'Rectify cells',
+            'type': 'bool',
+            'value': False,
+            'readonly': not pro})
+        self.pCellsX = self.pCells.addChild({
+            'name': 'X',
+            'type': 'int',
+            'value': 10,
+            'limits': (1, 100)})
+        self.pCellsY = self.pCells.addChild({
+            'name': 'Y',
+            'type': 'int',
+            'value': 6,
+            'limits': (1, 100)})
+
+        self.pCellsX.sigValueChanged.connect(self._updateROI)
+        self.pCellsY.sigValueChanged.connect(self._updateROI)
+
+        self.pMask = self.pRef.addChild({
+            'name': 'Create Mask',
+            'type': 'bool',
+            'value': True})
+        self.pSubcells = self.pMask.addChild({
+            'name': 'N subcells',
+            'type': 'int',
+            'value': 2})
+        self.pCellOrient = self.pMask.addChild({
+            'name': 'Subcells orientation',
+            'type': 'list',
+            'value': 'horiz',
+            'values': ['horiz', 'vert']})
+        self.pCellShape = self.pMask.addChild({
+            'name': 'Cell shape',
+            'type': 'list',
+            'value': 'square',
+            'values': ['square', 'pseudo square']})
+        self.pMask.sigValueChanged.connect(lambda param, val:
+                                           [ch.show(val) for ch in param.childs])
+        self.pMask.setValue(False)
+
         # HOMOGRAPHY THROUGH REF IMAGE
         self.pRefImgChoose = self.pRef.addChild({
             'name': 'Reference image',
@@ -74,7 +129,38 @@ class PerspectiveCorrection(Tool):
                     'readonly': True})
         self.pRefImgChoose.aboutToShow.connect(lambda menu:
                                                self.buildOtherDisplayLayersMenu(
-                                                    menu, self._setRefImg))
+                                                   menu, self._setRefImg,
+                                                   includeThisDisplay=True))
+
+        self.pSubPx = self.pRef.addChild({
+            'name': 'Sub-pixel alignment',
+                    'value': True,
+                    'type': 'bool',
+                    'visible': False,
+                    'enabled': pro})
+        self.pSubPx_x = self.pSubPx.addChild({
+            'name': 'cells x',
+                    'value': 12,
+                    'type': 'int',
+                    'limits': (1, 100)})
+        self.pSubPx_y = self.pSubPx.addChild({
+            'name': 'cells y',
+                    'value': 9,
+                    'type': 'int',
+                    'limits': (1, 100)})
+        self.pSubPx_neigh = self.pSubPx.addChild({
+            'name': 'n neighbors',
+                    'value': 2,
+                    'type': 'int',
+                    'limits': (1, 100)})
+        self.pSubPx_maxDev = self.pSubPx.addChild({
+            'name': 'max dev',
+                    'value': 30,
+                    'type': 'int',
+                    'limits': (1, 1000)})
+
+        self.pSubPx.sigValueChanged.connect(lambda param, val:
+                                            [ch.show(not val) for ch in param.childs])
 
         self.pRef.sigValueChanged.connect(self._pRefChanged)
 #         self.pSnap.sigValueChanged.connect(self._pSnapChanged)
@@ -131,12 +217,12 @@ class PerspectiveCorrection(Tool):
             'type': 'bool',
             'value': False,
             'tip': 'For realistic results choose a camera calibration'})
-        self.pDrawViewFactor = self.pCorrViewFactor.addChild({
-            'name': 'Show tilt factor',
-            'type': 'bool',
-            'value': False})
-        self.pCorrViewFactor.sigValueChanged.connect(lambda param, val:
-                                                     self.pDrawViewFactor.show(val))
+#         self.pDrawViewFactor = self.pCorrViewFactor.addChild({
+#             'name': 'Show tilt factor',
+#             'type': 'bool',
+#             'value': False})
+#         self.pCorrViewFactor.sigValueChanged.connect(lambda param, val:
+#                                                      self.pDrawViewFactor.show(val))
 
         self.pLive = pa.addChild({
             'name': 'Live',
@@ -198,8 +284,16 @@ class PerspectiveCorrection(Tool):
         return (rFrom, rTo)
 
     def _pRefChanged(self, param, val):
-        self.pManual.show(val == 'Object profile')
-        self.pRefImgChoose.show(val == 'Reference image')
+        x = val == 'Reference image'
+        self.pRefImgChoose.show(x)
+        self.pSubPx.show(x)
+
+        x = val == 'Object profile'
+        self.pManual.show(x)
+        self.pCells.show(x)
+        self.pBorder.show(x)
+        self.pMask.show(x)
+
         #self.pCalcAR.show(val != 'Reference points')
         vv = val == 'Reference points'
         if vv:
@@ -236,35 +330,37 @@ class PerspectiveCorrection(Tool):
 #         elif self._cLayerLines is not None:
 #             w.removeColorLayer(self._cLayerLines)
 #             self._cLayerLines = None
+#
+#     def _roiMoved(self):
+#         if self._cLayerLines is not None:
+#             i = self._cLayerLines.image
+#             for h in self.quadROI.handles:
+#                 # snap to closest line
+#                 pos = h['item'].pos()
+#                 pt = (pos.x(), pos.y())
+#                 closest = closestNonZeroIndex(pt, i, kSize=101)
+#                 if closest is not None:
+#                     h['item'].setPos(closest[0], closest[1])
+#             self.quadROI.update()
 
-    def _roiMoved(self):
-        if self._cLayerLines is not None:
-            i = self._cLayerLines.image
-            for h in self.quadROI.handles:
-                # snap to closest line
-                pos = h['item'].pos()
-                pt = (pos.x(), pos.y())
-                closest = closestNonZeroIndex(pt, i, kSize=101)
-                if closest is not None:
-                    h['item'].setPos(closest[0], closest[1])
+    def _updateROI(self):
+        if self.quadROI:
+            self.quadROI.nCells = self.pCellsX.value(), self.pCellsY.value()
             self.quadROI.update()
 
     def _createROI(self):
         w = self.display.widget
         s = w.image[w.currentIndex].shape[:2]
         if not self.quadROI:
-            self.quadROI = pg.PolyLineROI([[s[0] * 0.2, s[1] * 0.2],
-                                           [s[0] * 0.8, s[1] * 0.2],
-                                           [s[0] * 0.8, s[1] * 0.8],
-                                           [s[0] * 0.2, s[1] * 0.8]],
-                                          closed=True, pen='r')
-            self.quadROI.translatable = False
-            self.quadROI.mouseHovering = False
-            self.quadROI.sigRegionChangeFinished.connect(self._roiMoved)
-            # TODO: just disconnect all signals instead of having lambda
-            # PREVENT CREATION OF SUB SEGMENTS:
-            for s in self.quadROI.segments:
-                s.mouseClickEvent = lambda x: None
+
+            r = w.view.vb.viewRange()
+            p = ((r[0][0] + r[0][1]) / 2,
+                 (r[1][0] + r[1][1]) / 2)
+            s = [(r[0][1] - r[0][0]) * 0.1, (r[1][1] - r[1][0]) * 0.1]
+
+            self.quadROI = PerspectiveGridROI(nCells=(self.pCellsX.value(),
+                                                      self.pCellsY.value()),
+                                              pos=p, size=s)
 
             w.view.vb.addItem(self.quadROI)
 
@@ -283,27 +379,7 @@ class PerspectiveCorrection(Tool):
         if v == 'Reference points':
             self.pc = None
             return  # do in self.process
-        # HOMOGRAPHY THROUGH REFERENCE IMAGE
-        elif v == 'Reference image':
-            ref = self._refImg
-        else:
-            # HOMOGRAPHY THROUGH QUAD
-            if self.pManual.value():
-                # need to transpose because of different conventions
-                vertices = np.array([(h['pos'].y(), h['pos'].x())
-                                     for h in self.quadROI.handles])
-                vertices += self.quadROI.pos()
-            else:
-                vertices = QuadDetection(img).vertices
 
-                if not self.quadROI:
-                    self._createROI()
-                # show found ROI:
-                for h, c in zip(self.quadROI.handles, vertices):
-                    pos = c[::-1] - self.quadROI.pos()
-                    h['item'].setPos(pos[0], pos[1])
-            ref = vertices
-            self.quadROI.show()
         try:
             c = self.calFileTool.currentCameraMatrix()
         except AttributeError:
@@ -322,19 +398,53 @@ class PerspectiveCorrection(Tool):
                 if h == 0:
                     h = None
         # output size:
-        size = (None,None)
+        size = (None, None)
         if not self.pCalcOutSize.value():
             size = (self.pOutHeight.value(), self.pOutWidth.value())
 
-        # INIT:
-        self.pc = PC(img.shape,
-                     obj_width_mm=h,
-                     obj_height_mm=w,
-                     cameraMatrix=c,
-                     do_correctIntensity=self.pCorrViewFactor.value(),
-                     new_size=size
-                     )
-        self.pc.setReference(ref)
+        self._pc_args = dict(obj_width_mm=h,
+                             obj_height_mm=w,
+                             cameraMatrix=c,
+                             do_correctIntensity=self.pCorrViewFactor.value(),
+                             new_size=size)
+
+        # HOMOGRAPHY THROUGH REFERENCE IMAGE
+        if v == 'Reference image':
+            # INIT:
+            self.pc = PC(img.shape, **self._pc_args)
+            self.pc.setReference(self._refImg)
+
+        else:
+            # HOMOGRAPHY THROUGH QUAD
+            vertices = None  # QuadDetection(img).vertices
+            if self.pManual.value():
+                # need to transpose because of different conventions
+                vertices = np.array([(h['pos'].y(), h['pos'].x())
+                                     for h in self.quadROI.handles])
+                vertices += self.quadROI.pos()
+            if CrystModule is None:
+                self.pc = PC(img.shape, **self._pc_args)
+                self.pc.setReference(self._refImg)
+
+            self.pc = CrystModule(border=self.pBorder.value())
+            self.pc.setGrid(img=img,
+                            vertices=vertices,
+                            shape=self.pCellShape.value(),
+                            grid=(self.pCellsY.value(), self.pCellsX.value()),
+                            nBusbars=self.pSubcells.value(),
+                            busbarOrientation=int(
+                                self.pCellOrient.value() == 'horiz'),
+                            refine=self.pCells.value(),
+                            refine_sublines=self.pMask.value())
+
+            if not self.pManual.value():
+                if not self.quadROI:
+                    self._createROI()
+                # show found ROI:
+                for h, c in zip(self.quadROI.handles, self.pc.opts['vertices']):
+                    pos = c[::-1] - self.quadROI.pos()
+                    h['item'].setPos(pos[0], pos[1])
+                self.quadROI.show()
 
     def _process(self):
         w = self.display.widget
@@ -343,12 +453,13 @@ class PerspectiveCorrection(Tool):
         v = self.pRef.value()
 
         if v == 'Reference points':
+            # 2x3 point warp:
             r0, r1 = self._refPn
             pts0 = np.array([(h['pos'].y(), h['pos'].x())
                              for h in r0.handles]) + r0.pos()
             pts1 = np.array([(h['pos'].y(), h['pos'].x())
                              for h in r1.handles]) + r1.pos()
-            #TODO: embed in PyerspectiveCorrection
+            # TODO: embed in PyerspectiveCorrection
             M = cv2.getAffineTransform(
                 pts0.astype(
                     np.float32), pts1.astype(
@@ -368,7 +479,21 @@ class PerspectiveCorrection(Tool):
                         or (e == 'last image' and n == len(img) - 1)):
 
                     if not (r and n == self._refImg_from_own_display):
-                        out.append(self.pc.correct(i))
+                        corr = self.pc.correct(i)
+
+                        if r and self.pSubPx.value():
+
+                            corr = subPixelAlignment(corr, self._refImg,
+                                                     niter=20,
+                                                     grid=(self.pSubPx_y.value(),
+                                                           self.pSubPx_x.value()),
+                                                     method='smooth',
+                                                     # maxGrad=2,
+                                                     concentrateNNeighbours=self.pSubPx_neigh.value(
+                                                     ),
+                                                     maxDev=self.pSubPx_maxDev.value())[0]
+
+                        out.append(corr)
         return out
 
     def _done(self, out):
@@ -383,57 +508,23 @@ class PerspectiveCorrection(Tool):
             self.outDisplay.widget.update(out)
             self.outDisplay.widget.updateView()
 
-        if self.pCorrViewFactor.value() and self.pDrawViewFactor.value():
-            if not self.outDisplayViewFactor:
-                self.outDisplayViewFactor = self.display.workspace.addDisplay(
-                    origin=self.display,
-                    changes=change,
-                    data=[self.pc.maps['tilt_factor']],
-                    title='Tilt factor')
-            else:
-                self.outDisplayViewFactor.widget.setImage(
-                    self.pc.maps['tilt_factor'])
-#
-#         if self.pSceneReconstruction.value():
-#             #print p.scene()[0,0], p.scene()[-1,-1]
-#             if not self.outDisplayScene:
-#                 self.outDisplayScene = self.workspace.addDisplay(
-#                         axes = 4,
-#                         origin=self.display,
-#                         changes=change,
-#                         data=[p.scene()],
-#                         title='Scene reconstruction')
+#         if self.pCorrViewFactor.value() and self.pDrawViewFactor.value():
+#             if not self.outDisplayViewFactor:
+        if self.pMask.value() and self.pMask.isVisible():
+            self.display.workspace.addDisplay(
+                origin=self.display,
+                data=[self.pc.mask()],
+                title='Grid mask')
 #             else:
-#                 self.outDisplayScene.widget.update(index=0, data=p.scene())
-#
-#             self.outDisplayScene.widget.updateView(xRange=p.sceneRange()[1],
-#                                                       #yRange=p.sceneRange()[0]
-#                                                       )
+#                 self.outDisplayViewFactor.widget.setImage(
+#                     self.pc.maps['tilt_factor'])
 
         if not self.pOverrideOutput.value():
             self.outDisplay = None
-            self.outDisplayViewFactor = None
+#             self.outDisplayViewFactor = None
         if not self.pLive.value():
             self.setChecked(False)
             del self.pc
-#         if self.pDraw3dAxis.value():
-#             out = p.draw3dCoordAxis()
-#             w.item.blockSignals(True)
-#             w.setImage(out)
-#             w.item.blockSignals(False)
-#             if self.axisLayer == None:
-#                 self.axisLayer = w.addColorLayer(out, name='3daxis')#, indices=found_indices)
-#             else:
-#                 self.axisLayer.setImage(out)
-
-#             if not self.outDisplayAxes:
-#                 self.outDisplayAxes = self.workspace.addDisplay(
-#                         origin=self.display,
-#                         changes=change,
-#                         data=[out],
-#                         title='Axes')
-#             else:
-#                 self.outDisplayAxes.widget.setImage(out)
 
     def _prepareAndProcess(self):
         self._prepare()

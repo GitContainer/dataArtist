@@ -122,7 +122,7 @@ class _POI(pg.ROI):
         if x == 0 or y == 0:
             return
         try:
-            z_values = self.master.image[:, x, y]
+            z_values = self.master.image[:, y, x]
 
             self.plot.setData(x=self.masterDisplay.stack.values, y=z_values)
             self.plot.label.setText('%s: [%s, %s]' % (self._name, x, y))

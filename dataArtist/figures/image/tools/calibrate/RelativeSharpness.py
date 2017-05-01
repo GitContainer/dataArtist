@@ -23,7 +23,7 @@ class RelativeSharpness(Tool):
             'modifiedLaplacian': parameters.modifiedLaplacian,
             'varianceOfLaplacian': parameters.varianceOfLaplacian,
             'normalizedGraylevelVariance': parameters.normalizedGraylevelVariance
-        }
+                        }
 
         pa = self.setParameterMenu()
 

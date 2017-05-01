@@ -1,7 +1,7 @@
 # coding=utf-8
 from __future__ import print_function
 import os
-import traceback
+import cv2
 
 from qtpy import QtWidgets, QtCore, QtGui
 
@@ -10,9 +10,7 @@ from fancytools.os.PathStr import PathStr
 from dataArtist.widgets.ParameterMenu import ParameterMenu
 
 
-# ICONFOLDER = PathStr.getcwd('dataArtist').join("media","icons")
 import dataArtist
-from PyQt5.QtWidgets import QToolButton
 ICONFOLDER = PathStr(dataArtist.__file__).dirname().join('media', 'icons')
 del dataArtist
 
@@ -56,9 +54,18 @@ class _ProcessThread(QtCore.QThread):
     def run(self):
         try:
             out = self.runfn()
-        except Exception:
-            print('tool activation aborted: %s' % traceback.format_exc())
-            return self.progressBar.cancel.click()
+        except AssertionError as e:
+            # need to transform assert into exception
+            # otherwise no exception text printed:
+            self.progressBar.cancel.click()
+            raise Exception(e.args)
+        except (cv2.error, Exception) as e:
+            # need to fetch cv2.error extra and print it. otherwise
+            # msg would not be visible in log
+            if type(e) is cv2.error:
+                print(e)
+            self.progressBar.cancel.click()
+            raise
         self.sigDone.emit(out)
 
 
@@ -69,7 +76,7 @@ class Tool(QtWidgets.QToolButton):
     reinit = False  # whether to execute activate()/deactivate() at restoreState()
 
     def __init__(self, display):
-        QtWidgets.QToolButton.__init__(self)
+        super().__init__()
         self.display = display
         self.view = display.widget.view.vb
         # SET ICON
@@ -95,16 +102,9 @@ class Tool(QtWidgets.QToolButton):
             except AttributeError:
                 self.deactivate = self._deactivate
                 self.setCheckable(False)
+            self.clicked.connect(self.toggle)
         else:
             self.setPopupMode(QtWidgets.QToolButton.InstantPopup)
-
-        self.clicked.connect(self.toggle)
-
-
-
-
-
-
 
     def showGlobalTool(self, toolCls):
         g = self.display.workspace.gui.gTools
@@ -224,8 +224,8 @@ class Tool(QtWidgets.QToolButton):
                     d.changeLayer(data=out, index=l, **kwargs)
         return d
 
-    def buildOtherDisplayLayersMenu(
-            self, menu, triggerFn, includeThisDisplay=False, updateMenuValue=True):
+    def buildOtherDisplayLayersMenu(self, menu, triggerFn,
+                                    includeThisDisplay=False, updateMenuValue=True):
         '''
         fill the menu with all available layers within other displays
         this function of often connected with the menu.aboutToShow signal
@@ -282,7 +282,6 @@ class Tool(QtWidgets.QToolButton):
         self._menu.aboutToShow.connect(self._highlightCurrentTool)
         return self._menu.p
 
-
     def _highlightCurrentTool(self):
         '''
         often you'll setup a tool within its menu
@@ -292,23 +291,22 @@ class Tool(QtWidgets.QToolButton):
         drawn slightly darker to help you remember.
         '''
         bar = self.parent()
-        #reset last highlighted tool:
-        for tool in bar.findChildren(QToolButton):
+        # reset last highlighted tool:
+        for tool in bar.findChildren(QtWidgets.QToolButton):
             if tool.property('modified') == 'True':
-                tool.setProperty('modified', 'False')  
+                tool.setProperty('modified', 'False')
                 tool.style().unpolish(tool)
                 tool.style().polish(tool)
                 tool.update()
 
-        #highlight current tool
+        # highlight current tool
         self.setProperty('modified', 'True')
         tbar = self.parent()
         color = tbar.palette().color(tbar.backgroundRole())
         color = color.darker(120)
 
         self.setStyleSheet(self.styleSheet() + """QToolButton[modified = "True"] {  
-        background-color: %s;}""" %color.name())
- 
+        background-color: %s;}""" % color.name())
 
     def addAction(self, *args):
         '''
@@ -366,11 +364,17 @@ class Tool(QtWidgets.QToolButton):
         '''
         self._returnMethod = returnMethod
         if activate:
-            self.clicked.disconnect(self.toggle)
+            try:
+                self.clicked.disconnect(self.toggle)
+            except TypeError:
+                pass  # module not connected
             self.clicked.connect(self._doReturnToolOnClick)
         else:
             self.clicked.connect(self.toggle)
-            self.clicked.disconnect(self._doReturnToolOnClick)
+            try:
+                self.clicked.disconnect(self._doReturnToolOnClick)
+            except TypeError:
+                pass  # module not connected
 
     def _doReturnToolOnClick(self):
         self.setChecked(False)

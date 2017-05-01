@@ -11,8 +11,10 @@ from .Transform import Transform
 from .IsColor import IsColor
 from .SwitchBetweenGridAndStackedView import SwitchBetweenGridAndStackedView
 from .ToPlot import ToPlot
+from .Selection import Selection
+
 color = 'blue'
 show = True
 tools = (LockView, Colorbar, Axes, TimeLine,
-         Transform, IsColor, Overlay,
+         Transform, IsColor, Selection, Overlay,
          SwitchBetweenGridAndStackedView, ToPlot)

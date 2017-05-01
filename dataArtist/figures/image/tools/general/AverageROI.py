@@ -170,7 +170,7 @@ class _ROI1d(_ROIAverage):
     def setupUpdateView(self, rotation):
         self._rotation = rotation
         if not rotation:
-            self.av_dir = 1 if self.tool.pAvDirection.value() == 'vertical' else 0
+            self.av_dir = 0 if self.tool.pAvDirection.value() == 'vertical' else 1
 
     def setup(self):
         '''
@@ -234,7 +234,7 @@ class _ROI1d(_ROIAverage):
                                            self.stdPlots, self.rmsPlots):
             # DATA
             try:
-                dataorig = img[x0:x1, y0:y1]
+                dataorig = img[y0:y1, x0:x1]
                 if dataorig.dtype.kind == 'f' and np.any(np.sum(dataorig)):
                     mean = np.nanmean
                 else:
@@ -425,7 +425,7 @@ class _ROI2d(_ROIAverage):
         self.text.setPos(px, py)
         # DATA
         try:
-            img_cut = self.img[:, x0:x1, y0:y1]
+            img_cut = self.img[:, y0:y1, x0:x1]
             w = self.slaveDisplay.widget
             w.image = img_cut
             w.updateView(force=True)

@@ -1,15 +1,12 @@
-# coding=utf-8
-from __future__ import absolute_import
 from .CorrectCamera import CorrectCamera
-from .Move import Move
-from .PatternRecognition import PatternRecognition
+from .PerspectiveImageStitching import PerspectiveImageStitching
 from .PerspectiveCorrection import PerspectiveCorrection
-from .ScaleHistogram import ScaleHistogram
-from .Stitch import Stitch
+from .ScaleIntensity import ScaleIntensity
+from .InPlaneImageStitching import InPlaneImageStitching
 
 
 tools = (CorrectCamera, PerspectiveCorrection,
-         PatternRecognition, ScaleHistogram, Stitch, Move)
+         PerspectiveImageStitching, ScaleIntensity, InPlaneImageStitching)
 # position='right'
 secondRow = True
 color = 'red'

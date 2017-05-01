@@ -34,6 +34,7 @@ class PointSpreadFunction(Tool):
 
         self.createResultInDisplayParam(pMeasure)
 
+        #TODO: implement other methods:
         self.pMethod = pMeasure.addChild({
             'name': 'Method',
             'type': 'list',

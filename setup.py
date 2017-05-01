@@ -63,11 +63,13 @@ setup(
         "pywin32",
         "pygments",
         # TODO: still needed although we use py3 now?:
-        "enum34",
-        # neede by numba(llvmlite) ... and for some reason not installed
-        "qtpy"
+        #"enum34",
+        # needed by numba(llvmlite) ... and for some reason not installed
+        "qtpy",
         # TO BE INSTALLED MANUALLY:
         # opencv
+        # OPTIONAL
+        "rawpy"
     ],
     classifiers=[
         'Intended Audience :: Developers',

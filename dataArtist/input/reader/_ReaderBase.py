@@ -100,7 +100,8 @@ class ReaderBase(QtCore.QThread):
         self.progressBar.cancel.clicked.connect(self._cancel)
         self.progressBar.bar.setValue(0)
         self._status_timer.timeout.connect(lambda:
-                                           self.progressBar.bar.setValue(self.overallStatus()))
+                                           self.progressBar.bar.setValue(
+                                           self.overallStatus()))
         self._status_timer.start(1000)  # [ms] -> every second
 
         self.finished.connect(self.cleanUp)

@@ -1,8 +1,5 @@
 # coding=utf-8
 
-import numpy as np
-from collections import OrderedDict
-
 from pyqtgraph_karl.parametertree.parameterTypes import GroupParameter
 
 # OWN
@@ -29,7 +26,7 @@ class RAWimage(ReaderBase):
     def open(self, filename):
         p = self.preferences
 
-        arr = RAW(filename, p.pWidth.value(), p.pHeight.value(), 
+        arr = RAW(filename, p.pWidth.value(), p.pHeight.value(),
                   p.pDType.value(), p.pLittleEndian.value())
 
         arr = self.toFloat(arr)

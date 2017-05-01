@@ -2,13 +2,13 @@
 from __future__ import print_function
 import numpy as np
 
-from imgProcessor.transform.PerspectiveTransformation import PerspectiveTransformation
+from imgProcessor.transform.PerspectiveImageStitching import PerspectiveImageStitching as PerspectiveTransformation
 
 # OWN
 from dataArtist.widgets.Tool import Tool
 
 
-class PatternRecognition(Tool):
+class PerspectiveImageStitching(Tool):
     '''
     Fit/Add last/all layer(s) of this display to a given reference image
     using pattern recognition
@@ -30,7 +30,7 @@ class PatternRecognition(Tool):
         self.pOperation = pa.addChild({
             'name': 'Operation',
             'type': 'list',
-            'value': 'fit',
+            'value': 'add',
             'limits': ['add', 'fit']})
 
         self.pExecOn = pa.addChild({
@@ -51,7 +51,8 @@ class PatternRecognition(Tool):
                     'readonly': True})
 
         pRefImgChoose.aboutToShow.connect(lambda menu:
-                                          self.buildOtherDisplayLayersMenu(menu, self._setRefImg))
+                    self.buildOtherDisplayLayersMenu(menu, self._setRefImg))
+
 
     def _setRefImg(self, display, layernumber, layername):
         '''
@@ -64,8 +65,10 @@ class PatternRecognition(Tool):
             self._refImg_from_own_display = layernumber
         self.pRefImg.setValue(layername)
 
+
     def activate(self):
         self.startThread(self._process, self._done)
+
 
     def _process(self):
         img = self.display.widget.image
@@ -82,7 +85,7 @@ class PatternRecognition(Tool):
         else:
             method = p.addImg
 
-        out = np.empty_like(img)
+        out = []#np.empty_like(img)
 
         for n, i in enumerate(img):
             if not only_last or only_last and n == len(img) - 1:
@@ -90,14 +93,18 @@ class PatternRecognition(Tool):
                 if n != self._refImg_from_own_display:
                     # PROCESS:
                     try:
-                        i = method(i.copy())
+                        i = method(i)#.copy())
                     except Exception as errm:
                         print((self.__class__.__name__ + 'Error: ', errm))
-                out[n] = i
+                    if method == p.fitImg:
+                        out.append(i)
+                    else:
+                        out = i
         return out, n
 
-    def _done(self, xxx_todo_changeme):
-        (out, index) = xxx_todo_changeme
+
+    def _done(self, out_index):
+        (out, index) = out_index
         self.handleOutput(out, title='PerspectiveFit',
                           changes='PerspectiveFit',
                           index=index)

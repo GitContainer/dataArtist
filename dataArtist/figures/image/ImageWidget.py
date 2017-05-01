@@ -11,7 +11,7 @@ from collections import OrderedDict
 
 from fancytools.os.PathStr import PathStr
 from fancytools.utils.incrementName import incrementName
-from imgProcessor.transform.PerspectiveTransformation import PerspectiveTransformation
+from imgProcessor.transform.PerspectiveImageStitching import PerspectiveImageStitching as PerspectiveTransformation
 from imgProcessor.transformations import isColor, toColor, toGray
 
 # OWN
@@ -21,7 +21,7 @@ from dataArtist.figures.DisplayWidget import DisplayWidget
 from dataArtist.widgets.dialogs.DifferentShapeDialog import DifferentShapeDialog
 
 
-    
+
 
 class ImageWidget(DisplayWidget, ImageView, PyqtgraphgDisplayBase):
     '''
@@ -40,11 +40,11 @@ class ImageWidget(DisplayWidget, ImageView, PyqtgraphgDisplayBase):
             a.setPen()  # update colour theme
 
         ImageView.__init__(
-            self,
-            view=pg.PlotItem(
-                axisItems={
+            self, view=pg.PlotItem(
+                  axisItems={
                     'bottom': axes[0],
-                    'left': axes[1]}))
+                    'left': axes[1]})
+                           )
         PyqtgraphgDisplayBase.__init__(self)
         DisplayWidget.__init__(self, **kwargs)
 
@@ -67,8 +67,6 @@ class ImageWidget(DisplayWidget, ImageView, PyqtgraphgDisplayBase):
 
         self.opts['discreteTimeLine'] = True
 
-
-
         # TODO: better would be to init imageView with given histrogramAxis
         #      ... but this is easier:
         axes[2].sigLabelChanged.connect(self.setHistogramLabel)
@@ -86,22 +84,21 @@ class ImageWidget(DisplayWidget, ImageView, PyqtgraphgDisplayBase):
         self.ui.roiPlot.setMouseEnabled(False, False)
         self.ui.roiPlot.hide()
 
-        #default color set
-        #NO: only gray works also with color images
-        #self.ui.histogram.item.gradient.loadPreset('flame')
-        
+        # default color set
+        # NO: only gray works also with color images
+        # self.ui.histogram.item.gradient.loadPreset('flame')
 
         if data is not None:
             self.update(data)
             self.updateView()
 
-
     def setOpts(self, **opts):
         self.opts.update(opts)
 
-
     @staticmethod
     def getNLayers(data):
+        if data is None:
+            return 0
         s = data.shape
         l = data.ndim
         if l == 2:
@@ -138,6 +135,7 @@ class ImageWidget(DisplayWidget, ImageView, PyqtgraphgDisplayBase):
         state['histogram'] = self.ui.histogram.vb.getState()
         state['histoRegion'] = self.ui.histogram.getLevels()
         state['colorbar'] = self.ui.histogram.gradient.saveState()
+        state['currentIndex'] = self.currentIndex
         state['image'] = self.image
         return state
 
@@ -150,6 +148,11 @@ class ImageWidget(DisplayWidget, ImageView, PyqtgraphgDisplayBase):
         if img is not None:
             self.setImage(img, autoRange=False, autoLevels=False,
                           autoHistogramRange=False)
+        try:
+            self.setCurrentIndex(state['currentIndex'])
+        except AttributeError:
+            #cannot set index, because has no layers
+            pass
         DisplayWidget.restoreState(self, state)
 
     def showTimeline(self, show=True):
@@ -314,8 +317,9 @@ class ImageWidget(DisplayWidget, ImageView, PyqtgraphgDisplayBase):
             self.image = np.delete(self.image, index, axis=0)
             s = self.image.shape[0]
             if s == 0:
-                self.setImage(np.zeros((1, 3, 3)))
                 self.image = None
+                self.imageDisp = None
+                self.item.clear()
             else:
                 # TODO: has last index, if addWidget was called before
                     # therefore index cannot be preserved when layers are
@@ -378,9 +382,10 @@ class ImageWidget(DisplayWidget, ImageView, PyqtgraphgDisplayBase):
                 self._firstTime = False
                 self._image_redefined = False
 
-            elif (force or self._set_index is None or 
+            elif (force or self._set_index is None or
                   self._set_index == self.currentIndex):
-                self.imageDisp = None  # needed by ImageView to set histogram levels
+                # needed by ImageView to set histogram levels
+                self.imageDisp = None
                 self.updateImage(**self._set_kwargs)
                 if self.opts['autoLevels']:
                     self.autoLevels()
@@ -397,10 +402,15 @@ class ImageWidget(DisplayWidget, ImageView, PyqtgraphgDisplayBase):
 
         if autoHistogramRange is None:
             autoHistogramRange = self.opts['autoHistogramRange']
-
+        
         image = self.getProcessedImage()
+
         if autoHistogramRange:
+            if np.isinf(self.levelMax):
+                # otherwise crashes when loading images containing inf
+                self.levelMax = self.quickMinMax(image[np.isfinite(image)])[1]
             self.ui.histogram.setHistogramRange(self.levelMin, self.levelMax)
+
         if self.axes['t'] is not None:
             # show/hide timeline:
             self.ui.roiPlot.setVisible(
@@ -411,5 +421,7 @@ class ImageWidget(DisplayWidget, ImageView, PyqtgraphgDisplayBase):
         # TODO: fix the origin bug
         if image.dtype == bool:
             return self.imageItem.updateImage(image, levels=(0., 1.))
-        else:
+        
+        #else: #TODO: dA crashes with self.levelMin == self.levelMax
+        elif self.levelMin != self.levelMax:
             self.imageItem.updateImage(image)

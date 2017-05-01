@@ -136,7 +136,7 @@ class Axis(pg.AxisItem):
             'type': 'float',
             'value': 0,
             #'tip': "Doesn't work at the moment",
-            'visible': False
+            #'visible': False
         })
         # TODO: need to know the orientation first
         # pOffset.sigValueChanged.connect(lambda x: dock.display.item.setPos (
@@ -225,16 +225,16 @@ class StackAxis(Axis):
     def registerStackParam(self, pStack):
         self.pStack = pStack
 
-        self.pRange.setOpts(limits=['linear', 'individual', 'fromName'])
-        self.pRange.sigValueChanged.connect(lambda param, val:
-                                            [ch.setOpts(readonly=val != 'individual') for ch in pStack.childs])
+        self.pRange.setOpts(limits=['linear',  'fromName'])  # 'individual',
+#         self.pRange.sigValueChanged.connect(lambda param, val:
+#                                             [ch.setOpts(readonly=val != 'individual') for ch in pStack.childs])
         self.pRange.sigValueChanged.connect(lambda param, val:
                                             [self.pFromName.show(val == 'fromName')])
 
         self.pScale.sigValueChanged.connect(self._setPStackValues)
         self.pOffset.sigValueChanged.connect(self._setPStackValues)
-        self.pStack.sigChildAdded.connect(self._setPStackValues)
-        self.pStack.sigChildRemoved.connect(self._setPStackValues)
+#         self.pStack.sigChildAdded.connect(self._setPStackValues)
+#         self.pStack.sigChildRemoved.connect(self._setPStackValues)
         self._setPStackValues()
 
         try:
@@ -243,43 +243,64 @@ class StackAxis(Axis):
                 'type': 'str',
                 'value': 'name[0:4]',
                 'visible': False})
-
         except Exception:
             self.pFromName = self.p.param('eval(name)')
             self.pFromName.sigValueChanged.disconnect()
+
         self.pFromName.sigValueChanged.connect(self._setPStackValues)
 
     def getNextStackValue(self, name):
-        l = len(self.pStack.childs)
-        # individual numbering
-        if self.pRange.value() == 'individual':
-            if l > 1:
-                return self.pStack.childs[0].value() + 1
-        else:
-            # linear numbering
-            scale = self.pScale.value()
-            offset = self.pOffset.value()
-            if self.pRange.value() == 'linear':
-                return l * scale + offset
+        scale = self.pScale.value()
+        offset = self.pOffset.value()
+        val = None
+        if self.pRange.value() == 'fromName':
+            try:
+                val = float(eval(self.pFromName.value(),
+                                 # GLOBALS:
+                                 {'name': name})
+                            ) * scale + offset
+            except Exception as err:
+                print(err)
+        if val is None:
+            ch = self.pStack.childs
+            l = len(ch)
+            if l == 0:
+                return 0
+            elif l == 1:
+                return ch[0].value() + scale
             else:
-                # numbering from name
-                try:
-                    val = float(eval(self.pFromName.value(),
-                                     # GLOBALS:
-                                     {'name': name})
-                                ) * scale + offset
-                    return val
-                except Exception as err:
-                    print(err)
+                # linear extrapolation:
+                return ch[-1].value() + scale * (ch[-1].value() - ch[-2].value())
 
-    # TODO: clean following messy defs
-    def _setNewStackValue(self, parent, child, index):
-        l = len(parent.childs)
-        if self.pRange.value() == 'individual':
-            if l > 1:
-                child.setValue(parent.childs[0].value() + 1)
-        else:
-            self._setChildValue(child, l)
+#         # individual numbering
+#         if self.pRange.value() == 'individual':
+#             if l > 1:
+#                 return self.pStack.childs[0].value() + 1
+#         else:
+#             # linear numbering
+#             scale = self.pScale.value()
+#             offset = self.pOffset.value()
+#             if self.pRange.value() == 'linear':
+#                 return l * scale + offset
+#             else:
+#                 # numbering from name
+#                 try:
+#                     val = float(eval(self.pFromName.value(),
+#                                      # GLOBALS:
+#                                      {'name': name})
+#                                 ) * scale + offset
+#                     return val
+#                 except Exception as err:
+#                     print(err)
+
+#     # TODO: clean following messy defs
+#     def _setNewStackValue(self, parent, child, index):
+#         l = len(parent.childs)
+#         if self.pRange.value() == 'individual':
+#             if l > 1:
+#                 child.setValue(parent.childs[0].value() + 1)
+#         else:
+#             self._setChildValue(child, l)
 
     def _setChildValue(self, ch, i):
         scale = self.pScale.value()

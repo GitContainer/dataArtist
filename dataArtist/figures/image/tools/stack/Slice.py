@@ -87,8 +87,14 @@ class _LineROI(pg.LineSegmentROI):
             self.master.removeItem(self)
 
     def updateView(self):
-        data = self.getArrayRegion(self.master.image,
+        #TODO:
+        #<<
+        import numpy as np
+        #getArrayRegion does still not consider new axis order (y,x): 
+        img = np.swapaxes(self.master.image, 1,2)
+        #>>>
+        data = self.getArrayRegion(img,
                                    self.master.imageItem, axes=(1, 2))
-        self.slaveDock.widget.setImage(data)
+        self.slaveDock.widget.setImage(data.T)
 
         self.text.setPos(self.boundingRect().center() + self.pos())

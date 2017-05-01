@@ -90,11 +90,11 @@ class DarkCurrent(ImageTool):
             raise Exception('only [as function] implemented at the moment')
 
     def activate(self):
-        self._method = self.pMethod.value()
-
         # need calibration for max value
-        assert self.calFileTool.curCal is not None, 'need camera calibration specified'
+        if not self.calFileTool.hasCal():
+            raise Exception('need camera calibration specified')
 
+        self._method = self.pMethod.value()
         if self._method == 'as function':
             self.startThread(self._startAsFunction, self._doneAsFunction)
         else:
@@ -108,8 +108,8 @@ class DarkCurrent(ImageTool):
         inter, slope, rmse = getDarkCurrentFunction(x, imgs, mxIntensity=mx)
         return inter, slope
 
-    def _doneAsFunction(self, xxx_todo_changeme):
-        (inter, slope) = xxx_todo_changeme
+    def _doneAsFunction(self, inter_slope):
+        (inter, slope) = inter_slope
         self._inter, self._slope = inter, slope
 
         self.outDisplay = self.handleOutput(
@@ -119,12 +119,13 @@ class DarkCurrent(ImageTool):
         self.pUpdate.show()
 
     def _startAverage(self):
-        x, imgs = self.display.stack.values, self._getImg()
+        x = self.display.stack.values
+        imgs = self.getImageOrFilenames()
         exposuretimes, imgs = getDarkCurrentAverages(x, imgs)
         return exposuretimes, imgs
 
-    def _doneAverage(self, xxx_todo_changeme1):
-        (exposuretimes, imgs) = xxx_todo_changeme1
+    def _doneAverage(self, expT_imgs):
+        (exposuretimes, imgs) = expT_imgs
         self.outDisplay = self.handleOutput(
             imgs, title='Averaged dark current')
         self.outDisplay.stack.values = np.array(exposuretimes)

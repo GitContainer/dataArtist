@@ -115,8 +115,8 @@ class DisplayDock(Dock):
 
         # PARAMETERS:
         self.p = Parameter.create(
-                name='',
-                type='empty')
+            name='',
+            type='empty')
 
         # TAB DISPLAYING PREFERENCES AND INPUT INFORMATION:
         self.tab = _DisplayTab(self)
@@ -131,14 +131,14 @@ class DisplayDock(Dock):
             'type':  'int',
             'value': 11})
         pSize.sigValueChanged.connect(
-                lambda param, size: self.widget.setTitleSize(size))
+            lambda param, size: self.widget.setTitleSize(size))
 
         self.pTitleFromLayer = self.pTitle.addChild({
             'name':  'From layer',
             'type':  'bool',
             'value': False})
         self.pTitleFromLayer.sigValueChanged.connect(
-                self._pTitleFromLayerChanged)
+            self._pTitleFromLayerChanged)
 
         self.pLimitLayers = self.p.addChild({
             'name':  'Limit Layers',
@@ -161,7 +161,7 @@ class DisplayDock(Dock):
                                   weakref.proxy(self.stack))
         # ADD AXES PARAMETERS:
         self.p.addChild(self.axes.p)
-        
+
         # LIST OF ALL FITTING DISPLAY FIGURES:
 #         widgetList = _DisplayFigureList(self)
 
@@ -194,7 +194,7 @@ class DisplayDock(Dock):
     def otherDisplaysOfSameType(self, includeThisDisplay=False):
         for d in self.workspace.displays():
             if (isinstance(d.widget, self.widget.__class__)
-                and (includeThisDisplay or d.name() != self.name())):
+                    and (includeThisDisplay or d.name() != self.name())):
                 yield d
 
     def _limitLayers(self, param, val):
@@ -229,7 +229,7 @@ class DisplayDock(Dock):
     def _setTitleFromCurrentLayer(self, index):
         try:
             self.widget.setTitle(
-                    self.stack.childs[index].name())
+                self.stack.childs[index].name())
         except IndexError:
             pass  # there are no layers
 
@@ -411,8 +411,8 @@ class DisplayDock(Dock):
         create a new display with the same data and axes
         '''
         d = self.workspace.addDisplay(
-                origin=self,
-                title='Duplicate')
+            origin=self,
+            title='Duplicate')
         d.p.restoreState(self.p.saveState())
         d.widget.restoreState(self.widget.saveState())
         return d
@@ -483,8 +483,8 @@ class DisplayDock(Dock):
 
     def copyLayerToNewDisplay(self, index):
         self.workspace.addDisplay(
-                origin=self,
-                index=index)
+            origin=self,
+            index=index)
 
     def moveLayerToNewDisplay(self, index):
         self.copyLayerToNewDisplay(index)
@@ -528,14 +528,14 @@ class DisplayDock(Dock):
             print('Move this layer to new display')
             # couldn't add new layer to stack: create a new display to show it
             self.workspace.addDisplay(
-                    origin=self,
-                    index=len(self.filenames) - 1,
-                    data=[data])
+                origin=self,
+                index=len(self.filenames) - 1,
+                data=[data])
             self.stack.childs[-1].remove()
         else:
             # LIMIT LAYERS
-            if (self.pLimitLayers.value()
-                and len(self.stack.childs) > self.pMaxLayers.value()):
+            if (self.pLimitLayers.value() and
+                    len(self.stack.childs) > self.pMaxLayers.value()):
                 self.stack.childs[0].remove()
             # AUTOMATION
             self.sigNewLayer.emit(self)
@@ -559,16 +559,16 @@ class DisplayDock(Dock):
             name += ": %s" % changes
 
             ur.add(
-                    display=self,
-                    name=name,
-                    undoFn=lambda i=index, d=backup:
-                    self.changeLayer(data=d, changes='undo', index=i,
-                                     backup=False),
-                    redoFn=lambda d, i=index:
-                    self.changeLayer(data=d, changes='redo', index=i,
-                                     backup=False),
-                    dataFn=lambda i=index, w=widget:
-                    w.getData(i).copy()
+                display=self,
+                name=name,
+                undoFn=lambda i=index, d=backup:
+                self.changeLayer(data=d, changes='undo', index=i,
+                                 backup=False),
+                redoFn=lambda d, i=index:
+                self.changeLayer(data=d, changes='redo', index=i,
+                                 backup=False),
+                dataFn=lambda i=index, w=widget:
+                w.getData(i).copy()
             )
 
     def changeAllLayers(self, data=None, changes=None, backup=True, **kwargs):
@@ -627,7 +627,7 @@ class DisplayDock(Dock):
 
         filt = '*.' + ' *.'.join(self.reader.ftypes)
         fname = self.workspace.gui.dialogs.getOpenFileName(
-                filter=filt, directory=self.filenames[index].dirname())
+            filter=filt, directory=self.filenames[index].dirname())
         if fname is not None:
             self._readFiles([fname], self._updateFiles)
 
@@ -639,7 +639,7 @@ class DisplayDock(Dock):
     def layerIndex(self, filename, layername):
         for n, ch in enumerate(self.stack.childs):
             if ch.opts['filename'] == filename and ch.opts[
-                'layername'] == layername:
+                    'layername'] == layername:
                 return n
         return None
 
@@ -698,10 +698,11 @@ class DisplayDock(Dock):
 
     def saveState(self):
 
-        state = {'stack':      self.stack.saveState(), 
+        state = {'stack':      self.stack.saveState(),
                  'automation': self.tab.automation.saveState(),
-                 'parameters': self.p.saveState(), 
-                 'dock': self.label.maximized}
+                 'parameters': self.p.saveState(),
+                 'dock': self.label.maximized,
+                 'sizes': self.tab.sizes()}
         #         path += ('display',str(self.number))
         # layers
         # automation
@@ -724,6 +725,7 @@ class DisplayDock(Dock):
         self.stack.restoreState(state['stack'])
         # automation
         self.tab.automation.restoreState(state['automation'])
+        self.tab.setSizes(state['sizes'])
         # parameters
         # TODO: this is not clean - stack is mentioned above and already
         # restore its parameters...
@@ -756,7 +758,7 @@ class _DisplayTab(QtWidgets.QSplitter):
 
     def __init__(self, display):
         QtWidgets.QSplitter.__init__(
-                self, QtCore.Qt.Orientation(0))  # 0=horiz, 1=vert)
+            self, QtCore.Qt.Orientation(0))  # 0=horiz, 1=vert)
 
         self.display = display
         self.automation = Automation(display, self)
@@ -765,6 +767,7 @@ class _DisplayTab(QtWidgets.QSplitter):
         self.addWidget(self.prefs)
 
         self.setStretchFactor(1, 1)
+
 
 class _PreferencesWidget(QtWidgets.QWidget):
     '''
@@ -784,7 +787,7 @@ class _PreferencesWidget(QtWidgets.QWidget):
         except AttributeError:
             h.setSectionResizeMode(0, QtWidgets.QHeaderView.Stretch)
         h.setStretchLastSection(False)
-        
+
         # TITLE
         l.addWidget(QtWidgets.QLabel('<b>Preferences</b'))
         l.addWidget(pref)
@@ -806,7 +809,8 @@ class _DisplayFigureList(ListParameter):
             'limits': names,
             'icons':  icons})
 
-        self.sigValueChanged.connect(lambda param, value: self.display.changeWidget(self._name_to_figure[value]))
+        self.sigValueChanged.connect(
+            lambda param, value: self.display.changeWidget(self._name_to_figure[value]))
 
     def __len__(self):
         return len(self._name_to_figure)
@@ -831,8 +835,8 @@ class _DisplayFigureList(ListParameter):
                     icons.append(getattr(cls, 'icon', None))
             else:
                 print(
-                        "%s doens't have needed attribute 'dimensions'" %
-                        cls.__name__)
+                    "%s doens't have needed attribute 'dimensions'" %
+                    cls.__name__)
         return list(self._name_to_figure.keys()), icons
 
 
@@ -849,18 +853,18 @@ class _StackParameter(GroupParameter):
 
         mAll = QtWidgets.QMenu('All layers')
         mAll.addAction('Change').triggered.connect(
-                self.display.changeLayerFiles)
+            self.display.changeLayerFiles)
         mAll.addAction('Remove').triggered.connect(self.display.removeLayers)
 
         GroupParameter.__init__(self, **{
             'name':             '   Layers',
             'sliding':          True,
             'addToContextMenu': [mAll]})
-        
+
         # IF A LAYER IS MOVED:
         self.sigChildRemoved.connect(lambda parent, child, index, self=self:
-                            self.display.removeLayer(index,
-                            self.opts.get('aboutToMove', False)))
+                                     self.display.removeLayer(index,
+                                                              self.opts.get('aboutToMove', False)))
         self._fnInsertRemovedLayer = lambda parent, child, index, self=self: \
             self.display.insertRemovedLayer(index)
         self.sigChildAdded.connect(self._fnInsertRemovedLayer)
@@ -921,15 +925,22 @@ class _StackParameter(GroupParameter):
         self.blockSignals(True)
         self.clearChildren()
         self.blockSignals(False)
-        self.sigChildAdded.disconnect(self._fnInsertRemovedLayer)
-        # REBUILD STACK:
-        #         l =  eval(session.getSavedContent(*path +('stack.txt',) )  )
-        
-        GroupParameter.restoreState(self, state, **kwargs)
-        self.sigChildAdded.connect(self._fnInsertRemovedLayer)
+        if 'children' in state:
+            self.sigChildAdded.disconnect(self._fnInsertRemovedLayer)
+            # REBUILD STACK:
+            for name, sub in state['children'].items():
+                number = sub['default']
+                label = sub['layername']
+                info = sub['children']['Info']['value']
+                fname = sub['filename']
+                changes = sub['children']['Changes']['value']
+                self.buildLayer(fname, label, name, None, info=info,
+                                changes=changes, number=number)
+#         GroupParameter.restoreState(self, state, **kwargs)
+            self.sigChildAdded.connect(self._fnInsertRemovedLayer)
 
     def buildLayer(self, fname, label, name, data, origin=None, index=None,
-                   info=None, changes=None):
+                   info=None, changes=None, number=None):
         '''
         for every layer of the stack add a parameter containing ...
         * it's stack value
@@ -955,17 +966,19 @@ class _StackParameter(GroupParameter):
                                     self.display.changeLayerFile(i))
             menu_entries.append(aFile)
         # CREATE AND ADD COPY-LAYER-TO OPTION TO PARAMETER:
+        if number is None:
+            number = self.display.axes.stackAxis.getNextStackValue(
+                PathStr(fname).basename())
         pLayer = self.addChild({
             'type':              'float',
             'highlight':         True,
             'name':              name,
-            'value':             self.display.axes.stackAxis.getNextStackValue(
-                                                    PathStr(fname).basename()),
+            'value':             number,
             'expanded':          False,
             'removable':         True,
             'autoIncrementName': True,
             'renamable':         True,
-            'readonly':          True,
+            #'readonly':          True,
             'addToContextMenu':  menu_entries,
 
             'filename':          fname,
@@ -981,7 +994,7 @@ class _StackParameter(GroupParameter):
         # EMIT LAYERNAMESCHANGED:
         pLayer.sigNameChanged.connect(lambda param, val, self=self:
                                       self.sigLayerNameChanged.emit(
-                                      param.parent().children().index(param), val))
+                                          param.parent().children().index(param), val))
         # CHECK WHETHER INSERTED LAYER COMES FROM A MOVED ONE:
         self.sigChildAdded.connect(self._fnInsertRemovedLayer)
         # ADD LAYER INFO
@@ -1024,8 +1037,7 @@ class _StackParameter(GroupParameter):
             # 'TODO: every change through a tool/scripts operation to be added here',
             'value':    changes if changes else '',
             # 'readonly':True
-            'expanded': bool(changes)
-        })
+            'expanded': bool(changes)})
 
     def addChange(self, change, index=None):
         if change is not None:
@@ -1061,8 +1073,8 @@ class _StackParameter(GroupParameter):
             m = self.display.moveLayerToNewDisplay
 
         menuCopy.addAction('NEW').triggered.connect(
-                lambda checked, paramFile=paramFile, m=m:
-                m(paramFile.parent().children().index(paramFile)))
+            lambda checked, paramFile=paramFile, m=m:
+            m(paramFile.parent().children().index(paramFile)))
 
         # OTHER DISPLAYS:
         if method == 'copy':
@@ -1073,8 +1085,8 @@ class _StackParameter(GroupParameter):
         for d in self.display.workspace.displays():
             if d != self.display and d.widget.__class__ == self.display.widget.__class__:
                 menuCopy.addAction(d.name()).triggered.connect(
-                        lambda checked, paramFile=paramFile, d=d, m=m:
-                        m(paramFile.parent().children().index(paramFile), d)
+                    lambda checked, paramFile=paramFile, d=d, m=m:
+                    m(paramFile.parent().children().index(paramFile), d)
                 )
 
     def getFileInfo(self, filename):

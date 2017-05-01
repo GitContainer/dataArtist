@@ -9,3 +9,4 @@ from .GreatEyesImageFormat import GreatEyesImageFormat
 from .RAWimage import RAWimage
 from .ELBINImageFormat import ELBINImageFormat
 from .FITSimageFormat import FITSimageFormat
+from .CanonCR2 import CanonCR2

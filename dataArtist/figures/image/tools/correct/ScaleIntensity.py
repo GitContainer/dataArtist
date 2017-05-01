@@ -5,12 +5,12 @@ from __future__ import print_function
 import numpy as np
 
 from imgProcessor.transform.equalizeImage import equalizeImage
-from imgProcessor.imgSignal import scaleSignal
+from imgProcessor.imgSignal import scaleSignal, scaleSignalCut
 
 from dataArtist.widgets.Tool import Tool
 
 
-class ScaleHistogram(Tool):
+class ScaleIntensity(Tool):
     '''
     Equalize the histogram (contrast) of all given images
     '''
@@ -27,16 +27,18 @@ class ScaleHistogram(Tool):
             # NAME: (FUNCTION, HISTOGRAM LEVELS)
             'Reference image':
             (lambda x: scaleSignal(x, reference=self._refImg), None),
+            '% CDF':
+            (lambda x: scaleSignalCut(x, self.pRatio.value()/100), [0, 1]),
             'Equalize histogram':
-            (equalizeImage, None),
-            'Scale Background-Signal: 0-1':
+                (equalizeImage, None),
+            'Scale Hist. Background-Signal: 0-1':
                 (lambda x: scaleSignal(x, backgroundToZero=True), [0, 1]),
-            'Scale signal +/-3std':
+            'Scale Hist. signal +/-3std':
                 (scaleSignal, [0, 1]),
             'Maximum=1':
-                (lambda img: img/np.nanmax(img), None),
+                (lambda img: img/np.nanmax(img), [0, 1]),
             'Average=1':
-                (lambda img: img/np.nanmean(img), None),
+                (lambda img: img/np.nanmean(img), [-1, 2]),
             'Minimum=0, Maximum=1':
                 (self._scaleMinMax, [0,1]),
                 }
@@ -64,6 +66,16 @@ class ScaleHistogram(Tool):
         self.pMethod.sigValueChanged.connect(
             lambda p, v: self.pRefImgChoose.show(v == 'Reference image'))
 
+        self.pRatio = self.pMethod.addChild({
+            'name': 'Percentage',
+            'value': 2,
+            'type': 'float',
+            'limits':[0.05,100],
+            'visible': False})
+
+        self.pMethod.sigValueChanged.connect(
+            lambda p, v: self.pRatio.show(v == '% CDF'))
+
     def _setRefImg(self, display, layernumber, layername):
         '''
         extract the reference image and -name from a
@@ -90,4 +102,4 @@ class ScaleHistogram(Tool):
                     img[n] = out
             except Exception as err:
                 print("couldn't scale image: %s" % err)
-        self.display.changeLayer(img, 'Equalized', levels=levels)
+        self.display.changeLayer(img, 'Normalized', levels=levels)

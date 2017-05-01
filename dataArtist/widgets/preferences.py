@@ -123,10 +123,6 @@ class PreferencesCommunication(QtWidgets.QWidget):
         for n, (queue, action) in enumerate(rab.listenTo.items()):
             gl.addWidget(QtWidgets.QLabel(queue), 4 + n, 0)
             gl.addWidget(QtWidgets.QLabel(action.__doc__), 4 + n, 1)
-
-
-
-#     def minimumSizeHint(self):
         
 
     def _watchFolderChanged(self, checked):
@@ -205,7 +201,7 @@ class PreferencesCommunication(QtWidgets.QWidget):
 
             'RMQ_refreshRate': self._rab_refRate.value(),
             'RMQ_host': str(self.le_host.text()),
-            'RMQ_timeout': self.sb_timeout.value(),
+#             'RMQ_timeout': self.sb_timeout.value(),
             'RMQ_activated': self.cb_allowRabbit.isChecked(),
             'RMQ_confirmPosts': self.cb_confirm.isChecked(),
         }
@@ -220,7 +216,7 @@ class PreferencesCommunication(QtWidgets.QWidget):
 
         self._rab_refRate.setValue(l['RMQ_refreshRate'])
         self.le_host.setText(l['RMQ_host'])
-        self.sb_timeout.setValue(l['RMQ_timeout'])
+#         self.sb_timeout.setValue(l['RMQ_timeout'])
         self.cb_confirm.setChecked(l['RMQ_confirmPosts'])
         self.cb_allowRabbit.setChecked(l['RMQ_activated'])
 
@@ -344,14 +340,44 @@ class PreferencesView(QtWidgets.QWidget):
 #                 d.reloadWidget()
 
 
+class _QComboBox(QtWidgets.QComboBox):
+    def __init__(self, pref, *args, **kwargs):
+        self.pref = pref
+        QtWidgets.QComboBox.__init__(self, *args, **kwargs)
+        self.activated.connect(self._updateDisplayNumber)
+        
+    def showPopup(self):
+        self.buildMenu()
+        QtWidgets.QComboBox.showPopup(self)
+
+    def buildMenu(self):
+        old = [self.itemText(i) for i in range(self.count())]
+        new = ['CURRENT']
+        self._numbers = list(self.pref.gui.currentWorkspace().displaydict().keys())
+        new.extend(['[%i]' %n for n in self._numbers])
+        if old != new:
+            self.clear()
+            self.addItems( new )
+            if len(old) == 0:
+                self.pref.importFilesPolicy = self.pref.inCurrentDisplay
+            
+    def _updateDisplayNumber(self, index):
+        if index ==0:
+            self.pref.importFilesPolicy = self.pref.inCurrentDisplay
+        else:
+            self.pref.importFilesPolicy = self.pref.inDisplay 
+            self.pref.displayNumber = self._numbers[index-1]
+
+
 class PreferencesImport(QtWidgets.QWidget):
     '''
     Preferences for importing files
     '''
     separated = 0
     together = 1
-    inCurrentDisplay = 2
-    inImportDisplay = 3
+    inDisplay = 2
+    inCurrentDisplay = 3
+    displayNumber = None
 
     importFilesPolicy = together
     showImportDialog = True
@@ -368,26 +394,35 @@ class PreferencesImport(QtWidgets.QWidget):
         layout.setAlignment(QtCore.Qt.AlignTop)
         self.setLayout(layout)
 
+        #<<<
         hlayout = QtWidgets.QHBoxLayout()
         layout.addLayout(hlayout)
-        self.label_multifiles = QtWidgets.QLabel('Import files')
-        hlayout.addWidget(self.label_multifiles)
+        label_multifiles = QtWidgets.QLabel('Import files')
+        hlayout.addWidget(label_multifiles)
 
         self.combo_import = QtWidgets.QComboBox()
         hlayout.addWidget(self.combo_import)
 
-#         self.combo_import.addItems(( 'separated',
-#                                      'together',
-#                                      'in current display',
-#                                      'in import display'))
         self.combo_import.addItems(('SPLIT into MULTIPLE displays',
                                     'ALL in NEW display',
-                                    'ADD to CURRENT display',
-                                    'ADD to IMPORT display'))
+                                    'ADD to display',
+                                    ))
 
         self.combo_import.setCurrentIndex(self.importFilesPolicy)
         self.combo_import.currentIndexChanged.connect(self._importChanged)
+        #>>>
 
+        #<<< LABEL(Display) - COMBO(CURRENT, 1,2,3...)
+        hlayout = QtWidgets.QHBoxLayout()
+        layout.addLayout(hlayout)
+        self.label_displays = QtWidgets.QLabel('Display')
+        hlayout.addWidget(self.label_displays)
+        self.combo_display = _QComboBox(self)
+        hlayout.addWidget(self.combo_display)
+        self.combo_display.hide()
+        self.label_displays.hide()
+        #>>>
+        
         self.btn_loadFiles = QtWidgets.QCheckBox('load files')
         self.btn_loadFiles.setChecked(True)
         self.btn_loadFiles.toggled.connect(
@@ -402,13 +437,17 @@ class PreferencesImport(QtWidgets.QWidget):
                 'showImportDialog', checked))
         layout.addWidget(self.btn_ask)
 
+
     def _importChanged(self, index):
         self.importFilesPolicy = index
-        w = self.gui.currentWorkspace()
-        if index == self.inImportDisplay:
-            w.setCurrentDisplayToImportDisplay()
-        else:
-            w.unsetImportDisplay()
+        v = index == self.inDisplay
+        if v: 
+            self.combo_display.buildMenu()
+            self.combo_display.show()
+            self.label_displays.show()
+        else: 
+            self.combo_display.hide()
+            self.label_displays.hide()
 
     def _save(self, state):
         state['pimport'] = {
@@ -417,7 +456,6 @@ class PreferencesImport(QtWidgets.QWidget):
             'showDialog': self.btn_ask.isChecked()}
 
     def _restore(self, state):
-        # eval(session.getSavedContent('preferences','import.txt'))
         l = state['pimport']
         self.combo_import.setCurrentIndex(l['importOption'])
         self.btn_loadFiles.setChecked(l['loadFiles'])
@@ -431,3 +469,7 @@ class PreferencesImport(QtWidgets.QWidget):
             self.combo_import.currentIndex())
         pref.btn_ask.setChecked(self.showImportDialog)
         pref.btn_loadFiles.setChecked(self.loadImportedFiles)
+        pref.combo_display.setCurrentIndex(
+            self.combo_display.currentIndex())
+        pref.displayNumber = self.displayNumber
+        pref.importFilesPolicy = self.importFilesPolicy

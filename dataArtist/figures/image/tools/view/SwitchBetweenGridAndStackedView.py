@@ -36,7 +36,7 @@ class SwitchBetweenGridAndStackedView(Tool):
 
     def _gridParamChanged(self):
         if self.isChecked():
-            for item, (dx, dy) in zip(self._items,
+            for item, (dx, dy) in zip(self.display.widget.subitems,
                                       self._positions()):
                 x, y = item.pos()
                 item.moveBy(dx - x, dy - y)
@@ -46,10 +46,13 @@ class SwitchBetweenGridAndStackedView(Tool):
         nr = self.pRNRows.value()
         s = self.pSpace.value()
 
-        s0, s1 = w.image.shape[1:3]
+        s1, s0 = w.image.shape[1:3]
 
         dx, dy = 0, 0
         ir = 1  # row index
+
+        if nr == 1:
+            dy = s1 + s
 
         while True:
             if ir < nr:
@@ -66,11 +69,14 @@ class SwitchBetweenGridAndStackedView(Tool):
 
     def activate(self):
 
-        self._items = []
         self._fns = []
 
         w = self.display.widget
         vb = w.view.vb
+
+
+        w.subitems = []
+
 
         if len(w.image) < 2:
             self.setChecked(False)
@@ -80,9 +86,7 @@ class SwitchBetweenGridAndStackedView(Tool):
         w.display.widget.showTimeline(False)
 
         hist = w.ui.histogram
-
         for img, (px, py) in zip(w.image[1:], self._positions()):
-
             if isColor(img):
                 # TODO: I dont know why it returns an error on color ...find
                 # out
@@ -101,7 +105,7 @@ class SwitchBetweenGridAndStackedView(Tool):
             item.moveBy(px, py)
             vb.addItem(item)
 
-            self._items.append(item)
+            w.subitems.append(item)
             self._fns.append((fn1, fn2))
 
         hist.sigLookupTableChanged.emit(hist)
@@ -112,6 +116,7 @@ class SwitchBetweenGridAndStackedView(Tool):
         vb.updateAutoRange()
         vb.state['autoRange'] = ar
 
+
     def deactivate(self):
         w = self.display.widget
         vb = w.view.vb
@@ -120,13 +125,13 @@ class SwitchBetweenGridAndStackedView(Tool):
         w.display.widget.showTimeline(True)
 
         hist = w.ui.histogram
-        for item, (fn1, fn2) in zip(self._items, self._fns):
+        for item, (fn1, fn2) in zip(w.subitems, self._fns):
             hist.sigLookupTableChanged.disconnect(fn1)
             hist.sigLevelsChanged.disconnect(fn2)
 
             vb.removeItem(item)
 
-        self._items = []
+        w.subitems = []
         self._fns = []
 
         ar = vb.state['autoRange']

@@ -61,8 +61,7 @@ class TimeLine(Tool):
     #ONLY A TEMPORARY TEST FUNCTION
     def setContinous(self, p,v):
         w = self.display.widget
-        w.setOpts(discreteTimeSteps=not v)
-        
+        w.setOpts(discreteTimeLine=not v)        
         if v:
             self.interpolator = LinearInterpolateImageStack(lambda :w.image, dynamic=True)
             w.timeLine.sigPositionChanged.connect(self._showInterpolatedImage)

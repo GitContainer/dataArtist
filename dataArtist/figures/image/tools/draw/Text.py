@@ -1,6 +1,6 @@
 # coding=utf-8
 from pyqtgraph_karl import TextItem as pgTextItem
-from qtpy import QtCore, QtWidgets
+from qtpy import QtCore, QtWidgets, QtGui
 from pyqtgraph_karl import functions as fn
 
 # OWN
@@ -23,13 +23,14 @@ class Text(Tool):
         self.pScales = pa.addChild({
             'name': 'Text scales',
             'type': 'bool',
-            'value': True})
+            'value': False})
 
         pAdd = self._menu.p.addChild({
             'name': 'Add',
             'type': 'action'})
         pAdd.sigActivated.connect(lambda:
-                                  self.view.scene().sigMouseClicked.connect(self._textAdd))
+                                  self.view.scene().sigMouseClicked.connect(
+                                                                self._textAdd))
         pAdd.sigActivated.connect(self._menu.hide)
 
         pClear = pa.addChild({
@@ -150,4 +151,5 @@ class _TextItem(pgTextItem):
         self.setPos(*self._parent.mouseCoord(ev))
 
     def mouseDoubleClickEvent(self, ev):
+        self.editor.move(QtGui.QCursor.pos())
         self.editor.show()

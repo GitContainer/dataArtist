@@ -1,8 +1,9 @@
 # coding=utf-8
-from qtpy import QtWidgets
+from qtpy import QtWidgets, QtCore
 
 from pyqtgraph_karl.parametertree import Parameter
 from dataArtist.widgets.ParameterTree import ParameterTree
+
 
 
 class ParameterMenu(QtWidgets.QMenu):
@@ -12,20 +13,58 @@ class ParameterMenu(QtWidgets.QMenu):
 
     def __init__(self, tool):
         QtWidgets.QMenu.__init__(self, tool)
-        # embed parameterTree as a QWidgetAction:
-        a = QtWidgets.QWidgetAction(self)
-
         self.content = _MenuContent(tool)
         self.pTree = self.content.pTree
 
+        # embed parameterTree as a QWidgetAction:
+        a = QtWidgets.QWidgetAction(self)
         a.setDefaultWidget(self.content)
         self.addAction(a)
+        self.setActiveAction(a)
+        
         self.p = self.pTree.p
-
         self.p.tool = tool
         tool.param = self.p.param
 
-        self.aboutToShow.connect(self.resizeToContent)
+        self.aboutToShow.connect(self.aboutToShowFn)
+        self.aboutToHide.connect(self.aboutToHideFn)
+
+        self._topWidgets = []
+
+        #<<<<<
+        #due to Qt5 bug:
+            #uncomment following
+            #and QActions inside QMenu inside this tool will not 
+            #fire trigger
+        self.setWindowFlags(QtCore.Qt.Dialog | QtCore.Qt.FramelessWindowHint)
+        self.installEventFilter(self)
+        
+    def eventFilter(self, op, event):
+        if event.type()== QtCore.QEvent.WindowDeactivate:
+            QtCore.QTimer.singleShot(10,self.close)
+        return False
+        #>>>>>
+
+
+
+    def addTopWidget(self, w):
+        self._topWidgets.append(w)
+        self.content.layout().insertWidget(1, w)
+        
+
+    def aboutToShowFn(self):
+        self.p.sigTreeStateChanged.connect(self.delayedResize)
+        self.resizeToContent()
+
+
+    def aboutToHideFn(self):
+        self.p.sigTreeStateChanged.disconnect(self.delayedResize)
+
+
+    def delayedResize(self):
+        #allow pTree to fully add/remove parameters 
+        #before size is updated
+        QtCore.QTimer.singleShot(10, self.resizeToContent)
 
 
     def resizeToContent(self):
@@ -34,18 +73,25 @@ class ParameterMenu(QtWidgets.QMenu):
         the height of all rows
         '''
         width = 350
-        heightMax = 600
-        height = 6
+        heightMax = 800
+        height = 6#self.content.header.contentsRect().height()
+        hh = [w.height() for w in self._topWidgets]
+        if hh:
+            height += max(hh)
         _iter = QtWidgets.QTreeWidgetItemIterator(self.pTree)
         while _iter.value():
             item = _iter.value()
             height += self.pTree.visualItemRect(item).height()
             _iter += 1
+
         # limit height
         if height >= heightMax:
             height = heightMax
-        self.pTree.setMinimumSize(width, height)
-        self.setMinimumSize(width, height + 22)
+        self.pTree.setFixedSize(width, height)
+        #prevent scroll bar(+22):
+        self.setFixedSize(width, height + 22)
+
+
 
 
 class _MenuContent(QtWidgets.QWidget):

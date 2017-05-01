@@ -8,7 +8,7 @@ import cv2
 from dataArtist.widgets.Tool import Tool
 
 
-class CV2Denoise(Tool):
+class Denoise(Tool):
     '''
     use Non-local Means Denoising algorithm given by OpenCV
     works on grey, coloured single and multiple images

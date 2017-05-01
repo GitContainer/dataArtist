@@ -3,7 +3,8 @@
 """start dataArtist with this module if other modules are in same
 root folder but not globally installed
 """
-from __future__ import print_function
+import sys
+import os
 
 PROFILE_IMPORT_SPEED = False
 
@@ -13,9 +14,6 @@ if PROFILE_IMPORT_SPEED:
 
     pr = cProfile.Profile()
     pr.enable()
-
-import sys
-import os
 
 # main directory for all code:
 pkg_dir = os.path.dirname(os.path.dirname(os.path.abspath(os.curdir)))

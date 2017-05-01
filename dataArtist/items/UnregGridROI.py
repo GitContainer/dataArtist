@@ -86,7 +86,7 @@ if __name__ == '__main__':
     from pyqtgraph.Qt import QtGui
     import pyqtgraph_karl as pg
 
-    app = QtWidgets.QApplication([])
+    app = QtGui.QApplication([])
     w = pg.GraphicsWindow(size=(1000, 800), border=True)
     w.setWindowTitle('pyqtgraph example: ROI Examples')
 

@@ -17,7 +17,6 @@ def addDataFiles():
            ('dataArtist', os.path.join(pkg_dir,'dataartist', 'dataArtist', 'media')),
            ('dataArtist', os.path.join(pkg_dir,'dataartist', 'dataArtist','scripts')),
        #    ('dataArtist', os.path.join(pkg_dir,'dataartist', 'dataArtist','tutorials')),
-       #    ('bat', os.path.join(pkg_dir,'dataartist', 'dataArtist','bat')),
            ('fancywidgets', os.path.join(pkg_dir,'fancyWidgets', 'fancywidgets', 'media'))
             ]
     for loc, d in dirs:
@@ -31,23 +30,35 @@ def addDataFiles():
 
 a = Analysis(['dataArtist\\gui_pyinstaller.py'],
              pathex=[
+
+                 #proprietary:
+                 os.path.join(pkg_dir,'PROimgprocessor_obfuscated'), 
+                 
+                 #open source:
                  os.path.join(pkg_dir,'pyqtgraph_karl'), 
                  os.path.join(pkg_dir,'fancyTools'), 
                  os.path.join(pkg_dir,'fancyWidgets'), 
                  os.path.join(pkg_dir,'imgprocessor'), 
                  os.path.join(pkg_dir,'appBase'), 
+                 
+                 #maybe later again used:
                  #os.path.join(pkg_dir,'interactiveTutorial'), 
                  '', 
                  os.path.join(pkg_dir,'dataartist')],
                  
              hiddenimports=[
-                #'qtpy',
-                 #'mpl_toolkits.mplot3d',#3d surface plot with matplotlib
-                 'scipy.linalg._decomp_u',#???for tool: createSpatialSensitivity Array
+                 #'scipy.linalg._decomp_u',#???for tool: createSpatialSensitivity Array
 
                  #skimage:
                 'scipy.special._ufuncs_cxx',
                  ],
+             
+             excludes=[
+             
+             #'matplotlib', #cannot exclude -> needed by skimage
+             'sphinx', 'cython',
+             '_gtkagg', '_tkagg', 'bsddb', 'curses', 'pywin.debugger', 'pandas',
+             'pywin.debugger.dbgcon', 'pywin.dialogs', 'tcl', 'Tkconstants', 'tkinter'],
                  
              hookspath=None,
              runtime_hooks=None)
@@ -77,7 +88,7 @@ a.binaries = a.binaries - TOC([
  ('_sqlite3', None, None),
  ('_tkinter', None, None)])
 
-# Add a single missing dll...
+# Add missing dll...
 #a.binaries = a.binaries + [
 #  ('opencv_ffmpeg245_64.dll', 'C:\\Python27\\opencv_ffmpeg245_64.dll', 'BINARY')]
 

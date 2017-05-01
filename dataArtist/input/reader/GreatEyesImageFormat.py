@@ -17,9 +17,9 @@ class GreatEyesImageFormat(ReaderBase):
     def __init__(self, *args, **kwargs):
         ReaderBase.__init__(self, *args, **kwargs)
 
-    @staticmethod
-    def check(ftype, fname):
-        return ftype in GreatEyesImageFormat.ftypes
+#     @staticmethod
+#     def check(ftype, fname):
+#         return ftype in GreatEyesImageFormat.ftypes
 
     def open(self, filename):
         # TODO: replace with faster method e.g. panda
@@ -28,7 +28,7 @@ class GreatEyesImageFormat(ReaderBase):
                          delimiter='\n')
         shape = arr[:2]
         arr = arr[2:]
-        arr = arr.reshape(shape, order='F')
+        arr = arr.reshape(shape, order='F')  # .T
 
         labels = None
         return arr, labels

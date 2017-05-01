@@ -33,7 +33,7 @@ class MovingAverage(Tool):
 
     def activate(self):
         #         m = M(self.pN.value())
-        n = self.pN.value()
+        pn = self.pN.value()
 #         self._back = []
         for n, curve in enumerate(self.display.widget.curves):
             if curve in self._curves:
@@ -43,9 +43,9 @@ class MovingAverage(Tool):
 #             self._back.append((x,y))
             d = self.pDim.value()
             if d == 'both' or d == 'x':
-                x = M(x, n)
+                x = M(x, pn)
             if d == 'both' or d == 'y':
-                y = M(y, n)
+                y = M(y, pn)
             # curve.setData(x,y)
 
             try:

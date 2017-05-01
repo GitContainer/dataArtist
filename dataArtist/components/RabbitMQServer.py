@@ -1,6 +1,7 @@
 # coding=utf-8
 from __future__ import division
 from __future__ import print_function
+from PyQt5.Qt import QWidget
 try:
     import pika
 except ImportError:
@@ -71,12 +72,47 @@ class RabbitMQServer(object):
 
 
 if __name__ == '__main__':
-    #send a message:
-    import pika
+    import sys
+    from qtpy import QtWidgets
+    
+    ##############
+    # Test all keys dataArtist listens to
+    # in an interactive window
+    # ensure, that dA.preferences.commmunication.RabbitMQ = True
+    ##############
+    
+    
+    #setup server:
     parameters = pika.URLParameters("amqp://localhost/")
     connection = pika.BlockingConnection(parameters)
     channel = connection.channel()
-    channel.basic_publish(exchange='',
-                          routing_key='addFile',
-                          body='TEST/FILE/PATH.txt'
-                          )
+
+    #create window:
+    a = QtWidgets.QApplication(sys.argv)
+    w = QtWidgets.QWidget()
+    l = QtWidgets.QGridLayout()
+
+
+    I = [ ('addFile',             'path/to/file'    ),
+          ('changeActiveDisplay', '1'               ),
+          ('showDisplay',         '2, (0,0,100,200)'),
+          ('runScriptFromName',   'SCRIPTNAME'      ) ]
+
+    def fn(meth, txt):
+        channel.basic_publish(exchange='',
+                              routing_key=meth,
+                              body=txt)
+
+
+    for n,(meth, txt) in enumerate(I):
+        btn = QtWidgets.QPushButton(meth)
+        le = QtWidgets.QLineEdit()
+        le.setText(txt)
+        btn.clicked.connect(lambda _, meth=meth, le=le: fn(meth, le.text()))
+        l.addWidget(le, n,0)
+        l.addWidget(btn, n,1)
+
+    w.setLayout(l)
+    w.setWindowTitle("Test all RabbitMQ commands")
+    w.show() 
+    sys.exit(a.exec_())

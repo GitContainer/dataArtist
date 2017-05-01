@@ -94,7 +94,7 @@ class ColorLayerItem(pg.ImageItem):
 
     def _mkQImg(self):
         '''create a QImage from self.image_full'''
-        im = self.image
+        im = self.image.T
         a = self.alpha
         if im.dtype == bool:
             mn = False
@@ -118,7 +118,8 @@ class ColorLayerItem(pg.ImageItem):
         data[...,3] = im
 
         argb, alpha = pg.functions.makeARGB(data, levels=[mn, mx])
-        qalpha = pg.functions.makeQImage(argb, alpha, transpose=True)
+        qalpha = pg.functions.makeQImage(argb, alpha#, transpose=True
+                                         )
         qalpha.convertToFormat(QtGui.QImage.Format_Indexed8)
         return qalpha
 

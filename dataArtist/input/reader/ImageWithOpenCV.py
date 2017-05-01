@@ -49,7 +49,7 @@ class ImageWithOpenCV(ReaderBase):
         if img is None:
             raise Exception("image '%s' doesn't exist" % filename)
         # due to different conventions:
-        img = transpose(img)
+        #img = transpose(img)
 
         # crop
         if p.pCrop.value():

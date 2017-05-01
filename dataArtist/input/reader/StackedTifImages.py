@@ -44,7 +44,7 @@ class StackedTifImages(ImageWithOpenCV):
         tif = TiffFile(str(filename))
         img = tif.asarray()
         # due to different conventions:
-        img = transpose(img)
+        #img = transpose(img)
         # crop
         if prefs.pCrop.value():
             r = (prefs.pCropX0.value(),

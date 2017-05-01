@@ -269,17 +269,17 @@ class CalibrationFile(GlobalTool):
         self._autosave()
 
     def _checkCal(self):
-        c = self.curCal
-        if c is None:
+        if not self.hasCal():
             print('no calibration chosen - load now')
             self.showMenu()
-            c = self.curCal
-            if c is None:
+            if not self.hasCal():
                 self._loadFromFile()
-            c = self.curCal
-            if c is None:
+            if not self.hasCal():
                 raise Exception('no calibration chosen')
-        return c
+        return self.curCal
+
+    def hasCal(self):
+        return bool(len(self.calibrations))
 
     def updateNoise(self, nlf_coeff):
         c = self._checkCal()
@@ -438,8 +438,9 @@ class CalibrationFile(GlobalTool):
         if self.pAutosave.value():
             self._saveToFile(self._cal_file_path)
 
-    # TODO: default argument is mutable: Default argument values are evaluated only once at function definition time, 
-    #   which means that modifying the default value of the argument will affect all subsequent calls of the function.
+    # TODO: default argument is mutable: Default argument values are evaluated only once at function definition time,
+    # which means that modifying the default value of the argument will affect
+    # all subsequent calls of the function.
     def saveState(self, state={}):
         GlobalTool.saveState(self, state)
         state['cal dir'] = self._last_dir

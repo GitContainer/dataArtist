@@ -3,16 +3,18 @@ from __future__ import division
 from __future__ import print_function
 
 import cv2
-from qtpy import QtGui
+# from qtpy import QtGui
 import numpy as np
 
-from skimage.transform import resize
+# from skimage.transform import resize
 
 from fancywidgets.pyQtBased.Dialogs import Dialogs
 from imgProcessor.transformations import toUIntArray, isColor
-from imgProcessor.imgIO import transpose
+# from imgProcessor.imgIO import transpose
 from imgProcessor.imgIO import imwrite
 from dataArtist.widgets.Tool import Tool
+from imgProcessor.reader.qImageToArray import qImageToArray
+from imgProcessor.interpolate.LinearInterpolateImageStack import LinearInterpolateImageStack
 
 
 class SaveToFile(Tool):
@@ -49,6 +51,8 @@ TIFF files (*.tiff *.tif)"""
                        'Txt file':
                        (lambda: self.exportNumpy(np.savetxt),
                         'Text file (*.txt)'),
+                       'Video': 
+                        (self.exportVideo, 'Video file (*.avi *.png)'),
                        }
         pa = self.setParameterMenu()
 
@@ -134,6 +138,14 @@ rendered: export the current display view'''})
         self.pResize.sigValueChanged.connect(lambda param, value:
                                              [ch.show(value) for ch in param.children()])
 
+        
+        self.pFrames = self.pEngine.addChild({
+            'name': 'Frames per time step',
+            'type': 'float',
+            'value': 15,
+            'limits':(1,100),
+            'visible': False})
+
         self.pPath = pa.addChild({
             'name': 'path',
             'type': 'str',
@@ -165,6 +177,7 @@ rendered: export the current display view'''})
         self.pOnlyImage.show(val == 'rendered')
         self.pRange.show(val == 'normal image')
         self.pDType.show(val == 'normal image')
+        self.pFrames.show(val == 'Video')
 
     def _updateOutputSize(self):
         if self.pEngine.value() == 'rendered':
@@ -172,7 +185,7 @@ rendered: export the current display view'''})
             w = size.width()
             h = size.height()
         else:
-            w, h = self.display.widget.image.shape[1:3]
+            h, w = self.display.widget.image.shape[1:3]
         self.aspectRatio = h / w
         self.pWidth.setValue(w, blockSignal=self._pWidthChanged)
         self.pHeight.setValue(h, blockSignal=self._pHeightChanged)
@@ -290,7 +303,7 @@ rendered: export the current display view'''})
     def _export(self, fn):
         def export(img, path):
             if self.pResize.value():
-                img = resize(img, (self.pWidth.value(), self.pHeight.value()))
+                img = cv2.resize(img, (self.pWidth.value(), self.pHeight.value()))
             fn(path, img)
             print('Saved image under %s' % path)
         w = self.display.widget
@@ -310,9 +323,61 @@ rendered: export the current display view'''})
         Use pil.Image.fromarray(data).save() to save the image array
         '''
         def fn(path, img):
-            imwrite(path, transpose(img), dtype=float)
+            #float tiff only works if img is tiff:
+            path = path.setFiletype('tiff')
+            imwrite(path, img, dtype=float)
+#             imwrite(path, transpose(img), dtype=float)
         return self._export(fn)
 
+
+    def exportVideo(self):
+        self.startThread(self._exportVideoThread)
+
+    def _exportVideoDone(self):
+        pass
+
+
+    def _exportVideoThread(self):
+        fourcc = cv2.VideoWriter_fourcc(*'XVID')
+        ww = self.display.widget
+        im = ww.image
+        if self.pResize.value():
+            w,h = (self.pWidth.value(), self.pHeight.value())
+            im = [cv2.resize(i,(w,h)) for i in im]
+        else:
+            h,w = im.shape[1:3]
+        fr = self.pFrames.value()
+        pa = self.pPath.value()
+        assert pa[-3:] in ('avi', 'png'), 'video export only supports *.avi or *.png'
+        isVideo = pa[-3:] == 'avi'
+        if isVideo:
+            cap = cv2.VideoCapture(0)
+            out = cv2.VideoWriter(pa,fourcc, fr, (w,h), isColor=1)#im.ndim==4)
+        
+        times = np.linspace(0,len(im), len(im)*fr)
+        interpolator = LinearInterpolateImageStack(im)
+        
+        lastIm = ww.item.image
+        for n, time in enumerate(times):
+            #update progress:
+            self._thread.progressBar.bar.setValue(100*n/len(times))
+
+            ww.item.image = interpolator(time)
+            ww.item.render()
+            cimg = cv2.cvtColor(
+                    qImageToArray(ww.item.qimage), cv2.COLOR_RGB2BGR)
+            if isVideo:
+                out.write(cimg)
+            else:
+                cv2.imwrite('%s_%i_%.3f.png' %(pa[:-4], n, time) , cimg)
+                
+        if isVideo:
+            cap.release()
+            out.release()
+            
+        ww.item.image = lastIm
+
+            
     def exportCV2(self):
         '''
         Use cv2.imwrite() to save the image array
@@ -336,6 +401,6 @@ rendered: export the current display view'''})
             if isColor(int_img):
                 int_img = cv2.cvtColor(int_img, cv2.COLOR_RGB2BGR)
             
-            cv2.imwrite(path, transpose(int_img))
+            cv2.imwrite(path, int_img)#transpose(int_img))
 
         return self._export(fn)

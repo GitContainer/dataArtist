@@ -178,7 +178,7 @@ True: Images are taken every time the first layer is updated
             w.sigTimeChanged.disconnect(self._changeROI)
         self._rois = []
 
-    def _createROIs(self, edgesList=None):
+    def _createROIs(self):
         w = self.display.widget
         vb = w.view.vb
         p, s = self._posSize()

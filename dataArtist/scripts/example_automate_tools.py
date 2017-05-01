@@ -3,7 +3,10 @@
 # the region-of-interest tool
 #=====================================
 
-# this example only works on a image display!
+####################################
+# this example only works on a image display
+# with a least one layer
+####################################
 
 # show the 'Measurement' tool bar, if hidden:
 d.showToolBar('Measurement')

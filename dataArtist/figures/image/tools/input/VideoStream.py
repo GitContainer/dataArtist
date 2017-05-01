@@ -71,7 +71,7 @@ class VideoStream(Tool):
                 img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
             else:
                 img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-            img = cv2.transpose(img)
+            #img = cv2.transpose(img)
             if self.pFloat.value():
                 img = toFloatArray(img)
             i = w.image

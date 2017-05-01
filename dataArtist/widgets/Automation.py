@@ -234,6 +234,7 @@ class Automation(QtWidgets.QWidget):
 #         session.addContentToSave(l, *path+('automation.txt',))
         return state
 
+
     def restoreState(self, state):
         #         l =  eval(session.getSavedContent(*path +('automation.txt',) ) )
         # BUTTONS
@@ -245,11 +246,14 @@ class Automation(QtWidgets.QWidget):
                                         for i in range(self.cb_run_on.count())].index(
             state['runOn']))
         # SCRIPTS
-        self.tabs.clear()
         ss = state['scripts']
+        if ss and not hasattr(self, 'combo_import'):
+            self._toggleScriptsFirstTime()
+        self.tabs.clear()
         for n, title in enumerate(state['tabTitles']):
             tab = self.tabs.addEmptyTab(title)
             tab.editor.setPlainText(ss[n])
+
 
     def collectWidgets(self):
         '''
@@ -273,6 +277,7 @@ class Automation(QtWidgets.QWidget):
             # TOOL-PARAMETERS:
             if isinstance(tool.menu(), ParameterMenu):
                 tool.menu().pTree.returnParameterOnKlick(self._collect, fn)
+
 
     def _importScript(self, index):
         '''
@@ -404,6 +409,7 @@ class Automation(QtWidgets.QWidget):
         '''
         if self.btn_scripts.isChecked() and self.cb_run_on.currentIndex() == 2:  # =data changed
             self.toggle()
+
 
 
 class ScriptTab(CodeEditor):

@@ -83,12 +83,12 @@ class Crosshair(Tool):
                 x, y = self.mouseCoord(evt)
                 if w.image is None:
                     return
-                
+
                 img = w.image[w.currentIndex]
-                s0,s1 = img.shape[:2]
-                ix = np.clip(int(x),0,s0-1)
-                iy = np.clip(int(y),0,s1-1)
-                z = img[ix, iy]
+                s0, s1 = img.shape[:2]
+                ix = np.clip(int(x), 0, s0 - 1)
+                iy = np.clip(int(y), 0, s1 - 1)
+                z = img[iy, ix]
 
                 # set anchor of crosshair
                 if evt.y() - 30 > self.crosshair.boundingRect().height():
@@ -111,7 +111,7 @@ class Crosshair(Tool):
 
                 self.poiText = self._getPOItext(x, y, z)
                 self.crosshair.setText(self.poiText)
-                #except IndexError:
+                # except IndexError:
                 #    pass  # out of bounds
         # connect mouse-signals to new methods:
         self.scene.sigMouseMoved.connect(mouseMoved)
@@ -130,13 +130,13 @@ class Crosshair(Tool):
     def _updateValues(self):
         w = self.display.widget
         img = w.image[w.currentIndex]
-        s0,s1 = img.shape[:2]
+        s0, s1 = img.shape[:2]
         try:
             for t, d in zip(self.poiTextList, self.poiMarker.data):
                 x, y = d[0], d[1]
-                ix = np.clip(int(x),0,s0-1)
-                iy = np.clip(int(y),0,s1-1)
-                z = img[ix, iy]
+                ix = np.clip(int(x), 0, s0 - 1)
+                iy = np.clip(int(y), 0, s1 - 1)
+                z = img[iy, ix]
                 t.setText(self._getPOItext(x, y, z))
         except IndexError:
             # method also called when display closed
@@ -166,28 +166,30 @@ class Crosshair(Tool):
         self._first_time = True
         for t in self.poiTextList:
             self.view.removeItem(t)
+        self.poiTextList = []
         self.poiMarker.clear()
-#         self.view.removeItem(self.poiMarker)
-#         del self.poiMarker
-        w = self.display.widget
-        try:
-            # FIXME: sometime method is not connected any more ...
-            w.sigTimeChanged.disconnect(self._updateValues)
-            w.imageItem.sigImageChanged.disconnect(self._updateValues)
-        except:
-            pass
 
     def toggleShow(self):
+        w = self.display.widget
         if self.actionHide.isChecked():
             self.crosshair.show()
             self.poiMarker.show()
             for t in self.poiTextList:
                 t.show()
+            w.sigTimeChanged.connect(self._updateValues)
+            w.imageItem.sigImageChanged.connect(self._updateValues)
         else:
             self.crosshair.hide()
             self.poiMarker.hide()
             for t in self.poiTextList:
                 t.hide()
+            try:
+                # FIXME: sometimes method is not connected any more ...
+                w.sigTimeChanged.disconnect(self._updateValues)
+                w.imageItem.sigImageChanged.disconnect(self._updateValues)
+                print(999)
+            except:
+                pass
 
     def transpose(self):
         # TODO

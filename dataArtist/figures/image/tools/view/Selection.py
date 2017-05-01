@@ -14,7 +14,23 @@ import cv2
 from dataArtist.widgets.Tool import Tool
 from dataArtist.items.FreehandItem import FreehandItem
 from dataArtist.items.QPainterPath import QPainterPath
+
 from dataArtist.items.GridROI import GridROI
+from dataArtist.items.RectROI import RectROI
+from dataArtist.items.EllipseROI import EllipseROI
+from dataArtist.items.IsoCurveROI import IsoCurveROI
+from dataArtist.items.QuadROI import QuadROI
+from dataArtist.items.PerspectiveGridROI import PerspectiveGridROI
+
+
+ITEMS = {FreehandItem: 'Freehand',
+         RectROI: 'Rectangle',
+         GridROI: 'Grid',
+         IsoCurveROI: 'Isolines',
+         EllipseROI: 'Ellipse',
+         QuadROI:'Quad',
+         PerspectiveGridROI: 'PerspectiveGrid',
+         }
 
 
 class Selection(Tool):
@@ -40,7 +56,7 @@ class Selection(Tool):
             'name': 'Type',
             'type': 'list',
             'value': 'Freehand',
-            'limits': ['Freehand', 'Rectangle', 'Grid', 'Isolines', 'Ellipse']})
+            'limits': list(ITEMS.values())})
 
         self.pNew = self.pa.addChild({
             'name': 'New',
@@ -66,6 +82,7 @@ class Selection(Tool):
             'limits': ['-']})
         list(self.pMask.items.keys())[0].widget.showPopup = self._updatePMask
 
+
     def _updatePMask(self):
         l = ['-']
         l.extend([p.name() for p in self.pa.childs[3:]])
@@ -73,10 +90,12 @@ class Selection(Tool):
         i = list(self.pMask.items.keys())[0].widget
         i.__class__.showPopup(i)
 
+
     def _new(self):
         pen = mkPen(10, len(self.paths) + 2)
         name = typ = self.pType.value()
         self._add(typ, name, {'pen': pen})
+
 
     def _add(self, typ, name, state):
         self.curIndex = -1
@@ -97,10 +116,13 @@ class Selection(Tool):
             path = self._addGrid(p, state)
         elif typ == 'Isolines':
             path = self._addIso(p, state)
-        elif typ == 'Rectangle':
-            path = self._addROI(_Rect, p, state)
-        elif typ == 'Ellipse':
-            path = self._addROI(_Ellipse, p, state)
+        elif typ == 'PerspectiveGrid':
+            path = self._addPerspectiveGrid(p,state)
+        else:
+            cls = [k for k, v in ITEMS.items() if v==typ][0]
+            path = self._addROI(cls, p, state)
+
+
 
         self.paths.append(path)
 
@@ -201,7 +223,7 @@ class Selection(Tool):
     def _removePath(self, parent, child, index):
         w = self.display.widget
         path = self.paths.pop(index - 3)
-        if isinstance(path, _IsoCurve):
+        if isinstance(path, IsoCurveROI):
             try:
                 w.ui.histogram.vb.removeItem(path.isoLine)
             except ValueError:
@@ -230,12 +252,7 @@ class Selection(Tool):
         for p, path in zip(self.pa.childs[4:], self.paths):
             name = p.name()
             state = path.saveState()
-            typ = {FreehandItem: 'Freehand',
-                   _Rect: 'Rectangle',
-                   GridROI: 'Grid',
-                   _IsoCurve: 'Isolines',
-                   _Ellipse: 'Ellipse'
-                   }[path.__class__]
+            typ = ITEMS[path.__class__]
             state['pen'] = p.param('Line color').value().getRgb()
             state['brush'] = p.param('Fill color').value().getRgb()
             l.append((typ, name, state))
@@ -319,7 +336,7 @@ class Selection(Tool):
         lev = (mn + mx) / 2
 
         # Isocurve drawing
-        iso = _IsoCurve(level=lev, **state)
+        iso = IsoCurveROI(level=lev, **state)
 
         iso.setParentItem(w.imageItem)
         iso.setZValue(5)  # todo
@@ -364,6 +381,34 @@ class Selection(Tool):
         path = cls(**state)
         w.view.vb.addItem(path)
         return path
+
+
+    def _addPerspectiveGrid(self, param, state):
+        nCells = (10,6)
+        state['nCells']  = nCells
+        
+        path = self._addROI(PerspectiveGridROI, param, state)
+        
+        pX = param.addChild({
+            'name': 'X',
+            'type': 'int',
+            'value':nCells[0],
+            'limits':(1,20)})
+        pY = param.addChild({
+            'name': 'Y',
+            'type': 'int',
+            'value':nCells[1],
+            'limits':(1,20)})
+
+        def update():
+            path.nCells = pX.value(), pY.value()
+            path.update()
+ 
+        pX.sigValueChanged.connect(update)
+        pY.sigValueChanged.connect(update)
+        
+        return path
+
 
     def _addFreehand(self, param, state):
         w = self.display.widget
@@ -473,101 +518,4 @@ Click on 'Done Add' to stop drawing
                 name='layer %s' % n, array=avg)
 
 
-class _Rect(pg.ROI):
 
-    def __init__(self, *args, **kwargs):
-        if 'brush' in kwargs:
-            self.brush = kwargs.pop('brush')
-        pg.ROI.__init__(self, *args, **kwargs)
-        self.addScaleHandle([1, 1], [0, 0])
-
-    def painterPath(self):
-        p = self.state['pos']
-        s = self.state['size']
-        path = QPainterPath()
-        path.addRect(QtCore.QRectF(p[0], p[1], s[0], s[1]))
-        return path
-
-    def setBrush(self, brush):
-        self.brush = brush
-        self.update()
-
-    def paint(self, p, opt, widget):
-        if self.brush:
-            p.setBrush(self.brush)
-        return pg.ROI.paint(self, p, opt, widget)
-
-
-class _Ellipse(pg.EllipseROI):
-
-    def __init__(self, *args, **kwargs):
-        if 'brush' in kwargs:
-            self.brush = kwargs.pop('brush')
-        pg.EllipseROI.__init__(self, *args, **kwargs)
-
-    def painterPath(self):
-        p = self.state['pos']
-        s = self.state['size']
-        path = QPainterPath()
-        path.addEllipse(QtCore.QRectF(p[0], p[1], s[0], s[1]))
-        return path
-
-    def setBrush(self, brush):
-        self.brush = brush
-        self.update()
-
-    def paint(self, p, opt, widget):
-        if self.brush:
-            p.setBrush(self.brush)
-        return pg.EllipseROI.paint(self, p, opt, widget)
-
-
-class _IsoCurve(pg.IsocurveItem):
-
-    def __init__(self, *args, **kwargs):
-        self.brush = kwargs.pop('brush', None)
-        elements = None
-        if 'elements' in kwargs:
-            elements = kwargs.pop('elements')
-
-        pg.IsocurveItem.__init__(self, *args, **kwargs)
-
-        self.setElements(elements)
-
-    def setData(self, data, level=None):
-        if data is not None:
-            if data.ndim > 2:
-                raise Exception(
-                    'cannot create iso lines on color image at the moment')
-            pg.IsocurveItem.setData(self, data, level)
-
-    def setElements(self, elem):
-        self.path = QPainterPath()
-        if elem:
-            self.path.moveTo(*elem[0])
-            for e in elem[1:]:
-                self.path.lineTo(*e)
-            self.update()
-
-    def elements(self):
-        elem = []
-        for i in range(self.path.elementCount() - 1):
-            e = self.path.elementAt(i)
-            elem.append((e.x, e.y))
-        return elem
-
-    def painterPath(self):
-        return QPainterPath(self.path)
-
-    def paint(self, p, *args):
-        if self.data is None:
-            return
-        if self.path is None:
-            self.generatePath()
-        p.setPen(self.pen)
-        if self.brush:
-            p.setBrush(self.brush)
-        p.drawPath(self.path)
-
-    def saveState(self):
-        return {'elements': self.elements()}

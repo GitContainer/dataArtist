@@ -2,8 +2,8 @@
 # create a new display with 3 dimensions:
 n = new(axes=['x', 'y', 'i'])
 
-nx = 0
-ny = 0
+nx = 0.001
+ny = 0.001
 
 
 def update():
@@ -16,5 +16,5 @@ def update():
     # increase counter value
     nx += 0.001
     ny += 0.003
-# create a timer to coll 'update' every 20 ms:
+# create a timer to call 'update' every 20 ms:
 timed(update, 20, 20000)

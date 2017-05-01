@@ -36,5 +36,5 @@ class ToImage(Tool):
 
         self.display.workspace.addDisplay(
             axes=3,
-            data=[img.T],
+            data=[img],
             title='Image view of display (%s)' % d.number)

@@ -44,7 +44,7 @@ class NoiseLevelFunction(Tool):
         self.pRefFromDisplay.aboutToShow.connect(self._buildRefFromDisplayMenu)
 
         self.pRef.sigValueChanged.connect(lambda param, val:
-                                          self.pRefFromDisplay.show(val == 'From display'))
+                            self.pRefFromDisplay.show(val == 'From display'))
 
         self.pPlotResult = pa.addChild({
             'name': 'Plot NLF',
@@ -68,7 +68,7 @@ class NoiseLevelFunction(Tool):
             'visible': False,
             'value': 65000})
         self.pRange.sigValueChanged.connect(lambda param, val:
-                                            [ch.show(val) for ch in self.pRange.childs])
+                            [ch.show(val) for ch in self.pRange.childs])
 
         self.pUpdate = pa.addChild({
             'name': 'Update calibration',

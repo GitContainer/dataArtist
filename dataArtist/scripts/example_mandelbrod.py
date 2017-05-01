@@ -30,7 +30,7 @@ t_val, b_val = -1.223, 0.01124
 l_inc, r_inc = .03, -.02
 t_inc, b_inc = .03, -.005
 res = (200, 200)  # image resolution
-iterations = 11  # image depth - shouldn't be to high
+iterations = 31  # image depth - shouldn't be to high
 
 # we want to have the output on a new display:
 n = new(axes=3)

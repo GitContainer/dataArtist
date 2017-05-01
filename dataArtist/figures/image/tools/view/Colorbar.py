@@ -2,7 +2,7 @@
 import numpy as np
 from qtpy import QtWidgets
 from dataArtist.widgets.Tool import Tool
-from imgProcessor.imgSignal import signalRange
+from imgProcessor.imgSignal import scaleSignalCutParams #signalRange
 
 
 class Colorbar(Tool):
@@ -129,7 +129,8 @@ class Colorbar(Tool):
     def _fit(self):
         w = self.display.widget
         img = w.image[w.currentIndex]
-        r = signalRange(img, nSigma=3)
+#         r = signalRange(img, nSigma=3)
+        r = scaleSignalCutParams(img, 0.02)
         w.ui.histogram.setLevels(*r)
 
     def _pShowHistChanged(self, param, val):

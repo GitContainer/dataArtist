@@ -16,11 +16,12 @@ class Overlay(Tool):
         pa = self.setParameterMenu()
 
         # make some space for the color layer names:
-        try:
-            self._menu.pTree.header().setResizeMode(QtWidgets.QHeaderView.Fixed)
-        except AttributeError:
-            self._menu.pTree.header().setSectionResizeMode(QtWidgets.QHeaderView.Fixed)
-        self._menu.pTree.setColumnWidth(0, 270)
+#         try:
+        self._menu.pTree.header().setResizeMode(QtWidgets.QHeaderView.Fixed)
+#         except AttributeError:
+#             self._menu.pTree.header().setSectionResizeMode(QtWidgets.QHeaderView.Fixed)
+        self._menu.pTree.setColumnWidth( 0, 220)
+        self._menu.pTree.setColumnWidth( 1, 20)
 
         self.pAdd = pa.addChild({
             'name': 'add',
@@ -34,10 +35,12 @@ class Overlay(Tool):
         w.sigOverlayAdded.connect(self.addLayerControl)
         w.sigOverlayRemoved.connect(self.removeLayerControl)
 
+
     def addLayerFromOtherDisplay(self, display, layernumber, layername):
         im = display.widget.image
         im = im[layernumber]
-        self.display.widget.addColorLayer(im, layername, tip='')
+        self.display.widget.addColorLayer(im, layername[:20], tip='')
+
 
     def buildAddMenu(self, menu):
         '''
@@ -52,11 +55,13 @@ class Overlay(Tool):
                         lambda checked, d=d, n=n, l=l:
                         self.addLayerFromOtherDisplay(d, n, l))
 
+
     def removeLayer(self, parent, child):
         if child != self.pAdd:
             self.display.widget.removeColorLayer(child.name())
             if len(parent.children()[1:]) == 0:
                 self.setChecked(False)
+
 
     def _exportLayerToNewDisplay(self, name):
         for ch in self._menu.p.childs:
@@ -68,6 +73,7 @@ class Overlay(Tool):
             axes=self.display.axes.copy(),
             data=[item.image],
             title='Color overlay (%s)' % name)
+
 
     def removeLayerControl(self, item):
         '''
@@ -85,6 +91,7 @@ class Overlay(Tool):
         if len(self._menu.p.children()[1:]) == 0:
             self.setChecked(False)
 
+
     def addLayerControl(self, item, name, tip=''):
         '''
         add color button in parameter menu if an overlay is added
@@ -98,19 +105,21 @@ class Overlay(Tool):
             'name': name,
             'highlight': True,
             'type': 'color',
+            'value':item.getQColor(),
                     'tip': tip,
                     'removable': True,
+#                     'renamable':True,
                     'autoIncrementName': True,
                     'addToContextMenu': [aExport],
                     # TODO:
             # 'sliding':True
             'item': item
         })
-        p.setValue(item.getQColor())
         p.sigValueChanged.connect(
             lambda param, val: param.opts['item'].setQColor(val))
 
         self.setChecked(True)
+
 
     def saveState(self):
         state = Tool.saveState(self)
@@ -118,6 +127,7 @@ class Overlay(Tool):
         for n, ch in enumerate(self._menu.p.children()[1:]):
             state['c_layer_%i' % n] = ch.opts['item'].image
         return state
+
 
     def restoreState(self, state):
         Tool.restoreState(self, state)
@@ -162,12 +172,14 @@ class Overlay(Tool):
 #             img = np.load(p)
 #             self.display.widget.addColorLayer(img, name=ch.opts['name'], tip=ch.opts['name'])
 
+
     def activate(self):
         '''
         show all color layers
         '''
         for ch in self._menu.p.children()[1:]:
             ch.opts['item'].show()
+
 
     def deactivate(self):
         '''

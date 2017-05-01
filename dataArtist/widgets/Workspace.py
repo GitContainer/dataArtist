@@ -31,7 +31,7 @@ class Workspace(QtWidgets.QWidget):
 
         self.gui = gui
         self._last_active_display = None
-        self._import_display = None
+#         self._import_display = None
         self._n_displays = 0  # number of opened displays
         # BUILD MAIN DOCKAREAS:
         self.console = Console(self.gui.app.session.streamOut.message,
@@ -138,7 +138,7 @@ class Workspace(QtWidgets.QWidget):
         notepads = self.notepads()
         lt = l['notepads'] = {}
         for t in notepads:
-            lt[t.name] = t.widgets[0].text.toHtml()
+            lt[t.name()] = t.widgets[0].text.toHtml()
         return l
 
     def restoreState(self, state):
@@ -514,33 +514,40 @@ class Workspace(QtWidgets.QWidget):
         d = self.getCurrentDisplay()
         if d is not None:
             b = d.widget.item.sceneBoundingRect().toRect()
+            try:
+                #in case multiple items are in grid order:
+                for i in d.widget.subitems:
+                    b = b.united(i.sceneBoundingRect().toRect())
+            except AttributeError:
+                pass
             p = d.widget.grab(b)#QtGui.QPixmap.grabWidget(d.widget, b)
             QtWidgets.QApplication.clipboard().setPixmap(p)
             print('Copied current display item to clipboard.')
     
 
-    def setCurrentDisplayToImportDisplay(self):
-        '''
-        return whether successful
-        '''
-        d = self.getCurrentDisplay()
-        if not d:
-            return
-        self._setImportDisplay(d)
+#     def setCurrentDisplayToImportDisplay(self):
+#         '''
+#         return whether successful
+#         '''
+#         d = self.getCurrentDisplay()
+#         if not d:
+#             return
+#         self._setImportDisplay(d)
+# 
+#     def _setImportDisplay(self, d):
+#         print(d, self._import_display)
+#         if d != self._import_display:
+#             self.unsetImportDisplay()
+#             self._import_display = d
+#             d.label.closeButton.setEnabled(False)
+#             print('Set current display [%s] as import display' % d.number)
 
-    def _setImportDisplay(self, d):
-        if d != self._import_display:
-            self.unsetImportDisplay()
-            self._import_display = d
-            d.label.closeButton.setEnabled(False)
-            print('Set current display [%s] as import display' % d.number)
-
-    def unsetImportDisplay(self):
-        d = self._import_display
-        if d:
-            d.label.closeButton.setEnabled(True)
-            print('Unset current display [%s] as import display' % d.number)
-        self._import_display = None
+#     def unsetImportDisplay(self):
+#         d = self._import_display
+#         if d:
+#             d.label.closeButton.setEnabled(True)
+#             print('Unset current display [%s] as import display' % d.number)
+#         self._import_display = None
 
 
     def addFiles(self, names):
@@ -563,27 +570,23 @@ class Workspace(QtWidgets.QWidget):
                 return
         # add files in current display:
         i = pref.importFilesPolicy
-        if i in (pref.inCurrentDisplay, pref.inImportDisplay):
+        l = pref.loadImportedFiles
+        if i in (pref.inCurrentDisplay, pref.inDisplay):
             if i == pref.inCurrentDisplay:
                 display = self.getCurrentDisplay()
             else:
-                # DisplayNumber(pref.displayNumber)
-                display = self._import_display
-            if display:
-                display.addFiles(names, openfiles=pref.loadImportedFiles)
+                display = self.displaydict()[pref.displayNumber]
+            if display is not None:
+                display.addFiles(names, openfiles=l)
             else:
                 # if there is no display yet: create a new one:
-                display = self.addDisplay(
-                    names=names, openfiles=pref.loadImportedFiles)
-                if pref.inImportDisplay:
-                    self._setImportDisplay(display)
-
+                display = self.addDisplay(names=names, openfiles=l)
         # import all files in one new display:
-        elif pref.importFilesPolicy == pref.together:
-            self.addDisplay(names=names, openfiles=pref.loadImportedFiles)
+        elif i == pref.together:
+            self.addDisplay(names=names, openfiles=l)
         # import files in separate displays:
         else:
             for p in names:
                 # import each file separate
                 # also give a list when there is only one file
-                self.addDisplay(names=[p], openfiles=pref.loadImportedFiles)
+                self.addDisplay(names=[p], openfiles=l)
