@@ -12,7 +12,7 @@ python obfuscateDir.py C:\Users\elkb4\Desktop\Programming\git\PROimgprocessor\PR
 
 
 
-pyinstaller createPortable.spec
+pyinstaller createPortable_windows.spec
 
 COPY packaging dist
 

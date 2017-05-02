@@ -1,5 +1,4 @@
 # coding=utf-8
-from builtins import range
 from dataArtist.widgets.Tool import Tool
 from dataArtist.figures.image.tools.globals.CalibrationFile import CalibrationFile
 
@@ -48,28 +47,17 @@ all layers:
 pair of two layers: every next 2 image are averaged and STE removed
 current layer: only the current image is taken - no average, no STE removal
                     ''',
-            'limits': ['current layer',
-                       'all layers average',
-                       'all layers individual',
-                       'pair of two layers']})
-
-#         ps = self.pSTEremoval  = pa.addChild({
-#             'name':'Single-time-effect removal',
-#             'type':'bool',
-#             'value':False,
-#             'tip':'Averages every two images in a row in this display'})
-#
-#         self.pAllLayers.sigValueChanged.connect(lambda p,v:
-#             ps.setOpts(value=True, readonly=True)
-#             if v == 'all layers'
-#             else ps.setOpts(readonly=False))
-#         self.pAllLayers.setValue(True)
+            'limits': ['CURRENT layer',
+                       'ALL layers average',
+                       'ALL layers individual',
+                       'ALL as pair of two layers',
+                       'LAST two layers']})
 
         self.pDeblur = pa.addChild({
             'name': 'Deblur',
             'type': 'bool',
             'value': False,
-            'tip': 'Whether to deconvolve the image - this might take some minutes'})
+            'tip': 'Whether to deconvolute the image - this might take some minutes'})
 
         self.pDenoise = pa.addChild({
             'name': 'Denoise',
@@ -103,8 +91,6 @@ current layer: only the current image is taken - no average, no STE removal
             'type': 'menu',
             'value': '-'})
         self.pBgFromDisplay.aboutToShow.connect(
-            #                                 self._buildBgFromDisplayMenu)
-
             lambda m, fn=self._setBGDisplay:
             self.buildOtherDisplaysMenu(
                 m, fn))
@@ -133,7 +119,7 @@ current layer: only the current image is taken - no average, no STE removal
         else:
             self.pBgMethod.setOpts(value='from display', readonly=True)
 
-    def _pBgMethodChanged(self, param, value):
+    def _pBgMethodChanged(self, _param, value):
         '''
         show/hide right parameters for chosen option
         '''
@@ -147,21 +133,6 @@ current layer: only the current image is taken - no average, no STE removal
     def _setBGDisplay(self, display):
         self._bgDisplay = display
 
-
-#     def _buildBgFromDisplayMenu(self, menu):
-#         '''
-#         add an action for all layers of other ImageDisplays
-#         '''
-#         menu.clear()
-#         for d in self.display.workspace.displays():
-#             if (d.widget.__class__ == self.display.widget.__class__
-#                 and d.name() != self.display.name()):
-#                 a = menu.addAction(d.name())
-#                 a.triggered.connect(
-#                     lambda checked, d=d:
-#                         [menu.setTitle(d.name()[:20]),
-#                         self.__setattr__('_bgDisplay', d)] )
-
     def activate(self):
         '''
         open camera calibration and undistort image(s)
@@ -174,9 +145,6 @@ current layer: only the current image is taken - no average, no STE removal
 
         out = []
 
-        # CHECK SETUP:
-#         if self.pCalName.value() =='-':# is None:
-#             raise Exception('no calibration file given')
         # GET VARIABLES:
         bgImages = None
         exposureTime = None
@@ -184,44 +152,21 @@ current layer: only the current image is taken - no average, no STE removal
             exposureTime = self.pBgExpTime.value()
         elif self.pBgFromDisplay.value() != '-':
             bgImages = self._bgDisplay.widget.image
-#             if len(bgImages)==1:
-#                 bgImages = bgImages[0]
-
-#         if not self.pAllLayers.value():
-#             im = [im[w.currentIndex]]
 
         l = len(im)
         wc = w.currentIndex
-        #start, stop,step
-        c = {'current layer': (wc, wc + 1, 1),
-             'all layers average': (0, l + 1, l),
-             'all layers individual': (0, l, 1),
-             'pair of two layers': (0, l, 2)}[
+        #                      list of slices
+        c = {'CURRENT layer': (wc,),
+             'ALL layers average': (slice(None),),
+             'ALL layers individual': range(l),
+             'ALL as pair of two layers': [slice(i, i + 1) for i in range(l)[::2]],
+             'LAST two layers': (slice(-2, None),)
+             }[
             self.pAllLayers.value()]
 
-
-#         ste = self.pSTEremoval.value()
-#         if ste:
-#             if len(im) %2 != 0:
-#                 raise Exception('need an even number of images (min 2) for STE removal')
-#             c = 2
-#         else:
-#             c = 1
-
-        r = list(range(*c))
-
-#         for i in range(0,len(im),c):
-#             if ste:
-#                 im1 = im[i]
-#                 im2 = im[i+1]
-#             else:
-#                 im1 = im[i]
-#                 im2 = None
-
-        for i in range(len(r) - 1):
-
+        for i in c:
             out.append(self.calFileTool.correct(
-                images=im[r[i]:r[i + 1]],
+                images=im[i],
                 exposure_time=exposureTime,
                 bgImages=bgImages,
                 threshold=self.pThreshold.value(),

@@ -697,12 +697,13 @@ class DisplayDock(Dock):
                 self.addLayers(d, fnames, d)
 
     def saveState(self):
-
-        state = {'stack':      self.stack.saveState(),
-                 'automation': self.tab.automation.saveState(),
-                 'parameters': self.p.saveState(),
-                 'dock': self.label.maximized,
-                 'sizes': self.tab.sizes()}
+        #pp = self.p.saveState()
+        #ppp = pp['children'].pop(self.stack.name())
+        state = {  # 'stack':      ppp,  # self.stack.saveState(),
+            'automation': self.tab.automation.saveState(),
+            'parameters': self.p.saveState(),
+            'dock': self.label.maximized,
+            'sizes': self.tab.sizes()}
         #         path += ('display',str(self.number))
         # layers
         # automation
@@ -721,16 +722,26 @@ class DisplayDock(Dock):
         return self.widget.tools
 
     def restoreState(self, state):
-        # layers
-        self.stack.restoreState(state['stack'])
+        pp = state['parameters']
+
+        ppp = pp['children'][self.stack.name()]
+        # temporary remove layers to not initialize 2 times:
+        b = ppp['children']
+        ppp['children'] = {}
+        # ALL PARAM:
+        self.p.restoreState(pp)
+
+        # LAYERS
+        ppp['children'] = b
+        self.stack.restoreState(ppp)
+        self.stack._valuesChanged()
+
         # automation
         self.tab.automation.restoreState(state['automation'])
         self.tab.setSizes(state['sizes'])
         # parameters
         # TODO: this is not clean - stack is mentioned above and already
         # restore its parameters...
-        self.stack._valuesChanged()
-        self.p.restoreState(state['parameters'])
         # widget
         self.widget.restoreState(state['widget'])
         # dock
@@ -922,9 +933,9 @@ class _StackParameter(GroupParameter):
         set parameter values using file 'stack.txt'
         '''
         # DON'T DO ANYTHING WHILE THE STACK IS UPDATED:
-        self.blockSignals(True)
-        self.clearChildren()
-        self.blockSignals(False)
+        # self.blockSignals(True)
+        # self.clearChildren()
+        # self.blockSignals(False)
         if 'children' in state:
             self.sigChildAdded.disconnect(self._fnInsertRemovedLayer)
             # REBUILD STACK:

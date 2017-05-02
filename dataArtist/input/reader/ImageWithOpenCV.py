@@ -1,10 +1,7 @@
 # coding=utf-8
-from builtins import str
 import cv2
 import numpy as np
 
-from imgProcessor.transformations import transpose
-# OWN
 from dataArtist.input.reader._ReaderBase import ReaderBase, ReaderPreferences
 
 
@@ -29,7 +26,7 @@ class ImageWithOpenCV(ReaderBase):
         self.preferences = _ImagePreferences()
 
     @staticmethod
-    def check(ftype, fname):
+    def check(ftype, _fname):
         return ftype in ImageWithOpenCV.ftypes
 
     def open(self, filename):
@@ -48,8 +45,6 @@ class ImageWithOpenCV(ReaderBase):
         img = cv2.imread(str(filename), col)  # cv2.IMREAD_UNCHANGED)
         if img is None:
             raise Exception("image '%s' doesn't exist" % filename)
-        # due to different conventions:
-        #img = transpose(img)
 
         # crop
         if p.pCrop.value():
@@ -92,7 +87,7 @@ class _ImagePreferences(ReaderPreferences):
             'type': 'bool',
             'value': False,
             'visible': False})
-        self.pGrey.sigValueChanged.connect(lambda p, v:
+        self.pGrey.sigValueChanged.connect(lambda _p, v:
                                            self.pSplitColors.show(v))
         self.p8bit = self.addChild({
             'name': '8bit',
@@ -102,8 +97,10 @@ class _ImagePreferences(ReaderPreferences):
             'name': 'crop',
             'type': 'bool',
             'value': False})
-        fn = lambda param, value, self=self: [
-            ch.show(value) for ch in param.children()]
+
+        def fn(param, value):
+            [ch.show(value) for ch in param.children()]
+
         self.pCrop.sigValueChanged.connect(fn)
 
         pX = self.pCrop.addChild({
@@ -134,9 +131,8 @@ class _ImagePreferences(ReaderPreferences):
             'name': 'resize',
             'type': 'bool',
             'value': False})
-        fn = lambda param, value, self=self: [
-            ch.show(value) for ch in param.children()]
         self.pResize.sigValueChanged.connect(fn)
+
         self.pResizeX = self.pResize.addChild({
             'name': 'width',
             'type': 'int',

@@ -1,42 +1,32 @@
 # coding=utf-8
-from __future__ import division
-
-from qtpy import QtWidgets, QtCore, QtGui
 import numpy as np
 import traceback
+import platform
+from qtpy import QtWidgets, QtCore, QtGui
 
-from pyqtgraph import console
+from pyqtgraph_karl import console
+from pyqtgraph_karl.parametertree import Parameter
 
 from fancytools.os.PathStr import PathStr
 
-from pyqtgraph_karl.parametertree import Parameter
 from fancywidgets.pyQtBased.FwTabWidget import FwTabWidget
 from fancywidgets.pyQtBased.CodeEditor import CodeEditor
+from fancywidgets.pyQtBased.CircleWidget import CircleWidget
 
 import dataArtist
 from dataArtist.widgets.ParameterMenu import ParameterMenu
 from dataArtist.widgets.Tool import Tool
 
-import platform
-
-#---CONSTANTS------------------------------
+# ---CONSTANTS------------------------------
 # GET ALL PYTHON BUILD-INs:
-try:
-    __builtin__
-except NameError:
-    import builtins
-    __builtin__ = builtins
-
-from fancywidgets.pyQtBased.CircleWidget import CircleWidget
+import builtins
 BUILTINS_DICT = {}
-for b in dir(__builtin__):
-    BUILTINS_DICT[b] = getattr(__builtin__, b)
-del __builtin__
-
-#SPRIPT_PATH = PathStr.getcwd('dataArtist').join("scripts")
+for b in dir(builtins):
+    BUILTINS_DICT[b] = getattr(builtins, b)
+del builtins
+# SPRIPT_PATH = PathStr.getcwd('dataArtist').join("scripts")
 SPRIPT_PATH = PathStr(dataArtist.__file__).dirname().join('scripts')
-
-#------------------------------------------
+# ------------------------------------------
 
 
 class Automation(QtWidgets.QWidget):
@@ -47,7 +37,8 @@ class Automation(QtWidgets.QWidget):
     * 'Collect' button to grab the address of tool buttons and it's parameters
     * 'Import' list to load saved scripts
     * Multiple script editors listed as Tabs
-    * 'Run on new input' - Activate active script as soon as the input has changed
+    * 'Run on new input'
+        - Activate active script as soon as the input has changed
     * 'Run' - run active script now
     '''
 
@@ -58,7 +49,7 @@ class Automation(QtWidgets.QWidget):
         display.sigLayerChanged.connect(self.toggleDataChanged)
         display.sigNewLayer.connect(self.toggleNewData)
         self.setMinimumHeight(30)
-        
+
         self.splitter = splitter
 
         self._collect = False
@@ -72,7 +63,6 @@ class Automation(QtWidgets.QWidget):
         self._hl = QtWidgets.QHBoxLayout()
         layout.addLayout(self._hl)
 
-        
         # BUTTON: show/hide 'Scripts'
         self.btn_scripts = QtWidgets.QRadioButton('Scripts')
         f = self.btn_scripts.font()
@@ -94,7 +84,7 @@ class Automation(QtWidgets.QWidget):
 
         self._hl.addWidget(self.btn_console)
 
-        g = QtWidgets.QButtonGroup(self) 
+        g = QtWidgets.QButtonGroup(self)
         g.setExclusive(False)
         g.addButton(self.btn_scripts)
         g.addButton(self.btn_console)
@@ -110,18 +100,15 @@ class Automation(QtWidgets.QWidget):
         self.tabs.setTabsClosable(True)
         self.tabs.setTabsRenamable(True)
 
-
     def _uncheckScripts(self, show):
         if show and self.btn_scripts.isChecked():
             self._toggleScripts(False)
             self.btn_scripts.setChecked(False)
 
-
     def _uncheckConsole(self, show):
         if show and self.btn_console.isChecked():
             self._toggleConsole(False)
             self.btn_console.setChecked(False)
-
 
     def _toggleConsoleFirstTime(self):
 
@@ -133,23 +120,22 @@ class Automation(QtWidgets.QWidget):
         '''.format(platform.python_version())
 
         namespace = _ExecGlobalsDict(self.display)
-        
+
         self.console = console.ConsoleWidget(namespace=namespace, text=txt)
         self.console.ui.exceptionBtn.hide()
-        self.console.input.sigExecuteCmd.connect(self.display.widget.updateView)
-        self.layout().addWidget(self.console)        
+        self.console.input.sigExecuteCmd.connect(
+            self.display.widget.updateView)
+        self.layout().addWidget(self.console)
 
-        #update connections:
+        # update connections:
         self.btn_console.clicked.disconnect(self._toggleConsoleFirstTime)
         self.btn_console.clicked.connect(self._toggleConsole)
 
-
     def _toggleConsole(self, show):
         self.console.setVisible(show)
-        
 
     def _toggleScriptsFirstTime(self):
-        #build scripts layout
+        # build scripts layout
         refreshR = 20
 
         # COMBOBOX: IMPORT
@@ -192,7 +178,7 @@ class Automation(QtWidgets.QWidget):
         l = self.layout()
         l.addWidget(self.combo_import)
         l.addWidget(self.tabs)
-        
+
         self.tabs.show()
 
         hl2 = QtWidgets.QHBoxLayout()
@@ -205,10 +191,9 @@ class Automation(QtWidgets.QWidget):
         l.addLayout(hl2)
         l.addWidget(self.btn_run_now)
 
-        #update connections:
+        # update connections:
         self.btn_scripts.clicked.disconnect(self._toggleScriptsFirstTime)
         self.btn_scripts.clicked.connect(self._toggleScripts)
-
 
     def checkWidgetIsActive(self, widget):
         # bring widget into list of updated widgets
@@ -218,12 +203,14 @@ class Automation(QtWidgets.QWidget):
             a.append(widget)
 
     def saveState(self):
-        state = {'scriptOn':    self.btn_scripts.isChecked(), 
+        state = {'scriptOn':    self.btn_scripts.isChecked(),
                  'consoleOn':   self.btn_console.isChecked(),
                  'runOn':     str(self.cb_run_on.currentText()),
-                 'tabTitles': [str(self.tabs.tabText(tab)) for tab in self.tabs]}
+                 'tabTitles': [str(self.tabs.tabText(tab))
+                               for tab in self.tabs],
+                 'curTab': self.tabs.currentIndex()}
         # BUTTONS
-        #l['runOnNewInput'] = self.btn_run_new.isChecked()
+        # l['runOnNewInput'] = self.btn_run_new.isChecked()
         # SCRIPTS
         ss = state['scripts'] = []
         for tab in self.tabs:
@@ -234,9 +221,7 @@ class Automation(QtWidgets.QWidget):
 #         session.addContentToSave(l, *path+('automation.txt',))
         return state
 
-
     def restoreState(self, state):
-        #         l =  eval(session.getSavedContent(*path +('automation.txt',) ) )
         # BUTTONS
         self.btn_scripts.setChecked(state['scriptOn'])
 #         self._toggleScripts(state['active'])
@@ -253,7 +238,7 @@ class Automation(QtWidgets.QWidget):
         for n, title in enumerate(state['tabTitles']):
             tab = self.tabs.addEmptyTab(title)
             tab.editor.setPlainText(ss[n])
-
+        self.tabs.setCurrentIndex(state['curTab'])
 
     def collectWidgets(self):
         '''
@@ -277,7 +262,6 @@ class Automation(QtWidgets.QWidget):
             # TOOL-PARAMETERS:
             if isinstance(tool.menu(), ParameterMenu):
                 tool.menu().pTree.returnParameterOnKlick(self._collect, fn)
-
 
     def _importScript(self, index):
         '''
@@ -309,26 +293,23 @@ class Automation(QtWidgets.QWidget):
             except Exception:
                 traceback.print_exc()
 
-
     def minimumHeight(self):
         return QtWidgets.QWidget.minimumHeight(self) + 10
-        
 
     def updateSize(self):
         s = self.splitter
         l = s.sizes()
         if self.btn_scripts.isChecked() or self.btn_console.isChecked():
-            #resize to 50%
+            # resize to 50%
             s.setSizes(np.ones(len(l)) * np.mean(l))
             self.splitter.setStretchFactor(0, 1)
         else:
             minSize = self.minimumHeight()
-            l[1]= max(0,np.sum(l)-minSize)
-            l[0]=minSize
-            
+            l[1] = max(0, np.sum(l) - minSize)
+            l[0] = minSize
+
             s.setSizes(l)
             self.splitter.setStretchFactor(0, 0)
-
 
     def _toggleScripts(self, show):
         '''
@@ -353,7 +334,6 @@ class Automation(QtWidgets.QWidget):
             self.combo_import.hide()
             self.label_refresh.hide()
             self.sb_refreshrate.hide()
-
 
     def _setRunning(self):
         '''update button'''
@@ -409,7 +389,6 @@ class Automation(QtWidgets.QWidget):
         '''
         if self.btn_scripts.isChecked() and self.cb_run_on.currentIndex() == 2:  # =data changed
             self.toggle()
-
 
 
 class ScriptTab(CodeEditor):
@@ -468,8 +447,11 @@ Options are...
         elif isinstance(widget, Parameter):
             topParam, path = widget.path()
             tool = topParam.tool
-            self.editor.appendPlainText("d.tools['%s'].param('%s').setValue('XXX')" % (
-                tool.__class__.__name__, path[2:]))
+            p = str(path)[1:-1]
+            if len(path) == 1:
+                p = p[:-1]
+            self.editor.appendPlainText("d.tools['%s'].param(%s).setValue('XXX')" % (
+                tool.__class__.__name__, p))
 
 
 class _ExecGlobalsDict(dict):
@@ -504,7 +486,7 @@ class _ExecGlobalsDict(dict):
                 except KeyError:
                     raise Exception("display %s doesn't exist" % n)
             raise e
-    
+
     @property
     def displaydict(self):
         return self.display.workspace.displaydict()
@@ -598,7 +580,7 @@ class _Thread(QtCore.QThread):
         self._done = False
 
         self._timers = []
-        #self._globals.setup()
+        # self._globals.setup()
 
         self._widgetUpdateTimer.start()
         try:

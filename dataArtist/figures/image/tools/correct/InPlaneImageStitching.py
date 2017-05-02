@@ -69,7 +69,7 @@ class InPlaneImageStitching(ImageTool):
         self.pRotDev = self.pRot.addChild({
             'name': 'Deviation',
                     'type': 'float',
-                    'value': 0,
+                    'value': 1,
                     'limits': [0, 20]})
 
         self.pSet = pa.addChild({
@@ -88,7 +88,7 @@ class InPlaneImageStitching(ImageTool):
                 m = menu.addMenu(d.name())
                 for n, l in enumerate(d.layerNames()):
                     m.addAction(l).triggered.connect(
-                        lambda checked, d=d, n=n, l=l:
+                        lambda _checked, d=d, n=n, l=l:
                             self.setRefImg(d, n, l))
                     if d == self.display:
                         # allow only to choose first layer from same display
@@ -110,13 +110,20 @@ class InPlaneImageStitching(ImageTool):
         self.pImg.setValue(layername)
 
     def activate(self):
+        d = self.display
+
+        if self._refImg is None:
+            # try to take first layer of current display:
+            n = d.layerNames()
+            if len(n) > 1:
+                self.setRefImg(d, 0, n[0])
         if self._refImg is None:
             raise Exception('Need to define reference image first')
 
         st = StitchImages(self._refImg)
 
         im = self.getImageOrFilenames()
-        if self._refDisplay.number == self.display.number:
+        if self._refDisplay.number == d.number:
             im = im[1:]
 
         bgcol = {'0': 0,

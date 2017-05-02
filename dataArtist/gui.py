@@ -23,7 +23,7 @@ from dataArtist.widgets.dialogs.FirstStartDialog import FirstStartDialog
 from dataArtist.widgets.GlobalTools import GlobalTools
 from dataArtist.widgets.StatusBar import StatusBar
 
-#by default pyqtgraph is still col-major, so:
+# by default pyqtgraph is still col-major, so:
 import pyqtgraph_karl
 pyqtgraph_karl.setConfigOptions(imageAxisOrder='row-major')
 del pyqtgraph_karl
@@ -104,7 +104,7 @@ class Gui(MultiWorkspaceWindow):
         l = {}
         i = self.size()
         p = self.pos()
-        l['geometry'] = (p.x(),p.y(), i.width(), i.height())
+        l['geometry'] = (p.x(), p.y(), i.width(), i.height())
 #         l['desktop'] = QtGui.QApplication.desktop().screenNumber(self)
         c = self.centralWidget()
         l['nWorkspaces'] = c.count()
@@ -117,6 +117,11 @@ class Gui(MultiWorkspaceWindow):
         for w in self.workspaces():
             sw[w.number()] = w.saveState()
         l['undoRedo'] = self.undoRedo.saveState()
+        # GLOBAL TOOLS
+        tt = []
+        for t in self.gTools:
+            tt.append(t.saveState())
+        l['globalTools'] = tt
         return l
 
     def restoreState(self, l):
@@ -145,6 +150,9 @@ class Gui(MultiWorkspaceWindow):
         self._toggleShowSelectedToolbars(l['showTools'])
 
         self.undoRedo.restoreState(l['undoRedo'])
+        # GLOBAL TOOLS
+        for t, tt in zip(self.gTools, l['globalTools']):
+            t.restoreState(tt)
 
     def addFilePath(self, filepath):
         '''
@@ -222,10 +230,10 @@ class Gui(MultiWorkspaceWindow):
             'New' --> run a script, called 'New' in the current active display
         '''
         d = self.currentWorkspace().getCurrentDisplay()
-        w = d.tab.automation.tabs.widgetByName(name.decode("utf-8") )
+        w = d.tab.automation.tabs.widgetByName(name.decode("utf-8"))
         if not w:
             raise Exception(
-                'couldnt find script [%s] in the current display' %name)
+                'couldnt find script [%s] in the current display' % name)
         w.thread.start()
 
     def _appendMenubarAndPreferences(self):
@@ -307,8 +315,8 @@ class Gui(MultiWorkspaceWindow):
 
         def showhidePref():
             s = self.currentWorkspace().vert_splitter
-            if len(s)==1:
-                #preference tab is popped out
+            if len(s) == 1:
+                # preference tab is popped out
                 return
             show = not isPrefVisible()
             r = s.getRange(1)[1]

@@ -68,7 +68,7 @@ b) Installation into existing Python installation using pip
 - After installing Python3.x and ensuring that 'pip' is a recognised command in the command shell (Windows: CMD.exe).
   you need to install the following packages BEFORE installing dataArtist:
   
-    - PyQt4 
+    - PyQt5 
     - OpenCV3.1
     - OPTIONAL: RabbitMQ (for inter-program communication)
   

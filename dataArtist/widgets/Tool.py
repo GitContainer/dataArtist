@@ -1,8 +1,6 @@
 # coding=utf-8
-from __future__ import print_function
 import os
 import cv2
-
 from qtpy import QtWidgets, QtCore, QtGui
 
 from fancytools.os.PathStr import PathStr
@@ -52,20 +50,16 @@ class _ProcessThread(QtCore.QThread):
         self.progressBar.cancel.clicked.disconnect(self.kill)
 
     def run(self):
+        # TODO: sometimes not full traceback printed...
         try:
             out = self.runfn()
-        except AssertionError as e:
-            # need to transform assert into exception
-            # otherwise no exception text printed:
-            self.progressBar.cancel.click()
-            raise Exception(e.args)
-        except (cv2.error, Exception) as e:
+        except (cv2.error, Exception, AssertionError) as e:
             # need to fetch cv2.error extra and print it. otherwise
             # msg would not be visible in log
             if type(e) is cv2.error:
                 print(e)
             self.progressBar.cancel.click()
-            raise
+            raise Exception('Tool execution failed: ', e)
         self.sigDone.emit(out)
 
 

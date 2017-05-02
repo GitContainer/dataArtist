@@ -1,11 +1,9 @@
 # coding=utf-8
-from __future__ import division
-from __future__ import print_function
-from PyQt5.Qt import QWidget
 try:
     import pika
 except ImportError:
-    print("couldn't import pika - you wont be able to use the RabbitMQ data server")
+    print(
+        "couldn't import pika - you wont be able to use the RabbitMQ data server")
 from qtpy import QtCore
 
 
@@ -21,7 +19,7 @@ class RabbitMQServer(object):
 
         self.opts = {'refreshrate': 1000,  # ms
                      'host': 'localhost',
-                    # 'timeout': 1,  # ms
+                     # 'timeout': 1,  # ms
                      'corfirmPosts': False
                      }
 
@@ -30,7 +28,6 @@ class RabbitMQServer(object):
                          'showDisplay': self.gui.showDisplay,
                          'runScriptFromName': self.gui.runScriptFromName,
                          }
-
 
     def start(self):
         '''
@@ -41,7 +38,6 @@ class RabbitMQServer(object):
         self.timer = QtCore.QTimer()
         self.timer.timeout.connect(self.connection.process_data_events)
         self.timer.start(self.opts['refreshrate'])
-
 
     def configure(self):
         parameters = pika.URLParameters("amqp://%s/" % self.opts['host'])
@@ -54,15 +50,16 @@ class RabbitMQServer(object):
                 queue=name, no_ack=True,
                 consumer_callback=self.on_message)
 
-
     def on_message(self, channel, method_frame, header_frame, body):
         key = method_frame.routing_key
+        # TEMP FIX: [body] is byte str -> b'...'
+        # transform for python str:
+        body = body.decode("utf-8")
+
         if self.opts['corfirmPosts']:
-            print(" [R] %s -> '%s'" % (key, body))
+            print(" [R] %s -> {%s}" % (key, body))
         action = self.listenTo[key]
         action(body)
-#         channel.basic_ack(delivery_tag=method_frame.delivery_tag)
-
 
     def stop(self):
         if self.timer is not None and self.timer.isActive():
@@ -74,45 +71,42 @@ class RabbitMQServer(object):
 if __name__ == '__main__':
     import sys
     from qtpy import QtWidgets
-    
+
     ##############
     # Test all keys dataArtist listens to
     # in an interactive window
     # ensure, that dA.preferences.commmunication.RabbitMQ = True
     ##############
-    
-    
-    #setup server:
+
+    # setup server:
     parameters = pika.URLParameters("amqp://localhost/")
     connection = pika.BlockingConnection(parameters)
     channel = connection.channel()
 
-    #create window:
+    # create window:
     a = QtWidgets.QApplication(sys.argv)
     w = QtWidgets.QWidget()
     l = QtWidgets.QGridLayout()
 
-
-    I = [ ('addFile',             'path/to/file'    ),
-          ('changeActiveDisplay', '1'               ),
-          ('showDisplay',         '2, (0,0,100,200)'),
-          ('runScriptFromName',   'SCRIPTNAME'      ) ]
+    I = [('addFile',             'path/to/file'),
+         ('changeActiveDisplay', '1'),
+         ('showDisplay',         '2, (0,0,100,200)'),
+         ('runScriptFromName',   'SCRIPTNAME')]
 
     def fn(meth, txt):
         channel.basic_publish(exchange='',
                               routing_key=meth,
                               body=txt)
 
-
-    for n,(meth, txt) in enumerate(I):
+    for n, (meth, txt) in enumerate(I):
         btn = QtWidgets.QPushButton(meth)
         le = QtWidgets.QLineEdit()
         le.setText(txt)
         btn.clicked.connect(lambda _, meth=meth, le=le: fn(meth, le.text()))
-        l.addWidget(le, n,0)
-        l.addWidget(btn, n,1)
+        l.addWidget(le, n, 0)
+        l.addWidget(btn, n, 1)
 
     w.setLayout(l)
     w.setWindowTitle("Test all RabbitMQ commands")
-    w.show() 
+    w.show()
     sys.exit(a.exec_())

@@ -22,11 +22,11 @@ from dataArtist.figures.image.tools.globals.CalibrationFile import CalibrationFi
 # PROPRIETARY
 try:
     from PROimgProcessor.transform.subPixelAlignment import subPixelAlignment
-    from PROimgProcessor.GridDetection import CrystModule
+    from PROimgProcessor.features.GridDetection import GridDetection
 
 except ImportError:
     subPixelAlignment = None
-    CrystModule = None
+    GridDetection = None
 
 
 class PerspectiveCorrection(Tool):
@@ -66,9 +66,9 @@ class PerspectiveCorrection(Tool):
         self.pBorder = self.pRef.addChild({
             'name': 'Border',
             'type': 'int',
-            'value': 0,
+            'value': 50,
             'limits': (0, 1000)})
-        pro = CrystModule is not None
+        pro = GridDetection is not None
         self.pManual = self.pRef.addChild({
             'name': 'Manual object detection',
             'type': 'bool',
@@ -83,12 +83,12 @@ class PerspectiveCorrection(Tool):
         self.pCellsX = self.pCells.addChild({
             'name': 'X',
             'type': 'int',
-            'value': 10,
+            'value': 6,
             'limits': (1, 100)})
         self.pCellsY = self.pCells.addChild({
             'name': 'Y',
             'type': 'int',
-            'value': 6,
+            'value': 10,
             'limits': (1, 100)})
 
         self.pCellsX.sigValueChanged.connect(self._updateROI)
@@ -101,7 +101,7 @@ class PerspectiveCorrection(Tool):
         self.pSubcells = self.pMask.addChild({
             'name': 'N subcells',
             'type': 'int',
-            'value': 2})
+            'value': -1})
         self.pCellOrient = self.pMask.addChild({
             'name': 'Subcells orientation',
             'type': 'list',
@@ -235,7 +235,7 @@ class PerspectiveCorrection(Tool):
             'type': 'bool',
             'value': True})
 
-    def _pCalcOutSizeChanged(self, p, v):
+    def _pCalcOutSizeChanged(self, _p, v):
         self.pCalcAR.show(v == 'Calculate')
         self.pOutWidth.show(v == 'Manual')
         self.pOutHeight.show(v == 'Manual')
@@ -251,11 +251,11 @@ class PerspectiveCorrection(Tool):
             self._refImg_from_own_display = layernumber
         self.pRefImg.setValue(layername)
 
-    def _showROI(self, param, value):
+    def _showROI(self, _p, value):
         if self.quadROI is not None:
             self.quadROI.show() if value else self.quadROI.hide()
 
-    def _setupQuadManually(self, param, value):
+    def _setupQuadManually(self, _p, value):
         #         self.pSnap.show(value)
         if value:
             if not self.quadROI:
@@ -283,7 +283,7 @@ class PerspectiveCorrection(Tool):
         w.view.vb.addItem(rTo)
         return (rFrom, rTo)
 
-    def _pRefChanged(self, param, val):
+    def _pRefChanged(self, _p, val):
         x = val == 'Reference image'
         self.pRefImgChoose.show(x)
         self.pSubPx.show(x)
@@ -418,24 +418,30 @@ class PerspectiveCorrection(Tool):
             # HOMOGRAPHY THROUGH QUAD
             vertices = None  # QuadDetection(img).vertices
             if self.pManual.value():
-                # need to transpose because of different conventions
-                vertices = np.array([(h['pos'].y(), h['pos'].x())
+                vertices = np.array([(h['pos'].x(), h['pos'].y())
                                      for h in self.quadROI.handles])
                 vertices += self.quadROI.pos()
-            if CrystModule is None:
+            if GridDetection is None:
                 self.pc = PC(img.shape, **self._pc_args)
                 self.pc.setReference(self._refImg)
+            ns = self.pSubcells.value()
+            if ns == -1:
+                nSublines = None
+            elif self.pCellOrient.value() == 'horiz':
+                nSublines = ([ns], [0])
+            else:
+                nSublines = ([0], [ns])
 
-            self.pc = CrystModule(border=self.pBorder.value())
-            self.pc.setGrid(img=img,
-                            vertices=vertices,
-                            shape=self.pCellShape.value(),
-                            grid=(self.pCellsY.value(), self.pCellsX.value()),
-                            nBusbars=self.pSubcells.value(),
-                            busbarOrientation=int(
-                                self.pCellOrient.value() == 'horiz'),
-                            refine=self.pCells.value(),
-                            refine_sublines=self.pMask.value())
+            self.pc = GridDetection(img=img,
+                                    border=self.pBorder.value(),
+                                    vertices=vertices,
+                                    shape=self.pCellShape.value(),
+                                    grid=(
+                                        self.pCellsY.value(),
+                                        self.pCellsX.value()),
+                                    nSublines=nSublines,
+                                    refine=self.pCells.value(),
+                                    refine_sublines=self.pMask.value())
 
             if not self.pManual.value():
                 if not self.quadROI:
@@ -443,7 +449,7 @@ class PerspectiveCorrection(Tool):
                 # show found ROI:
                 for h, c in zip(self.quadROI.handles, self.pc.opts['vertices']):
                     pos = c[::-1] - self.quadROI.pos()
-                    h['item'].setPos(pos[0], pos[1])
+                    h['item'].setPos(pos[1], pos[0])
                 self.quadROI.show()
 
     def _process(self):
@@ -474,9 +480,9 @@ class PerspectiveCorrection(Tool):
             r = v == 'Reference image'
             e = self.pExecOn.value()
             for n, i in enumerate(img):
-                if (e == 'all images'
-                    or (e == 'current image' and n == w.currentIndex)
-                        or (e == 'last image' and n == len(img) - 1)):
+                if (e == 'all images' or
+                        (e == 'current image' and n == w.currentIndex) or
+                        (e == 'last image' and n == len(img) - 1)):
 
                     if not (r and n == self._refImg_from_own_display):
                         corr = self.pc.correct(i)

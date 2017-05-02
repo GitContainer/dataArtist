@@ -8,6 +8,7 @@ from imgProcessor.camera.CameraCalibration import CameraCalibration
 from fancywidgets.pyQtBased.ArgSetter import ArgSetter
 
 from dataArtist.widgets.GlobalTool import GlobalTool
+from fancytools.os.PathStr import PathStr
 
 
 class CalibrationFile(GlobalTool):
@@ -26,8 +27,8 @@ class CalibrationFile(GlobalTool):
 
         self.calibrations = []
 
-        self._last_dir = None
-        self._cal_file_path = None
+        #self._last_dir = None
+        #self._cal_file_path = None
         self._curIndex = 0
         self._genericCal = CameraCalibration()
 
@@ -102,9 +103,9 @@ class CalibrationFile(GlobalTool):
 
             aView = QtWidgets.QAction('View', self)
             aDel = QtWidgets.QAction('Remove', self)
-            aView.triggered.connect(lambda checked, n=name:
+            aView.triggered.connect(lambda _checked, n=name:
                                     self._viewCurrentCoeff(n))
-            aDel.triggered.connect(lambda checked, n=name:
+            aDel.triggered.connect(lambda _checked, n=name:
                                    self._removeCurrentCoeff(n))
             pDates.addChild({
                 'name': 'Info',
@@ -194,6 +195,7 @@ class CalibrationFile(GlobalTool):
         a.exec_()
         if a.result():
             c = CameraCalibration()
+            c.path = None
             self.calibrations.append(c)
 
             name = a.args['camera name']
@@ -208,20 +210,20 @@ class CalibrationFile(GlobalTool):
             [p.show() for p in self.pCal.childs]
 
     def _loadFromFile(self):
-        d = self.display.workspace.gui.dialogs.getOpenFileName(
+        path = self.display.workspace.gui.dialogs.getOpenFileName(
             filter='*%s' % CameraCalibration.ftype)
-        if d:
-            self._cal_file_path = d
-            self._last_dir = d.dirname()
-
-            c = CameraCalibration.loadFromFile(d)
-            self.calibrations.append(c)
-
+        if path:
+            self._loadWithPath(path)
+            self.pCal.setLimits([c.coeffs['name'] for c in self.calibrations])
+            self._updateInfo()
             [p.show() for p in self.pCal.childs]
             self._curIndex = -1
-            self.pCal.setLimits([c.coeffs['name'] for c in self.calibrations])
 
-            self._updateInfo()
+    def _loadWithPath(self, path):
+        #self._last_dir = path.dirname()
+        c = CameraCalibration.loadFromFile(path)
+        self.calibrations.append(c)
+        c.path = path
 
     @property
     def curCal(self):
@@ -434,39 +436,34 @@ class CalibrationFile(GlobalTool):
 
     def _saveToFile(self, path=None):
         kwargs = {'filter': '*%s' % CameraCalibration.ftype}
-        if self._last_dir is not None:
-            kwargs['directory'] = self._last_dir
+        c = self.calibrations[self._curIndex]
+        if c.path is not None:
+            kwargs['directory'] = c.path  # self._last_dir
         if path is None:
             path = self.display.workspace.gui.dialogs.getSaveFileName(**kwargs)
         if path:
-            self._cal_file_path = path
-            c = self.calibrations[self._curIndex]
+            #self._cal_file_path = path
+
             c.saveToFile(path)
+            c.path = path
             self.pModified.setValue(False)
             print('camera calibration saved')
 
     def _autosave(self):
         if self.pAutosave.value():
-            self._saveToFile(self._cal_file_path)
+            self._saveToFile(self.calibrations[self._curIndex].path)
 
     # TODO: default argument is mutable: Default argument values are evaluated only once at function definition time,
     # which means that modifying the default value of the argument will affect
     # all subsequent calls of the function.
-    def saveState(self, state={}):
-        GlobalTool.saveState(self, state)
-        state['cal dir'] = self._last_dir
+    def saveState(self):
+        state = GlobalTool.saveState(self)
+        state['cal paths'] = [c.path for c in self.calibrations]
+        return state
 
     def restoreState(self, state):
+        self.calibrations = []
+        for p in state['cal paths']:
+            self._loadWithPath(PathStr(p))
         GlobalTool.restoreState(self, state)
-        self._last_dir = state['cal dir']
-
-
-#     def save(self, session, path):
-#         l = {}
-#         l['cal dir'] = self._last_dir
-#         session.addContentToSave(l, *path+('general.txt',))
-#
-#
-#     def restore(self, session, path):
-#         l =  eval(session.getSavedContent(*path +('general.txt',) ))
-#         self._last_dir = l['cal dir']
+        return
