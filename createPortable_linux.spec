@@ -105,7 +105,7 @@ pyz = PYZ(a.pure)
 exe = EXE(pyz,
       a.scripts,
       exclude_binaries=1,
-      name='dataArtist.bin',
+      name='dataArtist.run',
       debug=False,
       strip=None,
       upx=False,#should be disabled for PtQt4 according to https://groups.google.com/forum/#!topic/pyinstaller/GEL1QQfpHLI
