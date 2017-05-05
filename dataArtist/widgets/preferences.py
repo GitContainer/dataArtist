@@ -164,11 +164,18 @@ class PreferencesCommunication(QtWidgets.QWidget):
         if checked:
             try:
                 self.rabbitMQServer.start()
-            except Exception as err:
+            except Exception as ex:
                 # maybe rabbitMQ is not installed
                 # needs to assign to self, otherwise garbage collected
                 self._errm = QtWidgets.QErrorMessage()
-                self._errm.showMessage(str(err))
+                self._errm.showMessage("""Could not load RabbitMQ
+                
+%s: %s
+
+Have you installed it?
+
+https://www.rabbitmq.com""" %(
+                    type(ex).__name__, ex.args))
                 self.cb_allowRabbit.setChecked(False)
                 self.cb_allowRabbit.setEnabled(False)
                 return
@@ -185,7 +192,8 @@ class PreferencesCommunication(QtWidgets.QWidget):
             tt = self.gui.menuBar().file_preferences
             s = tt.minimumSize()
             h,w = s.height(), s.width()
-            tt.setMinimumSize(w-600, h-600)
+            if h:
+                tt.setMinimumSize(w-600, h-600)
 
         self._rab_opts.setVisible(checked)
         self.cb_confirm.setVisible(checked)
