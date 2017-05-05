@@ -3,7 +3,8 @@
 .. image:: https://img.shields.io/badge/License-GPLv3-red.svg
 .. image:: https://img.shields.io/badge/python-3.5-blue.svg
 
-`Download for Windows 7-10`_
+`Download for Windows 7-10 and Linux`_
+
 
 |screenshot|
 
@@ -44,7 +45,7 @@ Data is imported through drag n’drop.
 
 #. Images
 
--  Common used (TIF, BMP, PNG, JPG, CSV, TXT, MAT)
+-  Common used (TIF, BMP, PNG, JPG, CSV, TXT, MAT, CR2, FIT)
 -  RAW, if data type and image shape are known
 -  Numpy arrays
 
@@ -71,7 +72,9 @@ b) Installation into existing Python installation using pip
     - PyQt5 
     - OpenCV3.1
     - OPTIONAL: RabbitMQ (for inter-program communication)
-  
+
+-  Best use anaconda as Python environment. It comes with numba, scipy and
+   many more packages, that might be painful to install by hand.
    Please refer to the `USER manual`_ for more information.
 -  Once these packages are installed, open a command shell and type:
 
@@ -157,7 +160,7 @@ a reference image.
 .. |screenshot| image:: https://cloud.githubusercontent.com/assets/350050/15406631/806a7a8a-1dc4-11e6-9e76-709cd482857f.png
 .. |screenshotpsf| image:: https://cloud.githubusercontent.com/assets/350050/15404653/bd2e51b6-1dbb-11e6-8282-2ea539f0286d.png
 .. |screenshotcorrection| image:: https://cloud.githubusercontent.com/assets/350050/15404785/53d4c992-1dbc-11e6-93b7-c6108ab9a2b0.png
-.. _Download for Windows 7-10: https://github.com/radjkarl/dataArtist/releases/
+.. _Download for Windows 7-10 and Linux: https://github.com/radjkarl/dataArtist/releases/
 .. _USER manual: https://github.com/radjkarl/dataArtist/raw/master/dataArtist/media/USER_MANUAL.pdf
 .. _DEVELOPERS manual: http://radjkarl.github.io/dataArtist/
 .. _Releases: https://github.com/radjkarl/dataArtist/releases
