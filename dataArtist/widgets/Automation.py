@@ -153,7 +153,7 @@ class Automation(QtWidgets.QWidget):
         self.btn_collect.setToolTip(
             'click on all tool parameters you want to change during the batch process')
         self.btn_collect.setCheckable(True)
-        self.btn_collect.clicked.connect(self.collectWidgets)
+        self.btn_collect.clicked.connect(self.collectTools)
         # TABWIDGET: SCRIPT
         self.tabs.defaultTabWidget = lambda: ScriptTab(self, refreshR)
         self.tabs.addEmptyTab('New')
@@ -240,7 +240,7 @@ class Automation(QtWidgets.QWidget):
             tab.editor.setPlainText(ss[n])
         self.tabs.setCurrentIndex(state['curTab'])
 
-    def collectWidgets(self):
+    def collectTools(self):
         '''
         Get a Tool button or a parameter within the tools menu
         and add it to the active script
@@ -255,7 +255,10 @@ class Automation(QtWidgets.QWidget):
         # TOGGLE BUTTON
         self.btn_collect.setChecked(self._collect)
         # add chosen widget to active script:
-        fn = lambda widget: self.tabs.currentWidget().addTool(widget)
+
+        def fn(tool):
+            return self.tabs.currentWidget().addTool(tool)
+
         for tool in self.display.widget.tools.values():
             # TOOLS:
             tool.returnToolOnClick(self._collect, fn)

@@ -2,8 +2,10 @@ from dataArtist.widgets.Tool import Tool
 from dataArtist.items.PerspectiveGridROI import PerspectiveGridROI
 
 try:
-    from PROimgProcessor.electroluminescence.paramFromFilename import paramFromFilename
-    from PROimgProcessor.electroluminescence.seriesResistanceMapping import seriesResistanceMapping
+    from PROimgProcessor.electroluminescence.paramFromFilename \
+        import paramFromFilename
+    from PROimgProcessor.electroluminescence.seriesResistanceMapping \
+        import seriesResistanceMapping
 except ImportError:
     seriesResistanceMapping = None
 
@@ -16,7 +18,7 @@ class SeriesResistanceMap(Tool):
     This tool needs both images to be in the same display.
     Both images need to be fully corrected including ...
     * background removal
-    * flat field  
+    * flat field
     * artifacts
     * lens
     * perspective
@@ -44,10 +46,11 @@ class SeriesResistanceMap(Tool):
             _I[CURRENT IN A]
             _T[TEMPERATURE in DEG C]...
             float point number are written like that:
-            '0-015' for 0.015 
+            '0-015' for 0.015
             '''})
         self.pParamFromName.sigValueChanged.connect(lambda p, v:
-                                                    [ch.show(not(v)) for ch in p.childs])
+                                                    [ch.show(not(v))
+                                                     for ch in p.childs])
 
         for name in ('First image', 'Second image'):
             ch = self.pParamFromName.addChild({
@@ -139,18 +142,19 @@ class SeriesResistanceMap(Tool):
             temperature1 = p.childs[0].param('Temperature').value()
             temperature2 = p.childs[1].param('Temperature').value()
 
-        Rs, j0i, Ubias2grid = seriesResistanceMapping(img1, img2,
-                                                      voltage1, voltage2,
-                                                      current1, current2,
-                                                      temperature1, temperature2,
-                                                      module_length=None,  # cm
+        Rs, j0i, Ubias2grid = seriesResistanceMapping(
+            img1, img2,
+            voltage1, voltage2,
+            current1, current2,
+            temperature1, temperature2,
+            module_length=None,  # cm
 
-                                                      grid=gridROI.nCells,
-                                                      border=gridROI.edges(),
+            grid=gridROI.nCells,
+            border=gridROI.edges(),
 
-                                                      expTime1=expTime1,
-                                                      expTime2=expTime2,
-                                                      )
+            expTime1=expTime1,
+            expTime2=expTime2,
+            correct_perspective=False)
 
         return Rs, j0i,  Ubias2grid
 

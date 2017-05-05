@@ -568,8 +568,7 @@ class DisplayDock(Dock):
                 self.changeLayer(data=d, changes='redo', index=i,
                                  backup=False),
                 dataFn=lambda i=index, w=widget:
-                w.getData(i).copy()
-            )
+                w.getData(i).copy())
 
     def changeAllLayers(self, data=None, changes=None, backup=True, **kwargs):
         if backup:
@@ -725,14 +724,16 @@ class DisplayDock(Dock):
         pp = state['parameters']
 
         ppp = pp['children'][self.stack.name()]
-        # temporary remove layers to not initialize 2 times:
-        b = ppp['children']
-        ppp['children'] = {}
+        if 'children' in ppp:
+            # temporary remove layers to not initialize 2 times:
+            b = ppp['children']
+            ppp['children'] = {}
         # ALL PARAM:
         self.p.restoreState(pp)
 
         # LAYERS
-        ppp['children'] = b
+        if 'children' in ppp:
+            ppp['children'] = b
         self.stack.restoreState(ppp)
         self.stack._valuesChanged()
 

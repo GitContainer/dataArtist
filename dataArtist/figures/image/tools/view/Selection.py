@@ -28,7 +28,7 @@ ITEMS = {FreehandItem: 'Freehand',
          GridROI: 'Grid',
          IsoCurveROI: 'Isolines',
          EllipseROI: 'Ellipse',
-         QuadROI:'Quad',
+         QuadROI: 'Quad',
          PerspectiveGridROI: 'PerspectiveGrid',
          }
 
@@ -62,7 +62,7 @@ class Selection(Tool):
             'name': 'New',
             'type': 'action',
             'value': True})
-        self.pNew.sigActivated.connect(self._new)
+        self.pNew.sigActivated.connect(self.new)
         self.pNew.sigActivated.connect(self._menu.resizeToContent)
 
         pMask = self.pa.addChild({
@@ -82,7 +82,6 @@ class Selection(Tool):
             'limits': ['-']})
         list(self.pMask.items.keys())[0].widget.showPopup = self._updatePMask
 
-
     def _updatePMask(self):
         l = ['-']
         l.extend([p.name() for p in self.pa.childs[3:]])
@@ -90,12 +89,10 @@ class Selection(Tool):
         i = list(self.pMask.items.keys())[0].widget
         i.__class__.showPopup(i)
 
-
-    def _new(self):
+    def new(self):
         pen = mkPen(10, len(self.paths) + 2)
         name = typ = self.pType.value()
-        self._add(typ, name, {'pen': pen})
-
+        return self._add(typ, name, {'pen': pen})
 
     def _add(self, typ, name, state):
         self.curIndex = -1
@@ -117,12 +114,10 @@ class Selection(Tool):
         elif typ == 'Isolines':
             path = self._addIso(p, state)
         elif typ == 'PerspectiveGrid':
-            path = self._addPerspectiveGrid(p,state)
+            path = self._addPerspectiveGrid(p, state)
         else:
-            cls = [k for k, v in ITEMS.items() if v==typ][0]
-            path = self._addROI(cls, p, state)
-
-
+            cls = [k for k, v in ITEMS.items() if v == typ][0]
+            path = self._addROI(cls, state)
 
         self.paths.append(path)
 
@@ -150,6 +145,7 @@ class Selection(Tool):
         pFillColor.sigValueChanged.connect(self._changeFillColor)
 
         self.setChecked(True)
+        return path
 
     def _initFreehand(self):
         w = self.display.widget
@@ -258,8 +254,9 @@ class Selection(Tool):
             l.append((typ, name, state))
         return l
 
-    # TODO: default argument is mutable: Default argument values are evaluated only once at function definition time, 
-    #   which means that modifying the default value of the argument will affect all subsequent calls of the function.
+    # TODO: default argument is mutable: Default argument values are evaluated only once at function definition time,
+    # which means that modifying the default value of the argument will affect
+    # all subsequent calls of the function.
     def saveState(self, state={}):
         state['activated'] = self.isChecked()
         state['paths'] = self._savePaths()
@@ -343,7 +340,8 @@ class Selection(Tool):
         # build isocurves from smoothed data
         # connect
         pGauss.sigValueChanged.connect(self._isolinePGaussChanged)
-        fn = lambda v=pGauss.value(), p=pGauss: self._isolinePGaussChanged(p, v)
+        fn = lambda v=pGauss.value(), p=pGauss: self._isolinePGaussChanged(
+            p, v)
         w.imageItem.sigImageChanged.connect(fn)
         w.sigTimeChanged.connect(fn)
 
@@ -368,7 +366,7 @@ class Selection(Tool):
             d = w.image[w.currentIndex]
         p.parent().opts['iso'].setData(d)
 
-    def _addROI(self, cls, param, state):
+    def _addROI(self, cls, state):
         w = self.display.widget
         r = w.view.vb.viewRange()
         if 'pos' not in state:
@@ -382,33 +380,46 @@ class Selection(Tool):
         w.view.vb.addItem(path)
         return path
 
-
     def _addPerspectiveGrid(self, param, state):
-        nCells = (10,6)
-        state['nCells']  = nCells
-        
-        path = self._addROI(PerspectiveGridROI, param, state)
-        
+        nCells = (10, 6)
+        state['nCells'] = nCells
+
+        path = self._addROI(PerspectiveGridROI, state)
+        path.p = param
         pX = param.addChild({
             'name': 'X',
             'type': 'int',
-            'value':nCells[0],
-            'limits':(1,20)})
+            'value': nCells[0],
+            'limits': (1, 200)})
         pY = param.addChild({
             'name': 'Y',
             'type': 'int',
-            'value':nCells[1],
-            'limits':(1,20)})
+            'value': nCells[1],
+            'limits': (1, 200)})
 
-        def update():
-            path.nCells = pX.value(), pY.value()
+        def updateY(_p, v, path=path):
+            path.nCells[0] = v
             path.update()
- 
-        pX.sigValueChanged.connect(update)
-        pY.sigValueChanged.connect(update)
-        
-        return path
 
+        def updateX(_p, v, path=path):
+            path.nCells[1] = v
+            path.update()
+        pX.sigValueChanged.connect(updateY)
+        pY.sigValueChanged.connect(updateX)
+
+        pAvg = param.addChild({
+            'name': 'Create cell averages',
+            'type': 'action'})
+        pAvType = pAvg.addChild({
+            'name': 'Type',
+            'type': 'list',
+            'value': 'mean',
+            'limits': ['mean', 'standard deviation']})
+
+        pAvg.sigActivated.connect(lambda _p, path=path, param=pAvType:
+                                  self._showCellAverage_Pgrid(path,
+                                                              param.value()))
+        return path
 
     def _addFreehand(self, param, state):
         w = self.display.widget
@@ -489,8 +500,8 @@ Click on 'Done Add' to stop drawing
         pAvgCellInt = param.addChild({
             'name': 'Return average cell intensity',
             'type': 'action'})
-        pAvgCellInt.sigActivated.connect(lambda param, p=path:
-                                         self._showCellAverage(p))
+        pAvgCellInt.sigActivated.connect(lambda _p, pa=path:
+                                         self._showCellAverage_grid(pa))
 
         pRatio = pShape.addChild({
             'name': 'Ratio Circle/Square',
@@ -499,23 +510,30 @@ Click on 'Done Add' to stop drawing
             'limits': [1, 1.41],
             'visible': False})
 
-        pShape.sigValueChanged.connect(lambda param, val:
-                                       pRatio.show(val == 'Pseudosquare'))
-        pX.sigValueChanged.connect(lambda p, v, grid=path, py=pY:
+        pShape.sigValueChanged.connect(lambda _p, v:
+                                       pRatio.show(v == 'Pseudosquare'))
+        pX.sigValueChanged.connect(lambda _p, v, grid=path, py=pY:
                                    grid.setGrid(v, py.value()))
-        pY.sigValueChanged.connect(lambda p, v, grid=path, px=pX:
+        pY.sigValueChanged.connect(lambda _p, v, grid=path, px=pX:
                                    grid.setGrid(px.value(), v))
-        pShape.sigValueChanged.connect(lambda p, v, grid=path:
+        pShape.sigValueChanged.connect(lambda _p, v, grid=path:
                                        grid.setCellShape(v))
-        pRatio.sigValueChanged.connect(lambda p, v, grid=path:
-                                       [c.setRatioEllispeRect(v) for c in grid.cells])
+        pRatio.sigValueChanged.connect(lambda _p, v, grid=path:
+                                       [c.setRatioEllispeRect(v)
+                                        for c in grid.cells])
         return path
 
-    def _showCellAverage(self, path):
+    def _showCellAverage_grid(self, path):
         for n, img in enumerate(self.display.widget.image):
-            avg = path.getCellParameters(img).T
+            avg = path.getCellParameters(img)
             self.display.workspace.addTableDock(
                 name='layer %s' % n, array=avg)
 
-
-
+    def _showCellAverage_Pgrid(self, path, fnname):
+        d = self.display
+        fn = {'mean': np.mean, 'standard deviation': np.std}[fnname]
+        for n, img in enumerate(d.widget.image):
+            avg = path.cellAverages(img, fn)
+            self.display.workspace.addTableDock(
+                name='[%s].%s - Cell average(%s)' % (d.number, n, fnname),
+                array=avg)

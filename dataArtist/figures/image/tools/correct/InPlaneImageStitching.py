@@ -13,7 +13,6 @@ class InPlaneImageStitching(ImageTool):
 
     ...works on unloaded images too
 
-    IMPORTANT: not correction for perspective errors at the moment
     '''
     icon = 'imgStitching.svg'
 
@@ -21,6 +20,7 @@ class InPlaneImageStitching(ImageTool):
         ImageTool.__init__(self, imageDisplay)
 
         self._refImg = None
+        self._refTool = None
 
         pa = self.setParameterMenu()
         self.createResultInDisplayParam(pa)
@@ -77,7 +77,20 @@ class InPlaneImageStitching(ImageTool):
                     'type': 'bool',
                     'value': False,
                     'tip': 'Activate, to set overlap and rotation to found result'})
+        pRefDispl = pa.addChild({
+            'name': 'Take values from Display',
+                    'type': 'menu',
+                    'value': '-',
+                    'tip': '###################'})
 
+        pRefDispl.aboutToShow.connect(lambda menu:
+                                      self.buildOtherDisplaysMenu(
+                                          menu, self._setRefDisplay))
+
+    def _setRefDisplay(self, display):
+        self._refTool = display.tools[self.__class__.__name__]
+
+    # TODO: replace with buildOtherDisplayLayersMenu
     def buildImgMenu(self, menu):
         '''
         fill the menu with all available images within other displays
@@ -130,15 +143,40 @@ class InPlaneImageStitching(ImageTool):
                  'np.nan': np.nan,
                  '-': None}
         out = None
+
+        if self._refTool:
+            try:
+                params = self._refTool._lastParams
+            except AttributeError:
+                raise Exception('Tool from display [%] was not executed so far'
+                                %self._refTool.display.number())
+
+        c = 0
+        self._lastParams = []
         for i in im:
             if i is not None:
-                out = st.addImg(i,
-                                side=self.pSide.value(),
-                                backgroundColor=bgcol[self.pBgColor.value()],
-                                overlap=self.pOverlap.value(),
-                                overlapDeviation=self.pOverlapDev.value(),
-                                rotation=self.pRot.value(),
-                                rotationDeviation=self.pRotDev.value())
+
+                if self._refTool:
+                    kwargs = dict(side=self._refTool.pSide.value(),
+                                  backgroundColor=bgcol[
+                                      self._refTool.pBgColor.value()],
+                                  params=params[c])
+
+                    c += 1
+                    if c == len(params):
+                        c = 0
+
+                else:
+                    kwargs = dict(side=self.pSide.value(),
+                                  backgroundColor=bgcol[self.pBgColor.value()],
+                                  overlap=self.pOverlap.value(),
+                                  overlapDeviation=self.pOverlapDev.value(),
+                                  rotation=self.pRot.value(),
+                                  rotationDeviation=self.pRotDev.value())
+
+                out = st.addImg(i, **kwargs)
+
+                self._lastParams.append(st.lastParams)
 
                 if self.pSet.value():
                     offs, rot = st.lastParams[1:]

@@ -129,7 +129,7 @@ class Tool(QtWidgets.QToolButton):
 
         a = menu.addAction('[NEW, OVERRIDE]')
         a.triggered.connect(lambda: addToParam('[NEW, OVERRIDE]'))
-        #a.setToolTip('Create once a new display, than replace values in there.')
+        # a.setToolTip('Create once a new display, than replace values in there.')
 
         a = menu.addAction('[NEW, ADD]')
         a.triggered.connect(lambda: addToParam('[NEW, ADD]'))
@@ -140,11 +140,11 @@ class Tool(QtWidgets.QToolButton):
 
         a = menu.addAction('[ADD]')
         a.triggered.connect(lambda: addToParam('[ADD]'))
-        #a.setToolTip('Add a new layer to the current display.')
+        # a.setToolTip('Add a new layer to the current display.')
 
         a = menu.addAction('[REPLACE]')
         a.triggered.connect(lambda: addToParam('[REPLACE]'))
-        #a.setToolTip('Add the current layer to the current display.')
+        # a.setToolTip('Add the current layer to the current display.')
 
         for d in self.display.workspace.displays():
             if d != self.display and d.widget.__class__ == self.display.widget.__class__:
@@ -183,7 +183,7 @@ class Tool(QtWidgets.QToolButton):
                 n = kwargs.pop('names', None)
                 if v == '[NEW, OVERRIDE]':
                     # OVERRIDE
-                    d.changeLayer(data=out, **kwargs)
+                    d.changeAllLayers(data=out, **kwargs)
                 else:
                     if n is None:
                         n = t
@@ -219,16 +219,14 @@ class Tool(QtWidgets.QToolButton):
         return d
 
     def buildOtherDisplayLayersMenu(self, menu, triggerFn,
-                                    includeThisDisplay=False, updateMenuValue=True):
+                                    includeThisDisplay=False,
+                                    updateMenuValue=True):
         '''
         fill the menu with all available layers within other displays
         this function of often connected with the menu.aboutToShow signal
         '''
         menu.clear()
         # SUBMENU FOR ALL DISPLAYS
-#         for d in self.display.workspace.displays():
-#             if (isinstance(d.widget,self.display.widget.__class__)
-#                 and d.name() != self.display.name() ):
         for d in self.display.otherDisplaysOfSameType(includeThisDisplay):
             m = menu.addMenu(d.name())
             # ACTION FOR ALL LAYERS
@@ -236,11 +234,11 @@ class Tool(QtWidgets.QToolButton):
                 name = '%s - %s' % (n, l)
                 a = m.addAction(name)
                 a.triggered.connect(
-                    lambda checked, d=d, n=n, l=l:
+                    lambda _checked, d=d, n=n, l=l:
                         triggerFn(d, n, l))
                 if updateMenuValue:
                     a.triggered.connect(
-                        lambda checked, name=name: menu.setTitle(name))
+                        lambda _checked, name=name: menu.setTitle(name))
 
     def buildOtherDisplaysMenu(self, menu, triggerFn, lenMenuName=25):
         '''
@@ -249,14 +247,11 @@ class Tool(QtWidgets.QToolButton):
         '''
         menu.clear()
         # SUBMENU FOR ALL DISPLAYS
-#         for d in self.display.workspace.displays():
-#             if (isinstance(d.widget,self.display.widget.__class__)
-#                     and d.name() != self.display.name() ):
         for d in self.display.otherDisplaysOfSameType():
             a = menu.addAction(d.name())
-            a.triggered.connect(lambda checked, d=d:
+            a.triggered.connect(lambda _checked, d=d:
                                 triggerFn(d))
-            a.triggered.connect(lambda checked, d=d:
+            a.triggered.connect(lambda _checked, d=d:
                                 menu.setTitle(d.name()[:lenMenuName]))
 
     def _checkShowBtnMenu(self):

@@ -17,7 +17,7 @@ pyinstaller createPortable_windows.spec
 COPY packaging dist
 
 
-python obfuscateDir.py C:\Users\elkb4\Desktop\Programming\git\PROimgProcessor\PROimgProcessor done
+REM python obfuscateDir.py C:\Users\elkb4\Desktop\Programming\git\PROimgProcessor\PROimgProcessor done
 
 REM would be cool to create azip file from all...
 REM - this doesnt work: for /d %%a in (dist) do (ECHO zip -r -p "%%~na.zip" ".\%%a\*")

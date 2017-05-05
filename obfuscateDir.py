@@ -1,7 +1,8 @@
 import os
 import subprocess
 import shutil
-import time
+# import time
+# import compileall
 
 
 def obfuscateDir(p, opt=None):
@@ -17,21 +18,20 @@ def obfuscateDir(p, opt=None):
         with barely readable versions of the same functionality
     '''
 
-    p2 = os.path.join(os.path.dirname(p)+'_obfuscated', 
-                          os.path.basename(p))
-    if opt == None:
+    p2 = os.path.join(os.path.dirname(p) + '_obfuscated',
+                      os.path.basename(p))
+    if opt is None:
         # make backup
-#         name = os.path.basename(p) + '_obfuscated'
-        
+        #         name = os.path.basename(p) + '_obfuscated'
 
-#         p2 = os.path.join(os.path.dirname(p), name)
+        #         p2 = os.path.join(os.path.dirname(p), name)
         if os.path.exists(p2):
             shutil.rmtree(p2, ignore_errors=True)
 
         shutil.copytree(p, p2)
 #         except FileExistsError:
-#             
-#             
+#
+#
 #             pass
 #             # backup only exists if cresteExe failed.
 #             # in this case [p] is still obfuscated and nothing
@@ -49,11 +49,17 @@ def obfuscateDir(p, opt=None):
                     pp = os.path.join(root, name)
                     # replace current file with obfuscated version:
                     subprocess.Popen(
-                                     #--obfuscate-builtins #break functionality...
-                        "pyminifier --obfuscate-variables -o %s %s" % (pp, pp), shell=True)
+                        #--obfuscate-builtins #break functionality...
+                        #--obfuscate-variables #breaks in GridDetection
+                        "pyminifier -o %s %s" % (pp, pp), shell=True)
+
+                    # TODO: NEED TO MAKE PYC ONLY DISTRIBUTION WORK
+                    # compileall.compile_file(pp)
+                    # os.remove(pp)
 
     else:
-        shutil.rmtree(p2, ignore_errors=True)
+        pass
+        shutil.rmtree(os.path.dirname(p2), ignore_errors=True)
 #         # restore backup
 #         name = '_backup_' + os.path.basename(p)
 #         p2 = os.path.join(os.path.dirname(p), name)

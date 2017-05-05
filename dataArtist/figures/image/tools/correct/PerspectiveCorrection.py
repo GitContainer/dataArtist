@@ -23,7 +23,6 @@ from dataArtist.figures.image.tools.globals.CalibrationFile import CalibrationFi
 try:
     from PROimgProcessor.transform.subPixelAlignment import subPixelAlignment
     from PROimgProcessor.features.GridDetection import GridDetection
-
 except ImportError:
     subPixelAlignment = None
     GridDetection = None
@@ -83,16 +82,18 @@ class PerspectiveCorrection(Tool):
         self.pCellsX = self.pCells.addChild({
             'name': 'X',
             'type': 'int',
-            'value': 6,
-            'limits': (1, 100)})
+            'value': 0,
+            'limits': (0, 100)})
         self.pCellsY = self.pCells.addChild({
             'name': 'Y',
             'type': 'int',
-            'value': 10,
-            'limits': (1, 100)})
+            'value': 0,
+            'limits': (0, 100)})
 
-        self.pCellsX.sigValueChanged.connect(self._updateROI)
-        self.pCellsY.sigValueChanged.connect(self._updateROI)
+        def fn(p, v):
+            return self._updateROI()
+        self.pCellsX.sigValueChanged.connect(fn)
+        self.pCellsY.sigValueChanged.connect(fn)
 
         self.pMask = self.pRef.addChild({
             'name': 'Create Mask',
@@ -259,7 +260,7 @@ class PerspectiveCorrection(Tool):
         #         self.pSnap.show(value)
         if value:
             if not self.quadROI:
-                self._createROI()
+                self.quadROI = self._createROI()
             else:
                 self.quadROI.show()
         elif self.quadROI:
@@ -343,26 +344,32 @@ class PerspectiveCorrection(Tool):
 #                     h['item'].setPos(closest[0], closest[1])
 #             self.quadROI.update()
 
-    def _updateROI(self):
-        if self.quadROI:
-            self.quadROI.nCells = self.pCellsX.value(), self.pCellsY.value()
-            self.quadROI.update()
+    def _updateROI(self, roi=None):
+        if roi is None:
+            roi = self.quadROI
+        if roi is not None:
+            roi.p.param('X').setValue(self.pCellsX.value())
+            roi.p.param('Y').setValue(self.pCellsY.value())
 
-    def _createROI(self):
-        w = self.display.widget
-        s = w.image[w.currentIndex].shape[:2]
-        if not self.quadROI:
+    def _createROI(self, display=None):
+        if display is None:
+            display = self.display
 
-            r = w.view.vb.viewRange()
-            p = ((r[0][0] + r[0][1]) / 2,
-                 (r[1][0] + r[1][1]) / 2)
-            s = [(r[0][1] - r[0][0]) * 0.1, (r[1][1] - r[1][0]) * 0.1]
+        t = display.tools['Selection']
 
-            self.quadROI = PerspectiveGridROI(nCells=(self.pCellsX.value(),
-                                                      self.pCellsY.value()),
-                                              pos=p, size=s)
+        def check(roi):
+            return isinstance(roi, PerspectiveGridROI)
 
-            w.view.vb.addItem(self.quadROI)
+        def find():
+            return next((roi for roi in t.paths if check(roi)), None)
+        # check whether already a grid ROI exists:
+        quadROI = find()
+        if not check(quadROI):
+            # no grid ROI there -> create one!
+            t.pType.setValue('PerspectiveGrid')
+            quadROI = t.new()  # pNew.sigActivated.emit(t.pNew)
+        self._updateROI(quadROI)
+        return quadROI
 
     def activate(self):
         if self.pLive.value():
@@ -416,11 +423,13 @@ class PerspectiveCorrection(Tool):
 
         else:
             # HOMOGRAPHY THROUGH QUAD
-            vertices = None  # QuadDetection(img).vertices
+            vertices = None
             if self.pManual.value():
-                vertices = np.array([(h['pos'].x(), h['pos'].y())
-                                     for h in self.quadROI.handles])
-                vertices += self.quadROI.pos()
+                if not self.quadROI:
+                    self.quadROI = self._createROI()
+                    raise Exception('need to fit quad first.')
+                vertices = self.quadROI.edges()
+
             if GridDetection is None:
                 self.pc = PC(img.shape, **self._pc_args)
                 self.pc.setReference(self._refImg)
@@ -432,25 +441,21 @@ class PerspectiveCorrection(Tool):
             else:
                 nSublines = ([0], [ns])
 
+            gy = self.pCellsY.value()
+            gx = self.pCellsX.value()
+            if 0 in (gx, gy):
+                grid = None
+            else:
+                grid = gx, gy
+
             self.pc = GridDetection(img=img,
                                     border=self.pBorder.value(),
                                     vertices=vertices,
                                     shape=self.pCellShape.value(),
-                                    grid=(
-                                        self.pCellsY.value(),
-                                        self.pCellsX.value()),
+                                    grid=grid,
                                     nSublines=nSublines,
-                                    refine=self.pCells.value(),
+                                    refine_cells=self.pCells.value(),
                                     refine_sublines=self.pMask.value())
-
-            if not self.pManual.value():
-                if not self.quadROI:
-                    self._createROI()
-                # show found ROI:
-                for h, c in zip(self.quadROI.handles, self.pc.opts['vertices']):
-                    pos = c[::-1] - self.quadROI.pos()
-                    h['item'].setPos(pos[1], pos[0])
-                self.quadROI.show()
 
     def _process(self):
         w = self.display.widget
@@ -488,16 +493,15 @@ class PerspectiveCorrection(Tool):
                         corr = self.pc.correct(i)
 
                         if r and self.pSubPx.value():
-
-                            corr = subPixelAlignment(corr, self._refImg,
-                                                     niter=20,
-                                                     grid=(self.pSubPx_y.value(),
-                                                           self.pSubPx_x.value()),
-                                                     method='smooth',
-                                                     # maxGrad=2,
-                                                     concentrateNNeighbours=self.pSubPx_neigh.value(
-                                                     ),
-                                                     maxDev=self.pSubPx_maxDev.value())[0]
+                            corr = subPixelAlignment(
+                                corr, self._refImg,
+                                niter=20,
+                                grid=(self.pSubPx_y.value(),
+                                      self.pSubPx_x.value()),
+                                method='smooth',
+                                # maxGrad=2,
+                                concentrateNNeighbours=self.pSubPx_neigh.value(),
+                                maxDev=self.pSubPx_maxDev.value())[0]
 
                         out.append(corr)
         return out
@@ -513,6 +517,32 @@ class PerspectiveCorrection(Tool):
         else:
             self.outDisplay.widget.update(out)
             self.outDisplay.widget.updateView()
+        # show grid in display:
+        if not self.pManual.value():
+            if self.quadROI is None:
+                self.quadROI = self._createROI()
+            # TODO: unclean having perspectiveCorrection in GridDetection
+            pc = self.pc
+            if GridDetection is not None:
+                gx, gy = pc.opts['grid']
+                print(pc.opts['grid'])
+                self.pCellsX.setValue(gx)
+                self.pCellsY.setValue(gy)
+                pc = self.pc._pc
+            self.quadROI.setVertices(pc.quad)
+            self.quadROI.show()
+
+        # inherit corrected grid to output display:
+            # TODO: unclean
+        self.outDisplay.clicked.emit(self.outDisplay)  # init tools
+        quadROI = self._createROI(self.outDisplay)
+        b = self.pBorder.value()
+        sy, sx = out[0].shape[:2]
+        v = np.array([(b, sy - b),
+                      (sx - b, sy - b),
+                      (sx - b, b),
+                      (b, b)])
+        quadROI.setVertices(v)
 
 #         if self.pCorrViewFactor.value() and self.pDrawViewFactor.value():
 #             if not self.outDisplayViewFactor:
