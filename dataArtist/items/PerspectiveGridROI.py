@@ -5,8 +5,9 @@ from imgProcessor.utils.gridLinesFromVertices import gridLinesFromVertices
 
 
 from .QuadROI import QuadROI
-from imgProcessor.transform.simplePerspectiveTransform import simplePerspectiveTransform
 from imgProcessor.array.subCell2D import subCell2DFnArray
+
+from imgProcessor.transform.rmBorder import rmBorder
 
 
 class PerspectiveGridROI(QuadROI):
@@ -46,5 +47,5 @@ class PerspectiveGridROI(QuadROI):
         return an array of shape .ncells
         where every cell contains the average of every grid cell
         '''
-        cimg = simplePerspectiveTransform(img, self.edges())
+        cimg = rmBorder(img, self.edges())
         return subCell2DFnArray(cimg, fn, self.nCells[::-1])

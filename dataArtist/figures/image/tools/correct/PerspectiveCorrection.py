@@ -547,10 +547,14 @@ class PerspectiveCorrection(Tool):
 #         if self.pCorrViewFactor.value() and self.pDrawViewFactor.value():
 #             if not self.outDisplayViewFactor:
         if self.pMask.value() and self.pMask.isVisible():
-            self.display.workspace.addDisplay(
-                origin=self.display,
-                data=[self.pc.mask()],
-                title='Grid mask')
+            self.display.widget.addColorLayer(
+                layer=self.pc.mask(),
+                name='Grid mask')
+
+#             self.display.workspace.addDisplay(
+#                 origin=self.display,
+#                 data=[self.pc.mask()],
+#                 title='Grid mask')
 #             else:
 #                 self.outDisplayViewFactor.widget.setImage(
 #                     self.pc.maps['tilt_factor'])

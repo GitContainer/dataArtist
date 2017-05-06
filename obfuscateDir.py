@@ -48,17 +48,31 @@ def obfuscateDir(p, opt=None):
                                               name.endswith('.pyw')):
                     pp = os.path.join(root, name)
                     # replace current file with obfuscated version:
-                    subprocess.Popen(
+                    proc = subprocess.Popen(
                         #--obfuscate-builtins #break functionality...
-                        #--obfuscate-variables #breaks in GridDetection
+                        #--obfuscate-variables --replacement-length=6
+                        #breaks in GridDetection
+                        # reason is ,that all fn(xx=xx) are ignored
                         "pyminifier -o %s %s" % (pp, pp), shell=True)
+                    proc.wait()
+
+                    # remove __main__ :
+                    with open(pp, 'r') as f:
+                        lines = f.readlines()
+                        found = False
+                        for n, l in enumerate(lines):
+                            if "if __name__ == '__main__':" in l:
+                                found = True
+                                break
+                        if found:
+                            with open(pp, 'w') as f:
+                                f.writelines(lines[:n])
 
                     # TODO: NEED TO MAKE PYC ONLY DISTRIBUTION WORK
                     # compileall.compile_file(pp)
                     # os.remove(pp)
 
     else:
-        pass
         shutil.rmtree(os.path.dirname(p2), ignore_errors=True)
 #         # restore backup
 #         name = '_backup_' + os.path.basename(p)
@@ -70,5 +84,14 @@ def obfuscateDir(p, opt=None):
 
 
 if __name__ == '__main__':
+
+    #     pin = r'C:\Users\elkb4\Desktop\Programming\git\PROimgprocessor\PROimgProcessor\features\GridDetection.py'
+    #     pout = r'C:\Users\elkb4\Desktop\Programming\git\PROimgprocessor\PROimgProcessor\features\GridDetection_new.py'
+    #
+    #     subprocess.Popen(
+    #         #--obfuscate-builtins #break functionality...
+    #         #--obfuscate-variables #breaks in GridDetection
+    #         "pyminifier --obfuscate-variables --replacement-length=4 -o %s %s" % (pout, pin), shell=True)
+
     import sys
     obfuscateDir(*sys.argv[1:])

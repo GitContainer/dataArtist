@@ -1,6 +1,8 @@
 # coding=utf-8
 import os
 import cv2
+import sys
+
 from qtpy import QtWidgets, QtCore, QtGui
 
 from fancytools.os.PathStr import PathStr
@@ -25,6 +27,7 @@ class _ProcessThread(QtCore.QThread):
         self.tool = tool
         self.progressBar = tool.display.workspace.gui.progressBar
         self.runfn = runfn
+        self._exc_info = None
 
         self.sigDone.connect(self.done)
         if donefn is not None:
@@ -35,6 +38,9 @@ class _ProcessThread(QtCore.QThread):
         self.progressBar.cancel.clicked.disconnect(self.kill)
         self.tool.setChecked(False)
         self.terminate()
+        if self._exc_info is not None:
+            _, ei, tb = self._exc_info
+            raise ei.with_traceback(tb)
 
     def start(self):
         self.progressBar.show()
@@ -50,16 +56,15 @@ class _ProcessThread(QtCore.QThread):
         self.progressBar.cancel.clicked.disconnect(self.kill)
 
     def run(self):
-        # TODO: sometimes not full traceback printed...
         try:
             out = self.runfn()
         except (cv2.error, Exception, AssertionError) as e:
-            # need to fetch cv2.error extra and print it. otherwise
-            # msg would not be visible in log
             if type(e) is cv2.error:
                 print(e)
             self.progressBar.cancel.click()
-            raise Exception('Tool execution failed: ', e)
+            self._exc_info = sys.exc_info()
+            return
+
         self.sigDone.emit(out)
 
 
