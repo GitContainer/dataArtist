@@ -1,6 +1,4 @@
 # coding=utf-8
-from __future__ import division
-from builtins import zip
 
 from pyqtgraph_karl.widgets.MatplotlibWidget import MatplotlibWidget
 
@@ -34,13 +32,13 @@ class MatplotlibSurface(MatplotlibWidget):
         # s.auto_scale_xyz([0,480],[0,360],[0,3000])
 
         a[0].p.sigValueChanged.connect(
-                lambda param, value: s.set_xlabel(value))
+            lambda param, value: s.set_xlabel(value))
         s.set_xlabel(a[0].p.value())
         a[1].p.sigValueChanged.connect(
-                lambda param, value: s.set_ylabel(value))
+            lambda param, value: s.set_ylabel(value))
         s.set_ylabel(a[1].p.value())
         a[2].p.sigValueChanged.connect(
-                lambda param, value: s.set_zlabel(value))
+            lambda param, value: s.set_zlabel(value))
         s.set_zlabel(a[2].p.value())
 
         self.data = []
@@ -123,15 +121,15 @@ class MatplotlibSurface(MatplotlibWidget):
             s = self.surface
             s.clear()
             for d in self.data:
-                n = d.shape[0]// 50  # plot max 50x50 planes
+                n = d.shape[0] // 50  # plot max 50x50 planes
                 if n < 1:
                     n = 1
                 data = d.transpose(2, 0, 1)
                 s.plot_surface(
-                        data[
+                    data[
                         0, ::n, ::n], data[
-                                      1, ::n, ::n], data[
-                                                    2, ::n, ::n], cmap=cm.jet)
+                        1, ::n, ::n], data[
+                        2, ::n, ::n], cmap=cm.jet)
 
                 # s._changed = False
             # s.pbaspect = [1.0, 1.0, 1.0]

@@ -82,6 +82,11 @@ class Selection(Tool):
             'limits': ['-']})
         list(self.pMask.items.keys())[0].widget.showPopup = self._updatePMask
 
+    def findPath(self, cls):
+        def check(roi):
+            return isinstance(roi, cls)
+        return next((roi for roi in self.paths if check(roi)), None)
+
     def _updatePMask(self):
         l = ['-']
         l.extend([p.name() for p in self.pa.childs[3:]])
@@ -216,7 +221,7 @@ class Selection(Tool):
                 else:
                     p.continuePath(pos)
 
-    def _removePath(self, parent, child, index):
+    def _removePath(self, _parent, _child, index):
         w = self.display.widget
         path = self.paths.pop(index - 3)
         if isinstance(path, IsoCurveROI):
@@ -254,7 +259,8 @@ class Selection(Tool):
             l.append((typ, name, state))
         return l
 
-    # TODO: default argument is mutable: Default argument values are evaluated only once at function definition time,
+    # TODO: default argument is mutable: Default argument values are evaluated
+    # only once at function definition time,
     # which means that modifying the default value of the argument will affect
     # all subsequent calls of the function.
     def saveState(self, state={}):
@@ -317,8 +323,8 @@ class Selection(Tool):
                     n + 1, name, a.calcArea(), a.length()))
             else:
                 ia = QPainterPath(mask.intersected(a)).calcArea()
-                print('%s. %s - Area:(%s, area intersection: %s, relative %s) | Length:%s' % (
-                    n + 1, name, a.calcArea(), ia, ia / ma, a.length()))
+                print('%s. %s - Area:(%s, area intersection: %s, relative %s) \
+| Length:%s' % (n + 1, name, a.calcArea(), ia, ia / ma, a.length()))
 
     def _addIso(self, p, state):
         w = self.display.widget
@@ -340,8 +346,9 @@ class Selection(Tool):
         # build isocurves from smoothed data
         # connect
         pGauss.sigValueChanged.connect(self._isolinePGaussChanged)
-        fn = lambda v=pGauss.value(), p=pGauss: self._isolinePGaussChanged(
-            p, v)
+
+        def fn():
+            self._isolinePGaussChanged(pGauss, pGauss.value())
         w.imageItem.sigImageChanged.connect(fn)
         w.sigTimeChanged.connect(fn)
 
@@ -352,8 +359,8 @@ class Selection(Tool):
         isoLine.setValue(lev)
         isoLine.setZValue(1000)  # bring iso line above contrast controls
         # connect
-        fn2 = lambda isoLine, iso=iso: iso.setLevel(isoLine.value())
-        isoLine.sigDragged.connect(fn2)
+        isoLine.sigDragged.connect(lambda isoLine, iso=iso:
+                                   iso.setLevel(isoLine.value()))
         p.opts['iso'] = iso
         fn()
         return iso

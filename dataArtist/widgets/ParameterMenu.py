@@ -5,7 +5,6 @@ from pyqtgraph_karl.parametertree import Parameter
 from dataArtist.widgets.ParameterTree import ParameterTree
 
 
-
 class ParameterMenu(QtWidgets.QMenu):
     '''
     A QMenu embedding a ParameterTree
@@ -21,7 +20,7 @@ class ParameterMenu(QtWidgets.QMenu):
         a.setDefaultWidget(self.content)
         self.addAction(a)
         self.setActiveAction(a)
-        
+
         self.p = self.pTree.p
         self.p.tool = tool
         tool.param = self.p.param
@@ -32,49 +31,44 @@ class ParameterMenu(QtWidgets.QMenu):
         self._topWidgets = []
 
         #<<<<<
-        #due to Qt5 bug:
-            #uncomment following
-            #and QActions inside QMenu inside this tool will not 
-            #fire trigger
+        # due to Qt5 bug:
+        # uncomment following
+        # and QActions inside QMenu inside this tool will not
+        # fire trigger
         self.setWindowFlags(QtCore.Qt.Dialog | QtCore.Qt.FramelessWindowHint)
         self.installEventFilter(self)
-        
+
     def eventFilter(self, op, event):
-        if event.type()== QtCore.QEvent.WindowDeactivate:
-            QtCore.QTimer.singleShot(10,self.close)
+        if event.type() == QtCore.QEvent.WindowDeactivate:
+            QtCore.QTimer.singleShot(10, self.close)
         return False
         #>>>>>
-
-
 
     def addTopWidget(self, w):
         self._topWidgets.append(w)
         self.content.layout().insertWidget(1, w)
-        
 
     def aboutToShowFn(self):
         self.p.sigTreeStateChanged.connect(self.delayedResize)
         self.resizeToContent()
 
-
     def aboutToHideFn(self):
         self.p.sigTreeStateChanged.disconnect(self.delayedResize)
 
-
     def delayedResize(self):
-        #allow pTree to fully add/remove parameters 
-        #before size is updated
+        # allow pTree to fully add/remove parameters
+        # before size is updated
         QtCore.QTimer.singleShot(10, self.resizeToContent)
-
 
     def resizeToContent(self):
         '''
         set a fixed minimum width and calculate the height from
         the height of all rows
         '''
-        width = 350
-        heightMax = 800
-        height = 6#self.content.header.contentsRect().height()
+        PX_FACTOR = QtWidgets.QApplication.instance().PX_FACTOR
+        width = 350 * PX_FACTOR
+        heightMax = 800 * PX_FACTOR
+        height = 6 * PX_FACTOR  # self.content.header.contentsRect().height()
         hh = [w.height() for w in self._topWidgets]
         if hh:
             height += max(hh)
@@ -87,11 +81,9 @@ class ParameterMenu(QtWidgets.QMenu):
         # limit height
         if height >= heightMax:
             height = heightMax
-        self.pTree.setFixedSize(width, height)
-        #prevent scroll bar(+22):
-        self.setFixedSize(width, height + 22)
-
-
+        self.pTree.setFixedSize(width - 5 * PX_FACTOR, height)
+        # prevent scroll bar(+22):
+        self.setFixedSize(width, height + 22 * PX_FACTOR)
 
 
 class _MenuContent(QtWidgets.QWidget):
@@ -104,18 +96,20 @@ class _MenuContent(QtWidgets.QWidget):
     def __init__(self, tool):
         QtWidgets.QWidget.__init__(self)
 
+        PX_FACTOR = QtWidgets.QApplication.instance().PX_FACTOR
+
         l = QtWidgets.QVBoxLayout()
         l.setContentsMargins(0, 0, 0, 0)
-        l.setSpacing(2)
+        l.setSpacing(0)
 
         self.setLayout(l)
 
         self.header = header = QtWidgets.QHBoxLayout()
-        header.setContentsMargins(5, 0, 5, 0)
+        header.setContentsMargins(0, 0, 0, 0)
 
         label = QtWidgets.QLabel('<b> %s</b>' % tool.__class__.__name__)
 
-        self.pTree = _Parameters(tool)
+        self.pTree = _Parameters()
 
         header.addWidget(label)
         doc = getattr(tool, '__doc__', None)
@@ -127,8 +121,8 @@ class _MenuContent(QtWidgets.QWidget):
         if hasattr(tool, 'activate'):
             btn = QtWidgets.QPushButton('activate')
             btn.clicked.connect(tool.click)
-            btn.setFixedHeight(15)
-            btn.setFixedWidth(50)
+            btn.setFixedHeight(17 * PX_FACTOR)
+            btn.setFixedWidth(50 * PX_FACTOR)
             header.addWidget(btn)
 
         l.addLayout(header)
@@ -137,7 +131,7 @@ class _MenuContent(QtWidgets.QWidget):
 
 class _Parameters(ParameterTree):
 
-    def __init__(self, tool):
+    def __init__(self):
         self.p = Parameter.create(
             name='',
             type='empty')

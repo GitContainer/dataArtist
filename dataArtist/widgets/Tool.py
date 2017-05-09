@@ -287,20 +287,18 @@ class Tool(QtWidgets.QToolButton):
         bar = self.parent()
         # reset last highlighted tool:
         for tool in bar.findChildren(QtWidgets.QToolButton):
-            if tool.property('modified') == 'True':
-                tool.setProperty('modified', 'False')
-                tool.style().unpolish(tool)
-                tool.style().polish(tool)
-                tool.update()
+            if tool.autoFillBackground():
+                tool.setAutoFillBackground(False)
 
         # highlight current tool
-        self.setProperty('modified', 'True')
         tbar = self.parent()
         color = tbar.palette().color(tbar.backgroundRole())
         color = color.darker(120)
-
-        self.setStyleSheet(self.styleSheet() + """QToolButton[modified = "True"] {  
-        background-color: %s;}""" % color.name())
+        palette = self.palette()
+        role = self.backgroundRole()
+        palette.setColor(role, color)
+        self.setAutoFillBackground(True)
+        self.setPalette(palette)
 
     def addAction(self, *args):
         '''

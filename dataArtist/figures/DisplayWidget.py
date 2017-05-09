@@ -18,7 +18,8 @@ class DisplayWidget(object):
         if toolbars is not None:
             self.toolbars = toolbars
         else:
-            self.toolbars = Toolbars.build(weakref.proxy(self))
+            # wekref causes win10 exec. to not have empty d.widget.tools
+            self.toolbars = Toolbars.build(self)  # weakref.proxy(self))
 
     def saveState(self):
         state = {'toolbars': [t.isSelected() for t in self.toolbars]}

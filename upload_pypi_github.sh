@@ -41,7 +41,7 @@ make html
 cd _build/html
 mv -f dataArtist.html index.html
 
-#add an empty file called .nojekyll in the docs repo. This tells github�s default parsing software to ignore the sphinx-generated pages that are in the gh-pages branch
+#add an empty file called .nojekyll in the docs repo. This tells githubs default parsing software to ignore the sphinx-generated pages that are in the gh-pages branch
 touch .nojekyll
 git add .nojekyll
 git commit -m "added .nojekyll"

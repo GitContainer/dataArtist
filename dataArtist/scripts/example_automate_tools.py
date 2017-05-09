@@ -1,4 +1,3 @@
-# coding=utf-8
 # This example shows how to automate
 # the region-of-interest tool
 #=====================================

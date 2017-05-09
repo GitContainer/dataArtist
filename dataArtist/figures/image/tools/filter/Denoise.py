@@ -193,7 +193,7 @@ class Denoise(Tool):
             self.pHForColorComponents.hide()
 
     def activate(self):
-        image = np.array(self.display.widget.image)
+        image = self.display.widget.image
 
         self._setupMenu()
 
@@ -202,18 +202,15 @@ class Denoise(Tool):
         orig_dtype = image.dtype
         if orig_dtype != np.uint8:
             if self.pConvMethod.value() == 'clip':
-                image = [np.uint8(np.clip(i, 0, 255)) for i in image]
+                image = np.clip(image, 0, 255).astype(np.uint8)
+#                 image = [np.uint8(np.clip(i, 0, 255)) for i in image]
             else:  # scale
                 med = median_filter(image[0], 3)
                 mn = np.min(med)
                 image -= mn  # set min to 0
                 scale = np.max(med) / 255
                 image /= scale
-                image = np.clip(image, 0, 255)
-                image = image.astype(np.uint8)
-
-        # if len(image)==1:
-        #    image = image[0]
+                image = np.clip(image, 0, 255).astype(np.uint8)
 
         self.startThread(
             lambda image=image, scale=scale, mn=mn, orig_dtype=orig_dtype:
@@ -228,12 +225,18 @@ class Denoise(Tool):
                 self.display.widget.addColorLayer(diff, 'CV2 denoised')
 
     def _process(self, image, scale, mn, orig_dtype):
-        out = []
-        for i in image:
-            i = self.function(i, *self.args)
-            if self.pConvMethod.value() == 'scale':
+        if 'Multi' in self.function.__name__:
+            out = self.function(image, *self.args)
+        else:
+            out = []
+            for i in image:
+                i = self.function(i, *self.args)
+                out.append(i)
+        if self.pConvMethod.value() == 'scale':
+
+            for n, i in enumerate(out):
                 i = i.astype(orig_dtype)
                 i *= scale
                 i += mn
-            out.append(i)
+                out[n] = i
         return out

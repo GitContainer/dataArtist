@@ -23,7 +23,7 @@ class PerspectiveGridROI(QuadROI):
         p.setPen(self.currentPen)
 
         # generate grid lines:
-        h, v = gridLinesFromVertices(self.edges(), self.nCells)[:2]
+        h, v = gridLinesFromVertices(self.vertices(), self.nCells)[:2]
 
         # draw grid lines:
         for lines in (h, v):
@@ -31,8 +31,7 @@ class PerspectiveGridROI(QuadROI):
                 h1, h2 = line[0], line[-1]
                 p.drawLine(pg.Point(h1[0], h1[1]), pg.Point(h2[0], h2[1]))
 
-    # TOOD: rename into vertices()
-    def edges(self):
+    def vertices(self):
         return np.array([h['item'].pos() for h in self.handles])
 
     def setVertices(self, vertices):
@@ -47,5 +46,5 @@ class PerspectiveGridROI(QuadROI):
         return an array of shape .ncells
         where every cell contains the average of every grid cell
         '''
-        cimg = rmBorder(img, self.edges())
+        cimg = rmBorder(img, self.vertices())
         return subCell2DFnArray(cimg, fn, self.nCells[::-1])

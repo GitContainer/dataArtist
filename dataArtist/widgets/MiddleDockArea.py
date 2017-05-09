@@ -30,6 +30,7 @@ class MiddleDockArea(DockArea):
             <li>one or more <strong>files </strong>or <strong>folders</strong></li>
             <li><strong>number-fields</strong> from clipboard</li>
             <li><strong>images </strong>from clipboard</li>
+            <li>a saved dataArtist session file [*.da]</li>
         </ul><p>
             over this area to open it</p>
             <nl><nl> <p> <strong>Supported file types are:</strong> %s

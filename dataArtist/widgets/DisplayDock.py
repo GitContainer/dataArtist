@@ -131,7 +131,7 @@ class DisplayDock(Dock):
             'type':  'int',
             'value': 11})
         pSize.sigValueChanged.connect(
-            lambda param, size: self.widget.setTitleSize(size))
+            lambda _param, size: self.widget.setTitleSize(size))
 
         self.pTitleFromLayer = self.pTitle.addChild({
             'name':  'From layer',
@@ -193,8 +193,8 @@ class DisplayDock(Dock):
 
     def otherDisplaysOfSameType(self, includeThisDisplay=False):
         for d in self.workspace.displays():
-            if (isinstance(d.widget, self.widget.__class__)
-                    and (includeThisDisplay or d.name() != self.name())):
+            if (isinstance(d.widget, self.widget.__class__) and
+                    (includeThisDisplay or d.name() != self.name())):
                 yield d
 
     def _limitLayers(self, param, val):
@@ -277,7 +277,8 @@ class DisplayDock(Dock):
                 ch = [ch[index]]
 
             if names is None:
-                names = [c.name() for c in ch]
+                names = origin.filenames
+                #names = [c.name() for c in ch]
                 if index is not None:
                     names = names[0]
             if axes is None:
@@ -513,9 +514,9 @@ class DisplayDock(Dock):
         '''
         Add a new layer to the stack
         '''
-        data, filename, _, _ = self._extractInfoFromOrigin(origin, index,
-                                                           data, filename, False, False)
-
+        data, filename = self._extractInfoFromOrigin(origin, index,
+                                                     data, filename,
+                                                     False, False)[:2]
         name = self._getLayerLabel(filename, label)
         # ADD TO PARAMETER TREE
         self.stack.buildLayer(filename, label=label, name=name,
@@ -570,6 +571,7 @@ class DisplayDock(Dock):
                 dataFn=lambda i=index, w=widget:
                 w.getData(i).copy())
 
+    # TODO: needed?? if changeLayer exists?
     def changeAllLayers(self, data=None, changes=None, backup=True, **kwargs):
         if backup:
             self.backupChangedLayer(data, changes, **kwargs)
@@ -696,20 +698,11 @@ class DisplayDock(Dock):
                 self.addLayers(d, fnames, d)
 
     def saveState(self):
-        #pp = self.p.saveState()
-        #ppp = pp['children'].pop(self.stack.name())
-        state = {  # 'stack':      ppp,  # self.stack.saveState(),
+        state = {
             'automation': self.tab.automation.saveState(),
             'parameters': self.p.saveState(),
             'dock': self.label.maximized,
             'sizes': self.tab.sizes()}
-        #         path += ('display',str(self.number))
-        # layers
-        # automation
-        # parameters
-        #         session.addContentToSave(self.p.saveState(), *path+('parameters.txt',))
-        # dock
-        #         session.addContentToSave(self.label.maximized, *path+('dock.txt',))
         # to init the current toolbars:
         self.clicked.emit(self)
         # widget
@@ -736,13 +729,9 @@ class DisplayDock(Dock):
             ppp['children'] = b
         self.stack.restoreState(ppp)
         self.stack._valuesChanged()
-
         # automation
         self.tab.automation.restoreState(state['automation'])
         self.tab.setSizes(state['sizes'])
-        # parameters
-        # TODO: this is not clean - stack is mentioned above and already
-        # restore its parameters...
         # widget
         self.widget.restoreState(state['widget'])
         # dock
@@ -874,10 +863,10 @@ class _StackParameter(GroupParameter):
             'addToContextMenu': [mAll]})
 
         # IF A LAYER IS MOVED:
-        self.sigChildRemoved.connect(lambda parent, child, index, self=self:
+        self.sigChildRemoved.connect(lambda _parent, _child, index, self=self:
                                      self.display.removeLayer(index,
                                                               self.opts.get('aboutToMove', False)))
-        self._fnInsertRemovedLayer = lambda parent, child, index, self=self: \
+        self._fnInsertRemovedLayer = lambda _parent, _child, index, self=self: \
             self.display.insertRemovedLayer(index)
         self.sigChildAdded.connect(self._fnInsertRemovedLayer)
         self.sigChildAdded.connect(self._valuesChanged)
@@ -929,7 +918,7 @@ class _StackParameter(GroupParameter):
     #         session.addContentToSave(self.saveState(), *path+('stack.txt',))
     #
 
-    def restoreState(self, state, **kwargs):
+    def restoreState(self, state, **_kwargs):
         '''
         set parameter values using file 'stack.txt'
         '''

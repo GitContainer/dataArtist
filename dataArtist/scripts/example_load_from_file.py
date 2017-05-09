@@ -1,4 +1,3 @@
-# coding=utf-8
 # replace first layer:
 d.addFiles(['PATH\\TO\\FILE.tiff'], indices=[0])
 

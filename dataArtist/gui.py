@@ -64,7 +64,13 @@ class Gui(MultiWorkspaceWindow):
         MultiWorkspaceWindow.__init__(self, workspaceCls, title)
 
         s = self.app.session
-        self.resize(605, 550)
+
+        # cannot resize to px size anymore since there
+        # are high dpi screens around, therefore rescale relative:
+        PX_FACTOR = QtWidgets.QApplication.instance().PX_FACTOR = QtGui.QPaintDevice.logicalDpiY(
+            self) / 96
+        self.resize(605 * PX_FACTOR, 550 * PX_FACTOR)
+
         # ALLOW DRAGnDROP
         self.setAcceptDrops(True)
         # INIT CHILD PARTS:
@@ -554,7 +560,7 @@ def main(name='dataArtist',
                       icon=icon,
                       first_start_dialog=first_start_dialog)
     #"Plastique" is not longer avail. in PyQt5
-    app.setStyle("fusion")  # looks better and shows splitter handle
+    # app.setStyle("fusion")  # looks better and shows splitter handle
     win = Gui(title=name)
     s = app.session
     s.registerMainWindow(win)

@@ -1,7 +1,3 @@
-# coding=utf-8
-from __future__ import division
-from builtins import range
-from past.utils import old_div
 # this example animates a mandelbrot for us! yeah.
 # this is the basic function for it:
 

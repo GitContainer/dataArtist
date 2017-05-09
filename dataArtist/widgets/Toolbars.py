@@ -77,17 +77,14 @@ class _ToolBar(QtWidgets.QToolBar):
         self.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
         self.customContextMenuRequested.connect(self._openContextMenu)
 
-        #cannot resize to px size anymore since there
-        #are high dpi screens around, therefore rescale relative:
-        self._pxFac = QtGui.QPaintDevice.logicalDpiY(self)/96
-        
+        PX_FACTOR = QtWidgets.QApplication.instance().PX_FACTOR
         # make ToolBar smaller:
-        self.setIconSize(QtCore.QSize(self._pxFac*16, self._pxFac*16))
+        self.setIconSize(QtCore.QSize(PX_FACTOR * 16, PX_FACTOR * 16))
         self.layout().setContentsMargins(0, 0, 0, 0)
         self.setAllowedAreas(QtCore.Qt.TopToolBarArea)
 
         # measure toolbar width in order to find best place when added
-        self.width = 9*self._pxFac  # 9=handle width
+        self.width = 9 * PX_FACTOR  # 9=handle width
 
         # whether position of toolbar should be
         # found depending on available space:
@@ -190,7 +187,7 @@ class _ToolBar(QtWidgets.QToolBar):
         m = QtWidgets.QMenu()
         # title:
         a = QtWidgets.QAction('Toolbar:   %s' % self.name, self)
-            #removed in Qt5:
+        # removed in Qt5:
 #         a.setSoftKeyRole(QtWidgets.QAction.NoSoftKey)
         f = a.font()
         f.setBold(True)
@@ -202,6 +199,7 @@ class _ToolBar(QtWidgets.QToolBar):
         m.exec_(self.mapToGlobal(pos))
 
     def addTools(self):
+        PX_FACTOR = QtWidgets.QApplication.instance().PX_FACTOR
         if not self._toolsCreated:
             # TO ALL TOOLS IN PACKAGE:
             for cls in self.toolClasses:
@@ -213,9 +211,9 @@ class _ToolBar(QtWidgets.QToolBar):
                     self.addWidget(tool)
                     if tool.popupMode() == QtWidgets.QToolButton.MenuButtonPopup:
                         # [px] - tool is wider if drop down button is shown
-                        self.width += 39*self._pxFac
+                        self.width += 39 * PX_FACTOR
                     else:
-                        self.width += 27*self._pxFac  # px
+                        self.width += 27 * PX_FACTOR  # px
                 except Exception:
                     print("ERROR loading toolbutton: ", traceback.print_exc())
             self._toolsCreated = True
@@ -246,7 +244,7 @@ class _ToolBar(QtWidgets.QToolBar):
             del toolAction
 
         self._toolsCreated = False
-        self.width = 9*self._pxFac
+        self.width = 9 * QtWidgets.QApplication.instance().PX_FACTOR
 
     def show(self):
         # ensure that all tools are loaded:

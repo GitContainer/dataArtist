@@ -1,6 +1,4 @@
 # coding=utf-8
-from __future__ import division
-
 import cv2
 import numpy as np
 
@@ -21,8 +19,6 @@ from dataArtist.figures.DisplayWidget import DisplayWidget
 from dataArtist.widgets.dialogs.DifferentShapeDialog import DifferentShapeDialog
 
 
-
-
 class ImageWidget(DisplayWidget, ImageView, PyqtgraphgDisplayBase):
     '''
     A pyqtgraph.ImageView with methods to add/move/remove images
@@ -41,10 +37,10 @@ class ImageWidget(DisplayWidget, ImageView, PyqtgraphgDisplayBase):
 
         ImageView.__init__(
             self, view=pg.PlotItem(
-                  axisItems={
+                axisItems={
                     'bottom': axes[0],
                     'left': axes[1]})
-                           )
+        )
         PyqtgraphgDisplayBase.__init__(self)
         DisplayWidget.__init__(self, **kwargs)
 
@@ -151,7 +147,7 @@ class ImageWidget(DisplayWidget, ImageView, PyqtgraphgDisplayBase):
         try:
             self.setCurrentIndex(state['currentIndex'])
         except AttributeError:
-            #cannot set index, because has no layers
+            # cannot set index, because has no layers
             pass
         DisplayWidget.restoreState(self, state)
 
@@ -365,8 +361,9 @@ class ImageWidget(DisplayWidget, ImageView, PyqtgraphgDisplayBase):
                         or data.ndim == 3
                         and data.shape[2] in (3, 4)):  # single color
                     data = np.expand_dims(data, axis=0)
+                if self.image is None or self.image.shape != data.shape:
+                    self._image_redefined = True
                 self.image = data
-                self._image_redefined = True
         self._set_kwargs = kwargs
         self._set_index = index
         self._changed = True
@@ -376,8 +373,7 @@ class ImageWidget(DisplayWidget, ImageView, PyqtgraphgDisplayBase):
         update the visual representation
         '''
         if self.image is not None and (force or self._changed):
-
-            if self._image_redefined or self._set_kwargs or self._firstTime:
+            if self._image_redefined or self._firstTime:
                 self.setImage(self.image, **self._set_kwargs)
                 self._firstTime = False
                 self._image_redefined = False
@@ -391,7 +387,7 @@ class ImageWidget(DisplayWidget, ImageView, PyqtgraphgDisplayBase):
                     self.autoLevels()
             self._changed = False
 
-    def updateImage(self, autoHistogramRange=None):
+    def updateImage(self, autoHistogramRange=None, levels=None):
         '''
         overwrite original method to hide timeline when
         3d image has only one layer
@@ -402,7 +398,10 @@ class ImageWidget(DisplayWidget, ImageView, PyqtgraphgDisplayBase):
 
         if autoHistogramRange is None:
             autoHistogramRange = self.opts['autoHistogramRange']
-        
+
+        if levels is not None:
+            self.setLevels(*levels)
+
         image = self.getProcessedImage()
 
         if autoHistogramRange:
@@ -421,7 +420,7 @@ class ImageWidget(DisplayWidget, ImageView, PyqtgraphgDisplayBase):
         # TODO: fix the origin bug
         if image.dtype == bool:
             return self.imageItem.updateImage(image, levels=(0., 1.))
-        
-        #else: #TODO: dA crashes with self.levelMin == self.levelMax
+
+        # else: #TODO: dA crashes with self.levelMin == self.levelMax
         elif self.levelMin != self.levelMax:
             self.imageItem.updateImage(image)

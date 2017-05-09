@@ -40,15 +40,15 @@ class SignalToNoise(Tool):
             'name': 'Background image',
                     'value': '-',
                     'type': 'menu'})
-        self.pRefBg.aboutToShow.connect(lambda menu, d='_refBg', 
-            i='_refBg_i': self.buildRefImgMenu(menu, d, i))
+        self.pRefBg.aboutToShow.connect(lambda menu, d='_refBg',
+                                        i='_refBg_i': self.buildRefImgMenu(menu, d, i))
 
         self.pRefImg2 = pa.addChild({
             'name': 'Equivalent image',
                     'value': '-',
                     'type': 'menu'})
-        self.pRefImg2.aboutToShow.connect(lambda menu, d='_ref2', 
-            i='_ref2_i': self.buildRefImgMenu(menu, d, i))
+        self.pRefImg2.aboutToShow.connect(lambda menu, d='_ref2',
+                                          i='_ref2_i': self.buildRefImgMenu(menu, d, i))
 
         self.pShowMap = pa.addChild({
             'name': 'Show map',
@@ -72,7 +72,7 @@ class SignalToNoise(Tool):
                     'value': True,
                     'type': 'bool'})
         self.pOnImgAvg = self.pAverage.addChild({
-            'name': 'Refer to image average',
+            'name': 'Refer to 2-image-average',
                     'value': False,
                     'type': 'bool',
                     'tip': '''Check if SNR should be representative
@@ -93,9 +93,9 @@ class SignalToNoise(Tool):
         fill the menu with all available images within other displays
         '''
         menu.clear()
-        
+
         def setRefImg(display, layernumber, layername):
-            if len(layername)>20:
+            if len(layername) > 20:
                 layername = layername[:20] + '...'
             menu.setTitle(layername)
             self.__setattr__(refDisplay, display)

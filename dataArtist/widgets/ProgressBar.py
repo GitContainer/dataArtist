@@ -22,7 +22,7 @@ class ProgressBar(QtWidgets.QWidget):
         layout.addWidget(self.label)
         layout.addWidget(self.bar)
         layout.addWidget(self.cancel)
-        self.statusbar.addPermanentWidget(self, stretch=1)
+        self.statusbar.addPermanentWidget(self, stretch=0.5)
 
         self.hide()
 

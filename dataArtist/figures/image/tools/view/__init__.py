@@ -1,5 +1,4 @@
 # coding=utf-8
-from __future__ import absolute_import
 from .Axes import Axes
 from .TimeLine import TimeLine
 from .LockView import LockView
@@ -16,5 +15,5 @@ from .Selection import Selection
 color = 'blue'
 show = True
 tools = (LockView, Colorbar, Axes, TimeLine,
-         Transform, IsColor, Selection, Overlay,
+         IsColor, Selection, Overlay, Transform,
          SwitchBetweenGridAndStackedView, ToPlot)

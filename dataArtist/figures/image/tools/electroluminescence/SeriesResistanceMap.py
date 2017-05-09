@@ -131,7 +131,7 @@ class SeriesResistanceMap(Tool):
                     f[1].basename())
             except Exception as e:
                 raise Exception(
-                    'Cannot extract parameters frmo file name: %s' % e)
+                    'Cannot extract parameters from file name: %s' % e)
         else:
             expTime1 = p.childs[0].param('Exposure time').value()
             expTime2 = p.childs[1].param('Exposure time').value()
@@ -150,7 +150,7 @@ class SeriesResistanceMap(Tool):
             module_length=None,  # cm
 
             grid=gridROI.nCells,
-            border=gridROI.edges(),
+            border=gridROI.vertices(),
 
             expTime1=expTime1,
             expTime2=expTime2,

@@ -1,5 +1,5 @@
 # coding=utf-8
-from .BestExposureTime import BestExposureTime
+from .MinimumExposureTime import MinimumExposureTime
 from .SeriesResistanceMap import SeriesResistanceMap
 from .SignalToNoise import SignalToNoise
 from .CrackDetection import CrackDetection
