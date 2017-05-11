@@ -291,6 +291,7 @@ class Gui(MultiWorkspaceWindow):
         # SHOW/HIDE history
         aHistory = QtWidgets.QAction('Program log', v)
         aHistory.setShortcut(QtCore.Qt.Key_F4)
+        m.shortcutsWidget.addShortcut('F3', 'Show/Hide Program log')
 
         aHistory.setCheckable(True)
 
@@ -313,6 +314,7 @@ class Gui(MultiWorkspaceWindow):
         aPref = QtWidgets.QAction('Dock preferences', v)
         aPref.setShortcut(QtCore.Qt.Key_F3)
         aPref.setCheckable(True)
+        m.shortcutsWidget.addShortcut('F3', 'Show/Hide Preferences')
 
         def isPrefVisible():
             w = self.currentWorkspace()

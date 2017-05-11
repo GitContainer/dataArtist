@@ -76,7 +76,7 @@ class UndoRedo(QtWidgets.QWidget):
     def reset(self):
         # step within undo/redo:
         self.position = 0
-        #_list = list of (display, name, method)
+        #_list of (display, name, method):
         self._list = []
         # arguments to be captured before redo:
         self.data_args = []
@@ -95,10 +95,8 @@ class UndoRedo(QtWidgets.QWidget):
     def saveState(self):
         return {'activate': self.menu_options.activate.isChecked(),
                 'lenHistory': self.menu_options.lenHistory.value()}
-#         session.addContentToSave(l, 'undoRedo.txt')
 
     def restoreState(self, state):
-        #         l = eval(session.getSavedContent('undoRedo.txt'))
         self.menu_options.activate.setChecked(state['activate'])
         self.menu_options.lenHistory.setValue(state['lenHistory'])
 
@@ -106,7 +104,7 @@ class UndoRedo(QtWidgets.QWidget):
         for a in self.menu.actions()[1:]:
             self.menu.removeAction(a)
 
-    def _showMenu(self):  # , point):
+    def _showMenu(self):
         # current state <bold> and without connected action
         self.cleanMenu()
         if len(self._list):

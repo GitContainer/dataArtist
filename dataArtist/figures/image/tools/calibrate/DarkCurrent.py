@@ -5,11 +5,11 @@ import numpy as np
 from imgProcessor.camera.DarkCurrentMap \
     import getDarkCurrentFunction, getDarkCurrentAverages
 
-from dataArtist.widgets.ImageTool import ImageTool
+from dataArtist.widgets.Tool import Tool
 from dataArtist.figures.image.tools.globals.CalibrationFile import CalibrationFile
 
 
-class DarkCurrent(ImageTool):
+class DarkCurrent(Tool):
     '''
     Averages multiple dark current images (including STE removal)
     or calculate a dark current function as f(t) = a + b*t
@@ -21,7 +21,7 @@ class DarkCurrent(ImageTool):
     icon = 'darkCurrent.svg'
 
     def __init__(self, imageDisplay):
-        ImageTool.__init__(self, imageDisplay)
+        Tool.__init__(self, imageDisplay)
 
         self.calFileTool = self.showGlobalTool(CalibrationFile)
         self.pa = self.setParameterMenu()
@@ -102,7 +102,7 @@ class DarkCurrent(ImageTool):
 
     def _startAsFunction(self):
         x = self.display.stack.values
-        imgs = self.getImageOrFilenames()
+        imgs = self.getDataOrFilenames()
         mx = 2**self.calFileTool.curCal.coeffs['depth'] - 1
         # TODO: include rmse,maxExpTime
         inter, slope, rmse = getDarkCurrentFunction(x, imgs, mxIntensity=mx)
@@ -120,7 +120,7 @@ class DarkCurrent(ImageTool):
 
     def _startAverage(self):
         x = self.display.stack.values
-        imgs = self.getImageOrFilenames()
+        imgs = self.getDataOrFilenames()
         exposuretimes, imgs = getDarkCurrentAverages(x, imgs)
         return exposuretimes, imgs
 

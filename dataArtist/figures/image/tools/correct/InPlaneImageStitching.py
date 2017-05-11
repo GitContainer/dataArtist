@@ -3,10 +3,10 @@ import numpy as np
 
 from imgProcessor.transform.StitchImages import StitchImages
 
-from dataArtist.widgets.ImageTool import ImageTool
+from dataArtist.widgets.Tool import Tool
 
 
-class InPlaneImageStitching(ImageTool):
+class InPlaneImageStitching(Tool):
     '''
     Stitch two images at a given edge together.
     Find the right overlap through template matching
@@ -17,7 +17,7 @@ class InPlaneImageStitching(ImageTool):
     icon = 'imgStitching.svg'
 
     def __init__(self, imageDisplay):
-        ImageTool.__init__(self, imageDisplay)
+        Tool.__init__(self, imageDisplay)
 
         self._refImg = None
         self._refTool = None
@@ -135,7 +135,7 @@ class InPlaneImageStitching(ImageTool):
 
         st = StitchImages(self._refImg)
 
-        im = self.getImageOrFilenames()
+        im = self.getDataOrFilenames()
         if self._refDisplay.number == d.number:
             im = im[1:]
 
@@ -149,7 +149,7 @@ class InPlaneImageStitching(ImageTool):
                 params = self._refTool._lastParams
             except AttributeError:
                 raise Exception('Tool from display [%] was not executed so far'
-                                %self._refTool.display.number())
+                                % self._refTool.display.number())
 
         c = 0
         self._lastParams = []

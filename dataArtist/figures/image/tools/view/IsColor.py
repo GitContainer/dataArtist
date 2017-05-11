@@ -3,7 +3,8 @@ import numpy as np
 
 from dataArtist.widgets.Tool import Tool
 
-from imgProcessor.transformations import isColor, toColor, toGray
+from imgProcessor.transformations import isColor, toColor, toGray,\
+    rgChromaticity, monochromaticWavelength
 
 
 class IsColor(Tool):
@@ -22,12 +23,23 @@ class IsColor(Tool):
 
         pa = self.setParameterMenu()
 
-        pSep = pa.addChild({
+        pa.addChild({
             'name': 'Separate color channels',
-            'type': 'action'})
-        pSep.sigActivated.connect(self.separate)
+            'type': 'action'}).sigActivated.connect(self.separate)
 
-        self.createResultInDisplayParam(pa)
+        pa.addChild({
+            'name': 'RG chromaticity',
+            'type': 'action',
+            'tip': rgChromaticity.__doc__}).sigActivated.connect(
+                self._chromaticity)
+
+        pa.addChild({
+            'name': 'Monochromatic wavelength',
+            'type': 'action',
+            'tip': monochromaticWavelength.__doc__}).sigActivated.connect(
+                self._monochromaticWavelength)
+
+        self.createResultInDisplayParam(pa, value='[ALLWAYS NEW]')
 
         self._check()
 
@@ -42,6 +54,23 @@ class IsColor(Tool):
         out = np.transpose(i, axes=(3, 0, 1, 2))
         self.handleOutput(out, title='Color channels separated',
                           names=['red', 'green', 'blue'])
+
+    def _chromaticity(self):
+        i = self.display.widget.image
+        assert isColor(i), 'Only works on color images'
+        out = np.empty_like(i)
+        for n, im in enumerate(i):
+            out[n] = rgChromaticity(im)
+        self.handleOutput(out, title='RG chromacity')
+
+    def _monochromaticWavelength(self):
+        i = self.display.widget.image
+        assert isColor(i), 'Only works on color images'
+        out = np.empty(shape=i.shape[:-1])
+        for n, im in enumerate(i):
+            out[n] = monochromaticWavelength(im)
+        self.handleOutput(out, title='monochromatic wavelength',
+                          axes=('x', 'y', 'wavelength [nm]'))
 
     def activate(self):
         w = self.display.widget

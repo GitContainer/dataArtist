@@ -26,7 +26,7 @@ class RabbitMQServer(object):
         self.listenTo = {'addFile': self.gui.addFilePath,
                          'changeActiveDisplay': self.gui.changeActiveDisplay,
                          'showDisplay': self.gui.showDisplay,
-                         'runScriptFromName': self.gui.runScriptFromName,
+                         'runScriptFromName': self.gui.runScriptFromName
                          }
 
     def start(self):

@@ -35,10 +35,7 @@ class ChooseFileReaderDialog(QtWidgets.QDialog):
         for n, r in enumerate(readers):
             btn = QtWidgets.QRadioButton(r.__name__)
             btn.clicked.connect(
-                lambda checked,
-                n=n: self.__setattr__(
-                    'index',
-                    n))
+                lambda _checked, n=n: self.__setattr__('index', n))
             if r.__doc__ is not None:
                 btn.setToolTip(r.__doc__)
             p = getattr(r, 'preferred', False)

@@ -17,6 +17,8 @@ from dataArtist.items.ColorLayerItem import ColorLayerItem
 from dataArtist.figures._PyqtgraphgDisplayBase import PyqtgraphgDisplayBase
 from dataArtist.figures.DisplayWidget import DisplayWidget
 from dataArtist.widgets.dialogs.DifferentShapeDialog import DifferentShapeDialog
+from matplotlib.backends.qt_compat import QtWidgets
+from imgProcessor.imgSignal import scaleSignalCutParams
 
 
 class ImageWidget(DisplayWidget, ImageView, PyqtgraphgDisplayBase):
@@ -80,13 +82,44 @@ class ImageWidget(DisplayWidget, ImageView, PyqtgraphgDisplayBase):
         self.ui.roiPlot.setMouseEnabled(False, False)
         self.ui.roiPlot.hide()
 
-        # default color set
-        # NO: only gray works also with color images
-        # self.ui.histogram.item.gradient.loadPreset('flame')
+        # -------------------
+        # Context menu over colorbar histogram:
+        vb = self.ui.histogram.vb
+        menu = vb.menu
+        # remove 'Export...' menu:
+        vb.raiseContextMenu = self._cbar_raiseContextMenu
+        # remove mouse mode
+        menu.removeAction(menu.leftMenu.menuAction())
+        # remove redundsant menus:
+        menu.removeAction(
+            next(a for a in menu.actions() if a.text() == 'X Axis'))
+#         menu.removeAction(
+#             next(a for a in menu.actions() if 'Export' in a.text()))
+        # y-Axis menu
+        yAxisAction = next(a for a in menu.actions() if a.text() == 'Y Axis')
+        yAxisAction.setText('Scale')
+        # connect min-max edit with cbar intensity range change:
+        menu.ctrl[-1].minText.editingFinished.connect(self._cbar_updateRange)
+        menu.ctrl[-1].maxText.editingFinished.connect(self._cbar_updateRange)
+        # add cbar fit:
+        menu.addAction('Fit').triggered.connect(self._cbar_fit)
+        # -------------------
 
-        if data is not None:
-            self.update(data)
-            self.updateView()
+    def _cbar_updateRange(self):
+        c = self.ui.histogram.vb.menu.ctrl[-1]
+        mn = float(c.minText.text())
+        mx = float(c.maxText.text())
+        self.ui.histogram.item.setLevels(mn, mx)
+
+    def _cbar_fit(self):
+        img = self.image[self.currentIndex]
+        r = scaleSignalCutParams(img, 0.01)
+        self.ui.histogram.setLevels(*r)
+
+    def _cbar_raiseContextMenu(self, ev):
+        vb = self.ui.histogram.vb
+        menu = vb.getMenu(ev)
+        menu.popup(ev.screenPos().toPoint())
 
     def setOpts(self, **opts):
         self.opts.update(opts)

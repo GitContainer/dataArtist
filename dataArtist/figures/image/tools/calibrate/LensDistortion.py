@@ -1,8 +1,7 @@
 # coding=utf-8
-from __future__ import division
-from __future__ import print_function
-
 import numpy as np
+import os
+
 from qtpy import QtGui, QtWidgets, QtCore
 
 from imgProcessor.camera.LensDistortion import LensDistortion as LD
@@ -10,11 +9,8 @@ from imgProcessor.camera.LensDistortion import EnoughImages, NothingFound
 
 from fancytools.os.PathStr import PathStr
 
-import os
 
-# OWN
-from dataArtist.widgets.ImageTool import ImageTool
-
+from dataArtist.widgets.Tool import Tool
 from dataArtist.figures.image.tools.globals.CalibrationFile import CalibrationFile
 from dataArtist.items.UnregGridROI import UnregGridROI
 
@@ -25,7 +21,7 @@ PATTERN_FILE = PathStr(
 del dataArtist
 
 
-class LensDistortion(ImageTool):
+class LensDistortion(Tool):
     '''
     Calibrate the camera through interpreting chessboard images
     [also works with un-loaded image stack]
@@ -33,7 +29,7 @@ class LensDistortion(ImageTool):
     icon = 'chessboard.svg'
 
     def __init__(self, imageDisplay):
-        ImageTool.__init__(self, imageDisplay)
+        Tool.__init__(self, imageDisplay)
 
         self.calFileTool = self.showGlobalTool(CalibrationFile)
 
@@ -151,7 +147,7 @@ True: Images are taken every time the first layer is updated
 
     def correct(self):
         out = []
-        for i in self.getImageOrFilenmes():
+        for i in self.getDataOrFilenames():
             out.append(self.camera.correct(i, keepSize=True))
 
         self.display.workspace.addDisplay(
@@ -254,7 +250,7 @@ True: Images are taken every time the first layer is updated
                 # ACTIVATE WHEN IMAGE CHANGES
                 w.item.sigImageChanged.connect(self._addImgStream)
         else:
-            img = self.getImageOrFilenames()
+            img = self.getDataOrFilenames()
             img_loaded = isinstance(img[0], np.ndarray)
 
             # check conditions:

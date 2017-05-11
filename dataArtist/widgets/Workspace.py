@@ -31,7 +31,6 @@ class Workspace(QtWidgets.QWidget):
 
         self.gui = gui
         self._last_active_display = None
-#         self._import_display = None
         self._n_displays = 0  # number of opened displays
         # BUILD MAIN DOCKAREAS:
         self.console = Console(self.gui.app.session.streamOut.message,
@@ -50,7 +49,7 @@ class Workspace(QtWidgets.QWidget):
         m.setBottom(0)
         layout.setContentsMargins(m)
         self.setLayout(layout)
-        #middle - displays and message
+        # middle - displays and message
         self.middle_splitter = QtWidgets.QSplitter(
             QtCore.Qt.Orientation(0))  # 0=horiz, 1=vert
         self.middle_splitter.addWidget(self.area_middle)
@@ -99,7 +98,7 @@ class Workspace(QtWidgets.QWidget):
                     c.setStyleSheet("")
 
     def saveState(self):
-        l = {'middleSplitter': self.middle_splitter.sizes(), 
+        l = {'middleSplitter': self.middle_splitter.sizes(),
              'vertSplitter': self.vert_splitter.sizes()}
         # GENERAL
         # DISPLAYS
@@ -111,23 +110,18 @@ class Workspace(QtWidgets.QWidget):
         curD = self.getCurrentDisplay()
         if curD:
             l['currentDisplay'] = curD.number
-            #TOOLBARS
+            # TOOLBARS
             t = l['toolbars'] = {}
             if curD.widget:
                 for bar in self._sortToolbars(curD.widget.toolbars):
                     br = False
                     if bar.isSelected():
-                        br = self.gui.toolBarBreak(bar) 
+                        br = self.gui.toolBarBreak(bar)
                     t[bar.name] = (bar.isSelected(), br)
         else:
             l['currentDisplay'] = None
         l['nDisplays'] = self._n_displays
         l['displayLayout'] = self.area_middle.saveState() if d else None
-#         dis = self.displays()
-#         if dis:
-#             for d in dis:
-#                 l['display_%i' %d.number] = d.saveState()
-#             self.changeDisplay(dis[0])
         # TABLES
         tables = self.tables()
         lt = l['tables'] = {}  # {n:t.name() for n,t in enumerate(tables)}
@@ -152,7 +146,7 @@ class Workspace(QtWidgets.QWidget):
             d.close()
         for number, (name, nDim) in state['displays'].items():
             d = self.addDisplay(number=number, axes=nDim, docktitle=name)
-            #self.changeToolBars(d)
+            # self.changeToolBars(d)
 #             d.setName(name)
             d.restoreState(state['display_%i' % number])
             if number == currN:
@@ -174,7 +168,7 @@ class Workspace(QtWidgets.QWidget):
             self.area_middle.restoreState(state['displayLayout'])
         self._n_displays = state['nDisplays']
         if currentDisplay:
-            #TOOLBARS
+            # TOOLBARS
             for bar in currentDisplay.widget.toolbars:
                 issel, hasbreak = state['toolbars'][bar.name]
                 bar.setSelected(issel)
@@ -264,9 +258,6 @@ class Workspace(QtWidgets.QWidget):
         toolbars = self.gui.findChildren(QtWidgets.QToolBar)
         for bar in toolbars:
             self.gui.removeToolBar(bar)
-#         if self._last_active_display:
-#             for bar in self._last_active_display.widget.toolbars:
-#                 self.gui.removeToolBar(bar)
 
     def close(self):
         self.setInactive()
@@ -286,8 +277,8 @@ class Workspace(QtWidgets.QWidget):
         '''
         show tab, symbolActive and the toolbars of the changed display
         '''
-        if (self._last_active_display
-                and self._last_active_display.name == display.name):
+        if (self._last_active_display and
+                self._last_active_display.name == display.name):
             return
         if self._last_active_display != display:
             if self._last_active_display:
@@ -317,12 +308,6 @@ class Workspace(QtWidgets.QWidget):
             return self.displayPrefTabs.currentWidget().display
         except AttributeError:  # there is no display so far
             return None
-
-
-#     def getDisplayNumber(self, number):
-#         for d in self.displays():
-#             if d.number == number:
-#                 return d
 
     def moveCurrentDisplayToOtherWorkspace(self, workspsace):
         d = self.getCurrentDisplay()
@@ -361,7 +346,7 @@ class Workspace(QtWidgets.QWidget):
     def addNewToolbar(self, newbar):
         # find position [right end one toolbar row]
         # for new toolbars depending on where
-        #space is available
+        # space is available
         w = self.gui.size().width()
         needed_space = newbar.width
         p = QtCore.Qt.TopToolBarArea
@@ -402,8 +387,8 @@ class Workspace(QtWidgets.QWidget):
         remove old and show new toolbars - if there are selected
         apply position of last display.widget.toolbars
         '''
-        #will remove and add toolbars,
-        #if there's a 2nd row, prevent resize:
+        # will remove and add toolbars,
+        # if there's a 2nd row, prevent resize:
         self.gui.setUpdatesEnabled(False)
 
         # only show/change toolbars is that button is checked:
@@ -415,7 +400,7 @@ class Workspace(QtWidgets.QWidget):
             # save old layout
             for bar in d.widget.toolbars:
                 if bar.isSelected():
-                    #bar.position = self.gui.toolBarArea(bar)
+                    # bar.position = self.gui.toolBarArea(bar)
                     bar.hasBreak = self.gui.toolBarBreak(bar)
             # save order:
             d.widget.toolbars = self._sortToolbars(d.widget.toolbars)
@@ -445,7 +430,6 @@ class Workspace(QtWidgets.QWidget):
 
         self.gui.setUpdatesEnabled(True)
 
-
     def addShowToolBarAction(self, menu):
         d = self._last_active_display
         if d is not None:
@@ -458,9 +442,6 @@ class Workspace(QtWidgets.QWidget):
         else:
             if self._last_active_display is not None:
                 for t in self._last_active_display.widget.toolbars:
-                    #                 if show and t.isSelected():
-                    #                     t.show()
-                    #                 else:
                     t.hide()
 
     def addTableDock(self, name=None, text=None, array=None):
@@ -499,14 +480,14 @@ class Workspace(QtWidgets.QWidget):
         return display
 
     def copyViewToClipboard(self):
-        p = self.area_middle.grab()#QtGui.QPixmap.grabWidget(self.area_middle)
+        p = self.area_middle.grab()
         QtWidgets.QApplication.clipboard().setPixmap(p)
         print('Copied view to clipboard.')
 
     def copyCurrentDisplayToClipboard(self):
         d = self.getCurrentDisplay()
         if d is not None:
-            p = d.widget.grab()#QtGui.QPixmap.grabWidget(d)
+            p = d.widget.grab()
             QtWidgets.QApplication.clipboard().setPixmap(p)
             print('Copied current display to clipboard.')
 
@@ -515,40 +496,14 @@ class Workspace(QtWidgets.QWidget):
         if d is not None:
             b = d.widget.item.sceneBoundingRect().toRect()
             try:
-                #in case multiple items are in grid order:
+                # in case multiple items are in grid order:
                 for i in d.widget.subitems:
                     b = b.united(i.sceneBoundingRect().toRect())
             except AttributeError:
                 pass
-            p = d.widget.grab(b)#QtGui.QPixmap.grabWidget(d.widget, b)
+            p = d.widget.grab(b)
             QtWidgets.QApplication.clipboard().setPixmap(p)
             print('Copied current display item to clipboard.')
-    
-
-#     def setCurrentDisplayToImportDisplay(self):
-#         '''
-#         return whether successful
-#         '''
-#         d = self.getCurrentDisplay()
-#         if not d:
-#             return
-#         self._setImportDisplay(d)
-# 
-#     def _setImportDisplay(self, d):
-#         print(d, self._import_display)
-#         if d != self._import_display:
-#             self.unsetImportDisplay()
-#             self._import_display = d
-#             d.label.closeButton.setEnabled(False)
-#             print('Set current display [%s] as import display' % d.number)
-
-#     def unsetImportDisplay(self):
-#         d = self._import_display
-#         if d:
-#             d.label.closeButton.setEnabled(True)
-#             print('Unset current display [%s] as import display' % d.number)
-#         self._import_display = None
-
 
     def addFiles(self, names):
         '''

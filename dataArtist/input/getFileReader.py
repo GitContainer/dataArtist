@@ -11,8 +11,11 @@ SUPPORTED_FTYPES = set()
 [[SUPPORTED_FTYPES.add(f) for f in cls.ftypes] for _, cls in READERS]
 
 
-# TODO: default argument is mutable: Default argument values are evaluated only once at function definition time, 
-#   which means that modifying the default value of the argument will affect all subsequent calls of the function.
+# TODO: default argument is mutable: Default argument values are
+# evaluated only once at function definition time,
+# which means that modifying the default value of the argument
+# will affect all subsequent calls of the function.
+
 def getFileReader(filenames=[]):
     '''
     Try to find the right reader comparing filetypes of the given [filenames]

@@ -11,7 +11,7 @@ class DockBase(Dock):
         Dock.close(self)
         # Show text when all docks are closed
         if not self.area.docks:
-            self.area.text.show()
+            self.area.reset()
 
 
 class DockTable(DockBase):

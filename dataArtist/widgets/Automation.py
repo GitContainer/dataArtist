@@ -203,22 +203,16 @@ class Automation(QtWidgets.QWidget):
             a.append(widget)
 
     def saveState(self):
-        state = {'scriptOn':    self.btn_scripts.isChecked(),
-                 'consoleOn':   self.btn_console.isChecked(),
+        state = {'scriptOn':  self.btn_scripts.isChecked(),
+                 'consoleOn': self.btn_console.isChecked(),
                  'runOn':     str(self.cb_run_on.currentText()),
                  'tabTitles': [str(self.tabs.tabText(tab))
                                for tab in self.tabs],
-                 'curTab': self.tabs.currentIndex()}
-        # BUTTONS
-        # l['runOnNewInput'] = self.btn_run_new.isChecked()
+                 'curTab':    self.tabs.currentIndex()}
         # SCRIPTS
         ss = state['scripts'] = []
         for tab in self.tabs:
             ss.append(tab.editor.toPlainText())
-#             session.addContentToSave(tab.editor.toPlainText(),
-#                             *path+('scripts', '%s.txt' %n))
-        #-->
-#         session.addContentToSave(l, *path+('automation.txt',))
         return state
 
     def restoreState(self, state):
@@ -228,8 +222,8 @@ class Automation(QtWidgets.QWidget):
         self.btn_console.setChecked(state['consoleOn'])
         # self.btn_run_new.setChecked(l['runOnNewInput'])
         self.cb_run_on.setCurrentIndex([self.cb_run_on.itemText(i)
-                                        for i in range(self.cb_run_on.count())].index(
-            state['runOn']))
+                                        for i in range(self.cb_run_on.count())
+                                        ].index(state['runOn']))
         # SCRIPTS
         ss = state['scripts']
         if ss and not hasattr(self, 'combo_import'):
@@ -254,8 +248,8 @@ class Automation(QtWidgets.QWidget):
             QtWidgets.QApplication.restoreOverrideCursor()
         # TOGGLE BUTTON
         self.btn_collect.setChecked(self._collect)
-        # add chosen widget to active script:
 
+        # add chosen widget to active script:
         def fn(tool):
             return self.tabs.currentWidget().addTool(tool)
 
@@ -264,7 +258,7 @@ class Automation(QtWidgets.QWidget):
             tool.returnToolOnClick(self._collect, fn)
             # TOOL-PARAMETERS:
             if isinstance(tool.menu(), ParameterMenu):
-                tool.menu().pTree.returnParameterOnKlick(self._collect, fn)
+                tool.menu().pTree.returnParameterOnClick(self._collect, fn)
 
     def _importScript(self, index):
         '''
@@ -383,14 +377,14 @@ class Automation(QtWidgets.QWidget):
         '''
         toggle run settings allow running for new data
         '''
-        if self.btn_scripts.isChecked() and self.cb_run_on.currentIndex() == 1:  # =new data
+        if self.btn_scripts.isChecked() and self.cb_run_on.currentIndex() == 1:
             self.toggle()
 
     def toggleDataChanged(self):
         '''
         toggle run settings allow running for data changed
         '''
-        if self.btn_scripts.isChecked() and self.cb_run_on.currentIndex() == 2:  # =data changed
+        if self.btn_scripts.isChecked() and self.cb_run_on.currentIndex() == 2:
             self.toggle()
 
 
@@ -467,10 +461,7 @@ class _ExecGlobalsDict(dict):
         dict.__init__(self)
         self.display = display
         knownArgs = {'np': np,
-                     'd': display,
-                     #'QtGui': QtGui,
-                     #'QtCore': QtCore
-                     }
+                     'd': display}
         self.update(knownArgs)
         self.update(BUILTINS_DICT)
 
@@ -493,12 +484,6 @@ class _ExecGlobalsDict(dict):
     @property
     def displaydict(self):
         return self.display.workspace.displaydict()
-
-#     def setup(self):
-#         '''
-#         get all current displays
-#         '''
-#         self.displaydict = self.display.workspace.displaydict()
 
 
 class _Thread(QtCore.QThread):
@@ -530,8 +515,8 @@ class _Thread(QtCore.QThread):
         a.checkWidgetIsActive(d.widget)
         return d
 
-    def _getAndRegisterTimer(self, timeoutFunc=None, timeout=None, stopAfter=None,
-                             stopFunc=None):
+    def _getAndRegisterTimer(self, timeoutFunc=None, timeout=None,
+                             stopAfter=None, stopFunc=None):
         '''
         A convenience function for creating processes connected through a QTimer
 
@@ -581,10 +566,7 @@ class _Thread(QtCore.QThread):
         and check whether the execution is done at the end
         '''
         self._done = False
-
         self._timers = []
-        # self._globals.setup()
-
         self._widgetUpdateTimer.start()
         try:
             c = compile(str(self.scriptTab.editor.toPlainText()),

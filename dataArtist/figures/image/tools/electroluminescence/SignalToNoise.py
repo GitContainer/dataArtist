@@ -53,7 +53,12 @@ class SignalToNoise(Tool):
         self.pShowMap = pa.addChild({
             'name': 'Show map',
                     'value': True,
-                    'type': 'bool'})
+                    'type': 'bool',
+                    'visible': False})
+
+        self.createResultInDisplayParam(self.pShowMap)
+        self.pMethod.sigValueChanged.connect(lambda _p, v:
+                                             self.pShowMap.show(v == 'Bedrich2016'))
 
         self.pUnit = pa.addChild({
             'name': 'Unit',
@@ -122,9 +127,12 @@ class SignalToNoise(Tool):
         print(msg)
 
     def activate(self):
+        self.startThread(self._process, self._done)
+
+    def _process(self):
         img = self.display.widget.image
         unit = self.pUnit.value()
-
+        maps = []
         for n, i1 in enumerate(img):
             if self._ref2 is not None:
                 i2 = self._ref2.widget.image[self._ref2_i]
@@ -136,11 +144,12 @@ class SignalToNoise(Tool):
                 ibg = 0
 
             # ref. image must be different than image:
-            if ((self._refBg and self._refBg.number == self.display.number
-                    and self._refBg_i == n)
-                or
-                (self._ref2 and self._ref2.number == self.display.number
-                    and self._ref2_i == n)):
+            if ((self._refBg and
+                 self._refBg.number == self.display.number and
+                 self._refBg_i == n) or
+                (self._ref2 and
+                 self._ref2.number == self.display.number and
+                 self._ref2_i == n)):
                 continue
 
             if self.pMethod.value() != 'Bedrich2016':
@@ -152,23 +161,32 @@ class SignalToNoise(Tool):
                 self._printSNRavg(snr)
 
             else:
-                snr = SNR(i1, i2, ibg,
-                          imgs_to_be_averaged=self.pOnImgAvg.value())
+                snrMap = SNR(i1, i2, ibg,
+                             imgs_to_be_averaged=self.pOnImgAvg.value())
 
                 if unit == 'db':
-                    snr = 10 * np.log10(snr)
+                    snrMap = 10 * np.log10(snrMap)
 
-                avg = SNRaverage(
-                    snr, self.pAverage.value(), self.pExBg.value())
-                self._printSNRavg(avg)
+                snr = SNRaverage(
+                    snrMap, self.pAverage.value(), self.pExBg.value())
+                maps.append(snrMap)
 
-                if self.pShowMap.value():
-                    if self.outDisplay is None or self.outDisplay.isClosed():
-                        self.outDisplay = self.display.workspace.addDisplay(
-                            origin=self.display,
-                            data=[snr],
-                            title='Signal-to-Noise ratio (avg=%s[%s])' % (
-                                avg, unit))
-                    else:
-                        self.outDisplay.addLayer(
-                            data=snr, origin=self.display, index=n)
+            self._printSNRavg(snr)
+        return maps
+
+    def _done(self, maps):
+        if self.pShowMap.value() and len(maps):
+            self.handleOutput(maps, title='Signal-to-Noise ratio')
+#                     if self.outDisplay is None or self.outDisplay.isClosed():
+#                         self.outDisplay = self.display.workspace.addDisplay(
+#                             origin=self.display,
+#                             data=[snrMap],
+#                             title='Signal-to-Noise ratio (avg=%s[%s])' % (
+#                                 snr, unit))
+#                     else:
+#                         self.outDisplay.addLayer(
+#                             data=snr, origin=self.display, index=n)
+
+
+#             if self.pPlot.value():
+#                 snrs.append()

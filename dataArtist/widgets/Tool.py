@@ -72,7 +72,8 @@ class Tool(QtWidgets.QToolButton):
     '''
     Base class for all display.widget.tools
     '''
-    reinit = False  # whether to execute activate()/deactivate() at restoreState()
+    # whether to execute activate()/deactivate() at restoreState():
+    reinit = False
 
     def __init__(self, display):
         super().__init__()
@@ -134,31 +135,27 @@ class Tool(QtWidgets.QToolButton):
 
         a = menu.addAction('[NEW, OVERRIDE]')
         a.triggered.connect(lambda: addToParam('[NEW, OVERRIDE]'))
-        # a.setToolTip('Create once a new display, than replace values in there.')
 
         a = menu.addAction('[NEW, ADD]')
         a.triggered.connect(lambda: addToParam('[NEW, ADD]'))
 
         a = menu.addAction('[ALLWAYS NEW]')
         a.triggered.connect(lambda: addToParam('[ALLWAYS NEW]'))
-        # a.setToolTip('Create every time a new')
 
         a = menu.addAction('[ADD]')
         a.triggered.connect(lambda: addToParam('[ADD]'))
-        # a.setToolTip('Add a new layer to the current display.')
 
         a = menu.addAction('[REPLACE]')
         a.triggered.connect(lambda: addToParam('[REPLACE]'))
-        # a.setToolTip('Add the current layer to the current display.')
 
         for d in self.display.workspace.displays():
             if d != self.display and d.widget.__class__ == self.display.widget.__class__:
                 m = menu.addMenu(d.name())
                 m.addAction('[ADD]').triggered.connect(
-                    lambda checked, d=d: addToParam('[ADD to %s]' % d.name(), d))
+                    lambda _checked, d=d: addToParam('[ADD to %s]' % d.name(), d))
                 for n, l in enumerate(d.layerNames()):
                     m.addAction(l).triggered.connect(
-                        lambda checked, d=d, n=n, l=l:
+                        lambda _checked, d=d, n=n, l=l:
                         addToParam('[REPLACE %s]' % l, d, n))
 
     def handleOutput(self, out, **kwargs):
@@ -269,6 +266,12 @@ class Tool(QtWidgets.QToolButton):
         '''
         self._checkShowBtnMenu()
         QtWidgets.QToolButton.setMenu(self, *args)
+
+    def getDataOrFilenames(self):
+        data = self.display.widget.getData()
+        if data is None:
+            return self.display.filenames
+        return data
 
     def setParameterMenu(self):
         self._menu = ParameterMenu(self)

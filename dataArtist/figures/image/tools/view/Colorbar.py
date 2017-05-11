@@ -2,7 +2,7 @@
 import numpy as np
 from qtpy import QtWidgets
 from dataArtist.widgets.Tool import Tool
-from imgProcessor.imgSignal import scaleSignalCutParams #signalRange
+# from imgProcessor.imgSignal import scaleSignalCutParams  # signalRange
 
 
 class Colorbar(Tool):
@@ -31,30 +31,30 @@ class Colorbar(Tool):
         })
         pSync.aboutToShow.connect(self._buildLinkColorbar)
 
-        pFit = pa.addChild({
-            'name': 'Fit',
-            'type': 'action'})
-        pFit.sigActivated.connect(self._fit)
+#         pFit = pa.addChild({
+#             'name': 'Fit',
+#             'type': 'action'})
+#         pFit.sigActivated.connect(self._fit)
 
         pLevels = pa.addChild({
             'name': 'autoLevels',
             'type': 'bool',
             'value': w.opts['autoLevels']})
-        pLevels.sigValueChanged.connect(lambda param, value:
+        pLevels.sigValueChanged.connect(lambda _param, value:
                                         w.setOpts(autoLevels=value))
 
         pRange = pa.addChild({
             'name': 'autoHistogramRange',
             'type': 'bool',
             'value': w.opts['autoHistogramRange']})
-        pRange.sigValueChanged.connect(lambda param, value:
+        pRange.sigValueChanged.connect(lambda _param, value:
                                        w.setOpts(autoHistogramRange=value))
 
         self.pPrintView = pa.addChild({
             'name': 'print view',
             'type': 'bool',
             'value': False})
-        self.pPrintView.sigValueChanged.connect(lambda param, value:
+        self.pPrintView.sigValueChanged.connect(lambda _param, value:
                                                 w.setHistogramPrintView(value, pShowHist.value()))
 
         pShowHist = self.pPrintView.addChild({
@@ -88,7 +88,7 @@ class Colorbar(Tool):
 
         for d in self.display.otherDisplaysOfSameType():
             cb = QtWidgets.QCheckBox(d.name(), menu)
-            a =  QtWidgets.QWidgetAction(menu)
+            a = QtWidgets.QWidgetAction(menu)
             a.setDefaultWidget(cb)
             menu.addAction(a)
 #             a = QtWidgets.QAction(d.name(), menu, checkable=True)
@@ -98,7 +98,7 @@ class Colorbar(Tool):
             if d in self._linked_displays:
                 cb.setChecked(True)
             cb.clicked.connect(lambda checked, d=d, self=self:
-                                self._linkColorbar(d, checked))
+                               self._linkColorbar(d, checked))
 
     def _linkColorbar(self, display, dolink=True):
         '''
@@ -126,14 +126,14 @@ class Colorbar(Tool):
             if inactive:
                 self.setChecked(False)
 
-    def _fit(self):
-        w = self.display.widget
-        img = w.image[w.currentIndex]
-#         r = signalRange(img, nSigma=3)
-        r = scaleSignalCutParams(img, 0.02)
-        w.ui.histogram.setLevels(*r)
+#     def _fit(self):
+#         w = self.display.widget
+#         img = w.image[w.currentIndex]
+# #         r = signalRange(img, nSigma=3)
+#         r = scaleSignalCutParams(img, 0.01)
+#         w.ui.histogram.setLevels(*r)
 
-    def _pShowHistChanged(self, param, val):
+    def _pShowHistChanged(self, _param, _val):
         if self.pPrintView.value():
             self.pPrintView.setValue(False)
             self.pPrintView.setValue(True)

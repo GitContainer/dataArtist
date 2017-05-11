@@ -9,7 +9,7 @@ from builtins import object
 
 import pyqtgraph_karl.opengl as gl
 import pyqtgraph_karl as pg
-from pyqtgraph_karl import QtGui, QtPrintSupport, QtWidgets, QtCore
+from qtpy import QtWidgets, QtCore
 
 
 class Grid(object):

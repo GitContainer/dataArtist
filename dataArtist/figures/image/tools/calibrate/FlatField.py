@@ -5,14 +5,14 @@ from collections import OrderedDict
 # OWN
 from dataArtist.figures.image.ImageWidget import ImageWidget
 from dataArtist.figures.image.tools.globals.CalibrationFile import CalibrationFile
-from dataArtist.widgets.ImageTool import ImageTool
+from dataArtist.widgets.Tool import Tool
 
 # TODO: all fn fits are slow because there is no down-scaling a.t.m.
 # TODO: post proc. methods shuold be limited for some methods:
 #    MultiSpots only allows replace ones and no med, gauss
 
 
-class FlatField(ImageTool):
+class FlatField(Tool):
     '''
     Create a flat field calibration map from multiple
     input images.
@@ -27,7 +27,7 @@ class FlatField(ImageTool):
     icon = 'flatField.svg'
 
     def __init__(self, imageDisplay):
-        ImageTool.__init__(self, imageDisplay)
+        Tool.__init__(self, imageDisplay)
 
         # <<<<< save startup time
         from imgProcessor.camera.flatField.vignettingFromSpotAverage \
@@ -168,7 +168,7 @@ class FlatField(ImageTool):
 
     def _calc(self):
         # TODO: add standard deviation map
-        img = self.getImageOrFilenames()
+        img = self.getDataOrFilenames()
 
         # if self.pMethod.value() == 'from calibration images':
         if self._bg is None:

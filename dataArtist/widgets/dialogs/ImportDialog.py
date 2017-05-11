@@ -30,7 +30,7 @@ class ImportDialog(QtWidgets.QDialog):
         self.btn_done.clicked.connect(self.accept)
         l.addWidget(self.btn_done)
 
-    def accept(self, evt):
+    def accept(self, _evt):
         '''
         write setting to the preferences
         '''

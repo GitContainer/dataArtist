@@ -2,13 +2,12 @@
 '''
 Widgets handling all dataArtist preferences
 '''
-from builtins import str
 
 from qtpy import QtWidgets, QtCore
 import pyqtgraph_karl as pg
 
-from dataArtist.components.RabbitMQServer import RabbitMQServer
-from dataArtist.components.WatchFolder import WatchFolder
+from dataArtist.communication.RabbitMQServer import RabbitMQServer
+from dataArtist.communication.WatchFolder import WatchFolder
 
 
 class PreferencesCommunication(QtWidgets.QWidget):
@@ -110,41 +109,32 @@ class PreferencesCommunication(QtWidgets.QWidget):
                                          rab.opts.__setitem__('host', val))
         gl.addWidget(self.le_host, 1, 1)
 
-#         gl.addWidget(QtWidgets.QLabel('timeout [msec]'), 2, 0)
-#         self.sb_timeout = QtWidgets.QSpinBox()
-#         self.sb_timeout.setRange(0, 1000)
-#         self.sb_timeout.setValue(rab.opts['timeout'])
-#         self.sb_timeout.valueChanged.connect(lambda val:
-#                                              rab.opts.__setitem__('timeout', val))
-#         gl.addWidget(self.sb_timeout, 2, 1)
-
         gl.addWidget(QtWidgets.QLabel(
             '<b>....listen to queues named:</b>'), 3, 0)
         for n, (queue, action) in enumerate(rab.listenTo.items()):
             gl.addWidget(QtWidgets.QLabel(queue), 4 + n, 0)
             gl.addWidget(QtWidgets.QLabel(action.__doc__), 4 + n, 1)
-        
 
     def _watchFolderChanged(self, checked):
         self._folder_opts.setVisible(checked)
         if checked:
             if self._wf_folderEdit.text() != '-':
                 self._wf.start()
-            #update size
+            # update size
             tt = self.gui.menuBar().file_preferences
             s = tt.minimumSize()
-            h,w = s.height(), s.width()
-            tt.setMinimumSize(w, h+400)
+            h, w = s.height(), s.width()
+            tt.setMinimumSize(w, h + 400)
         else:
             self._wf.stop()
-            #update size
+            # update size
             tt = self.gui.menuBar().file_preferences
             s = tt.minimumSize()
-            h,w = s.height(), s.width()
-            tt.setMinimumSize(w, h-400)
+            h, w = s.height(), s.width()
+            tt.setMinimumSize(w, h - 400)
 
     def _wf_refRateChanged(self, rate):
-        self._wf.opts['refreshrate']
+        self._wf.opts['refreshrate'] = rate
         self._wf.stop()
         self._wf.start()
 
@@ -161,6 +151,8 @@ class PreferencesCommunication(QtWidgets.QWidget):
             self._wf.start()
 
     def _allowRabbitMQchanged(self, checked):
+        PX_FACTOR = QtWidgets.QApplication.instance().PX_FACTOR
+
         if checked:
             try:
                 self.rabbitMQServer.start()
@@ -169,35 +161,34 @@ class PreferencesCommunication(QtWidgets.QWidget):
                 # needs to assign to self, otherwise garbage collected
                 self._errm = QtWidgets.QErrorMessage()
                 self._errm.showMessage("""Could not load RabbitMQ
-                
+
 %s: %s
 
 Have you installed it?
 
-https://www.rabbitmq.com""" %(
+https://www.rabbitmq.com""" % (
                     type(ex).__name__, ex.args))
                 self.cb_allowRabbit.setChecked(False)
                 self.cb_allowRabbit.setEnabled(False)
                 return
 
-            #update size
+            # update size
             tt = self.gui.menuBar().file_preferences
             s = tt.minimumSize()
-            h,w = s.height(), s.width()
-            tt.setMinimumSize(w+600, h+600)
-       
+            h, w = s.height(), s.width()
+            tt.setMinimumSize(w + 600 * PX_FACTOR, h + 600 * PX_FACTOR)
+
         else:
             self.rabbitMQServer.stop()
-            #update size
+            # update size
             tt = self.gui.menuBar().file_preferences
             s = tt.minimumSize()
-            h,w = s.height(), s.width()
+            h, w = s.height(), s.width()
             if h:
-                tt.setMinimumSize(w-600, h-600)
+                tt.setMinimumSize(w - 600 * PX_FACTOR, h - 600 * PX_FACTOR)
 
         self._rab_opts.setVisible(checked)
         self.cb_confirm.setVisible(checked)
-
 
     def _save(self, state):
         # TODO: add server.opts.[activated]
@@ -209,7 +200,7 @@ https://www.rabbitmq.com""" %(
 
             'RMQ_refreshRate': self._rab_refRate.value(),
             'RMQ_host': str(self.le_host.text()),
-#             'RMQ_timeout': self.sb_timeout.value(),
+            #             'RMQ_timeout': self.sb_timeout.value(),
             'RMQ_activated': self.cb_allowRabbit.isChecked(),
             'RMQ_confirmPosts': self.cb_confirm.isChecked(),
         }
@@ -248,7 +239,7 @@ Changes are only effective after restarting the program.'''
         except KeyError:
             session.opts['profile'] = 'simple'
             pass
-        cb.currentIndexChanged.connect(lambda i:
+        cb.currentIndexChanged.connect(lambda _i:
                                        session.opts.__setitem__(
                                            'profile', str(cb.currentText())))
 
@@ -265,8 +256,8 @@ class PreferencesView(QtWidgets.QWidget):
     '''
 
     def __init__(self, gui):
-        # TODO: make pyqtgraph optics(colortheme...) directly changeable - not just
-        #      at reload
+        # TODO: make pyqtgraph optics(colortheme...) directly changeable
+        # not just at reload
         QtWidgets.QWidget.__init__(self)
         self.gui = gui
         session = gui.app.session
@@ -286,19 +277,21 @@ class PreferencesView(QtWidgets.QWidget):
         self.combo_colorTheme = QtWidgets.QComboBox()
         hlayout.addWidget(self.combo_colorTheme)
         self.combo_colorTheme.addItems(('dark', 'bright'))
-        self.combo_colorTheme.currentIndexChanged.connect(self._colorThemeChanged)
+        self.combo_colorTheme.currentIndexChanged.connect(
+            self._colorThemeChanged)
 
         self.check_antialiasting = QtWidgets.QCheckBox('Antialiasting')
         layout.addWidget(self.check_antialiasting)
-        self.check_antialiasting.stateChanged.connect(self._antialiastingChanged)
+        self.check_antialiasting.stateChanged.connect(
+            self._antialiastingChanged)
 
         combo_profile = ChooseProfile(session)
         layout.addWidget(combo_profile)
-        
+
         btn = QtWidgets.QPushButton('Make default')
         btn.clicked.connect(self._makeDefault)
         layout.addWidget(btn)
-        
+
         p = session.opts.get('pview', None)
         if p is not None:
             self._restore(p)
@@ -309,29 +302,22 @@ class PreferencesView(QtWidgets.QWidget):
         self.gui.app.session.opts['pview'] = d
 
     def _antialiastingChanged(self, val):
-        val = bool(val)
-        #make change session independent: 
-#         self.gui.app.session.opts['pview']['antialias'] = val
-        
-        pg.setConfigOption('antialias', val)
+        pg.setConfigOption('antialias', bool(val))
         for ws in self.gui.workspaces():
             ws.reload()
 
     def _save(self, state):
         state['pview'] = {
             'colorTheme': self.combo_colorTheme.currentIndex(),
-            'antialias':self.check_antialiasting.isChecked()}
+            'antialias': self.check_antialiasting.isChecked()}
 
     def _restore(self, state):
         p = state['pview']
         self.combo_colorTheme.setCurrentIndex(p['colorTheme'])
         self.check_antialiasting.setChecked(p['antialias'])
-        
-    def _colorThemeChanged(self, index):
+
+    def _colorThemeChanged(self, _index):
         theme = self.combo_colorTheme.currentText()
-        #make change session independent: 
-#         self.gui.app.session.opts['pview']['colorTheme'] = index
-        
         if theme == 'dark':
             pg.setConfigOption('foreground', 'w')
             pg.setConfigOption('background', 'k')
@@ -344,16 +330,15 @@ class PreferencesView(QtWidgets.QWidget):
 
         for ws in self.gui.workspaces():
             ws.reload()
-#             for d in ws.displays():#doesn't acknowledge tools prefs
-#                 d.reloadWidget()
 
 
 class _QComboBox(QtWidgets.QComboBox):
+
     def __init__(self, pref, *args, **kwargs):
         self.pref = pref
         QtWidgets.QComboBox.__init__(self, *args, **kwargs)
         self.activated.connect(self._updateDisplayNumber)
-        
+
     def showPopup(self):
         self.buildMenu()
         QtWidgets.QComboBox.showPopup(self)
@@ -361,20 +346,21 @@ class _QComboBox(QtWidgets.QComboBox):
     def buildMenu(self):
         old = [self.itemText(i) for i in range(self.count())]
         new = ['CURRENT']
-        self._numbers = list(self.pref.gui.currentWorkspace().displaydict().keys())
-        new.extend(['[%i]' %n for n in self._numbers])
+        self._numbers = list(
+            self.pref.gui.currentWorkspace().displaydict().keys())
+        new.extend(['[%i]' % n for n in self._numbers])
         if old != new:
             self.clear()
-            self.addItems( new )
+            self.addItems(new)
             if len(old) == 0:
                 self.pref.importFilesPolicy = self.pref.inCurrentDisplay
-            
+
     def _updateDisplayNumber(self, index):
-        if index ==0:
+        if index == 0:
             self.pref.importFilesPolicy = self.pref.inCurrentDisplay
         else:
-            self.pref.importFilesPolicy = self.pref.inDisplay 
-            self.pref.displayNumber = self._numbers[index-1]
+            self.pref.importFilesPolicy = self.pref.inDisplay
+            self.pref.displayNumber = self._numbers[index - 1]
 
 
 class PreferencesImport(QtWidgets.QWidget):
@@ -402,7 +388,7 @@ class PreferencesImport(QtWidgets.QWidget):
         layout.setAlignment(QtCore.Qt.AlignTop)
         self.setLayout(layout)
 
-        #<<<
+        # <<<
         hlayout = QtWidgets.QHBoxLayout()
         layout.addLayout(hlayout)
         label_multifiles = QtWidgets.QLabel('Import files')
@@ -418,9 +404,9 @@ class PreferencesImport(QtWidgets.QWidget):
 
         self.combo_import.setCurrentIndex(self.importFilesPolicy)
         self.combo_import.currentIndexChanged.connect(self._importChanged)
-        #>>>
+        # >>>
 
-        #<<< LABEL(Display) - COMBO(CURRENT, 1,2,3...)
+        # <<< LABEL(Display) - COMBO(CURRENT, 1,2,3...)
         hlayout = QtWidgets.QHBoxLayout()
         layout.addLayout(hlayout)
         self.label_displays = QtWidgets.QLabel('Display')
@@ -429,8 +415,8 @@ class PreferencesImport(QtWidgets.QWidget):
         hlayout.addWidget(self.combo_display)
         self.combo_display.hide()
         self.label_displays.hide()
-        #>>>
-        
+        # >>>
+
         self.btn_loadFiles = QtWidgets.QCheckBox('load files')
         self.btn_loadFiles.setChecked(True)
         self.btn_loadFiles.toggled.connect(
@@ -445,15 +431,14 @@ class PreferencesImport(QtWidgets.QWidget):
                 'showImportDialog', checked))
         layout.addWidget(self.btn_ask)
 
-
     def _importChanged(self, index):
         self.importFilesPolicy = index
         v = index == self.inDisplay
-        if v: 
+        if v:
             self.combo_display.buildMenu()
             self.combo_display.show()
             self.label_displays.show()
-        else: 
+        else:
             self.combo_display.hide()
             self.label_displays.hide()
 

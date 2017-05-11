@@ -7,10 +7,10 @@ class DifferentShapeDialog(QtWidgets.QDialog):
     If an image is to be imported into an ImageWidget
     filled already with other images of a different size
     This dialog lets the user decide what to do this the new image:
-    * Resize
-    * Cut
-    * Warp
-    * Add to new display
+        * Resize
+        * Cut
+        * Warp
+        * Add to new display
     '''
 
     opt = 0

@@ -2,7 +2,8 @@
 from qtpy import QtWidgets, QtCore
 
 from pyqtgraph_karl.parametertree import Parameter
-from dataArtist.widgets.ParameterTree import ParameterTree
+# from dataArtist.widgets.ParameterTree import ParameterTree
+from pyqtgraph_karl.parametertree import ParameterTree
 
 
 class ParameterMenu(QtWidgets.QMenu):
