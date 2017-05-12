@@ -21,6 +21,7 @@ class _ProcessThread(QtCore.QThread):
     the gui
     '''
     sigDone = QtCore.Signal(object)
+    sigUpdate = QtCore.Signal(int)
 
     def __init__(self, tool, runfn, donefn=None):
         QtCore.QThread.__init__(self)
@@ -46,6 +47,7 @@ class _ProcessThread(QtCore.QThread):
         self.progressBar.show()
         self.progressBar.cancel.clicked.connect(self.kill)
         self.progressBar.bar.setValue(50)
+        self.sigUpdate.connect(self.progressBar.bar.setValue)
         self.progressBar.label.setText(
             "Processing %s" %
             self.tool.__class__.__name__)

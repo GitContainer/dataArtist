@@ -16,6 +16,8 @@ class ParameterMenu(QtWidgets.QMenu):
         self.content = _MenuContent(tool)
         self.pTree = self.content.pTree
 
+        self.maxSize = [350, 800]  # px
+
         # embed parameterTree as a QWidgetAction:
         a = QtWidgets.QWidgetAction(self)
         a.setDefaultWidget(self.content)
@@ -67,8 +69,8 @@ class ParameterMenu(QtWidgets.QMenu):
         the height of all rows
         '''
         PX_FACTOR = QtWidgets.QApplication.instance().PX_FACTOR
-        width = 350 * PX_FACTOR
-        heightMax = 800 * PX_FACTOR
+        width = self.maxSize[0] * PX_FACTOR
+        heightMax = self.maxSize[1] * PX_FACTOR
         height = 6 * PX_FACTOR  # self.content.header.contentsRect().height()
         hh = [w.height() for w in self._topWidgets]
         if hh:

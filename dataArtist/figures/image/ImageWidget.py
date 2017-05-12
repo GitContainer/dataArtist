@@ -10,14 +10,14 @@ from collections import OrderedDict
 from fancytools.os.PathStr import PathStr
 from fancytools.utils.incrementName import incrementName
 from imgProcessor.transform.PerspectiveImageStitching import PerspectiveImageStitching as PerspectiveTransformation
-from imgProcessor.transformations import isColor, toColor, toGray
+from imgProcessor.transformations import isColor, toColor, toGray, isRot90, rot90
 
 # OWN
 from dataArtist.items.ColorLayerItem import ColorLayerItem
 from dataArtist.figures._PyqtgraphgDisplayBase import PyqtgraphgDisplayBase
 from dataArtist.figures.DisplayWidget import DisplayWidget
 from dataArtist.widgets.dialogs.DifferentShapeDialog import DifferentShapeDialog
-from matplotlib.backends.qt_compat import QtWidgets
+# from matplotlib.backends.qt_compat import QtWidgets
 from imgProcessor.imgSignal import scaleSignalCutParams
 
 
@@ -291,27 +291,31 @@ class ImageWidget(DisplayWidget, ImageView, PyqtgraphgDisplayBase):
                         self.image = toColor(self.image)
                         s1 = self.image[0].shape
                     if s1 != s2:
-                        # NEW LAYER SHAPE DOESNT FIT EXISTING:
-                        ###show DIALOG#####
-                        d = DifferentShapeDialog(name, s1, s2)
-                        d.exec_()
+                        if isRot90(s1, s2):
+                            print('Image is rotated 90DEG.')
+                            data = rot90(data)
+                        else:
+                            # NEW LAYER SHAPE DOESNT FIT EXISTING:
+                            ###show DIALOG#####
+                            d = DifferentShapeDialog(name, s1, s2)
+                            d.exec_()
 
-                        r = d.opt
-                        if r == d.optNewDisplay:
-                            self.moveLayerToNewImage = index
-                            return
-                        elif r == d.optCut:
-                            data = data[0:s1[0], 0:s1[1]]
-                            if data.shape != s1:
-                                d = np.zeros(s1)
-                                d[0:s2[0], 0:s2[1]] = data
-                                data = d
-                        elif r == d.optResize:
-                            data = cv2.resize(data, (s1[1], s1[0]))
+                            r = d.opt
+                            if r == d.optNewDisplay:
+                                self.moveLayerToNewImage = index
+                                return
+                            elif r == d.optCut:
+                                data = data[0:s1[0], 0:s1[1]]
+                                if data.shape != s1:
+                                    d = np.zeros(s1)
+                                    d[0:s2[0], 0:s2[1]] = data
+                                    data = d
+                            elif r == d.optResize:
+                                data = cv2.resize(data, (s1[1], s1[0]))
 
-                        elif r == d.optWarp:
-                            data = PerspectiveTransformation(
-                                self.image[-1]).fitImg(data)
+                            elif r == d.optWarp:
+                                data = PerspectiveTransformation(
+                                    self.image[-1]).fitImg(data)
 
                     self.image = np.insert(self.image, index, data, axis=0)
 

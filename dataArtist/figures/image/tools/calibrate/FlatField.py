@@ -48,6 +48,8 @@ class FlatField(Tool):
         self._bg = None
 
         pa = self.setParameterMenu()
+        # need to be wider to show longer method names...
+        self._menu.maxSize[0] = 500
 
         pMeasure = pa.addChild({
             'name': 'Calculate calibration array ...',

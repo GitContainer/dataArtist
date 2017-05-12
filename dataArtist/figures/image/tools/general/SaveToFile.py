@@ -7,6 +7,7 @@ from fancywidgets.pyQtBased.Dialogs import Dialogs
 from imgProcessor.transformations import toUIntArray, isColor
 from imgProcessor.imgIO import imwrite
 from imgProcessor.reader.qImageToArray import qImageToArray
+from pyqtgraph_karl.functions import makeARGB, makeRGBA
 from imgProcessor.interpolate.LinearInterpolateImageStack \
     import LinearInterpolateImageStack
 
@@ -333,9 +334,6 @@ cut values higher than maximum image intensity'''})
     def exportVideo(self):
         self.startThread(self._exportVideoThread)
 
-    def _exportVideoDone(self):
-        pass
-
     def _exportVideoThread(self):
         fourcc = cv2.VideoWriter_fourcc(*'XVID')
         ww = self.display.widget
@@ -358,15 +356,19 @@ cut values higher than maximum image intensity'''})
         times = np.linspace(0, len(im), len(im) * fr)
         interpolator = LinearInterpolateImageStack(im)
 
-        lastIm = ww.item.image
+        lut = ww.item.lut
+        if lut is not None:
+            lut = lut(im[0])
+
         for n, time in enumerate(times):
             # update progress:
-            self._thread.progressBar.bar.setValue(100 * n / len(times))
+            self._thread.sigUpdate.emit(100 * n / len(times))
+            image = interpolator(time)
 
-            ww.item.image = interpolator(time)
-            ww.item.render()
-            cimg = cv2.cvtColor(
-                qImageToArray(ww.item.qimage), cv2.COLOR_RGB2BGR)
+            argb = makeRGBA(image, lut=lut,
+                            levels=ww.item.levels)[0]
+            cimg = cv2.cvtColor(argb, cv2.COLOR_RGBA2BGR)
+
             if isVideo:
                 out.write(cimg)
             else:
@@ -375,8 +377,6 @@ cut values higher than maximum image intensity'''})
         if isVideo:
             cap.release()
             out.release()
-
-        ww.item.image = lastIm
 
     def exportCV2(self):
         '''
