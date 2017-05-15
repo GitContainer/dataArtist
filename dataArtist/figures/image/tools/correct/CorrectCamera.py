@@ -97,15 +97,24 @@ current layer: only the current image is taken - no average, no STE removal
 
         self.pThreshold = pa.addChild({
             'name': 'Artifact removal threshold',
-            'type': 'float',
-            'value': 0.0,
+            'type': 'slider',
+            'value': 1,
             'limits': [0., 1.],
-            'tip': 'Increase value to increase filter effect'})
+            'tip': '''0--> replace everything with median, 
+0.9 --> replace with median if rel. difference [img]-[median] > 0.9
+1 --> do nothing'''})
 
-#         self.pUncertainty  = pa.addChild({
-#             'name':'Return correction uncertainty',
-#             'type':'bool',
-#             'value':False})
+        self.pThreshold.sigValueChanged.connect(
+            self._updateSlider)
+
+    def _updateSlider(self, p, v):
+        w = list(p.items.keys())[0].widget
+        if v > 0.9:
+            w.slider.setStyleSheet('')
+        elif v > 0.7:
+            w.slider.setStyleSheet("QSlider {background-color: orange;}")
+        else:
+            w.slider.setStyleSheet("QSlider {background-color: red;}")
 
     def _updatepCal(self):
         v = self.calFileTool.pCal.value()

@@ -447,7 +447,6 @@ class PerspectiveCorrection(Tool):
                 if (e == 'all images' or
                         (e == 'current image' and n == w.currentIndex) or
                         (e == 'last image' and n == len(img) - 1)):
-
                     if not (r and n == self._refImg_from_own_display):
                         corr = self.pc.correct(i)
 
