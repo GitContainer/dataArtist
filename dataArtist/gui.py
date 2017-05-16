@@ -561,8 +561,8 @@ def main(name='dataArtist',
                       ftype=ftype,
                       icon=icon,
                       first_start_dialog=first_start_dialog)
-    #"Plastique" is not longer avail. in PyQt5
-    # app.setStyle("fusion")  # looks better and shows splitter handle
+    if os.name == 'posix':  # for linux-systems
+        app.setStyle("fusion") # native these under GTK looks bad - better replace
     win = Gui(title=name)
     s = app.session
     s.registerMainWindow(win)
