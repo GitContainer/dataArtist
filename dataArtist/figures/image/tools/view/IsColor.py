@@ -77,5 +77,7 @@ class IsColor(Tool):
         w.setImage(toColor(w.image))
 
     def deactivate(self):
-        w = self.display.widget
+        d = self.display
+        w = d.widget        
+        d.backupChangedLayer(backup=w.image, changes='RGB->gray')
         w.setImage(toGray(w.image))
