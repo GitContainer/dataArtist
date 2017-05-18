@@ -62,7 +62,8 @@ class PlotStyle(Tool):
             'name': 'Width',
             'index': (0, 1),
             'type': 'int',
-            'value': 1})
+            'value': 1,
+            'min':0})
         p.sigValueChanged.connect(self._pAllChanged)
 
         p = pLine.addChild({
@@ -167,6 +168,7 @@ class PlotStyle(Tool):
             p = pLine.addChild({
                 'name': 'Width',
                 'type': 'int',
+                'min' : 0,
                 # set current color as first option:
                 'value': pen.width(),
                 'itemPen': (item, pen)})

@@ -53,6 +53,7 @@ class ParameterMenu(QtWidgets.QMenu):
 
     def aboutToShowFn(self):
         self.p.sigTreeStateChanged.connect(self.delayedResize)
+        self.pTree.expanded.connect(self.delayedResize)
         self.resizeToContent()
 
     def aboutToHideFn(self):
