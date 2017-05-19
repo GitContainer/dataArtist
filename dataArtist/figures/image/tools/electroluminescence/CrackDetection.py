@@ -1,15 +1,15 @@
 import numpy as np
 from dataArtist.widgets.Tool import Tool
-from PROimgProcessor.features.crackDetection import labelCracks, evalCracks,\
-    detectLabelCrackParams
+
 from scipy.ndimage.filters import maximum_filter
 from dataArtist.items.PerspectiveGridROI import PerspectiveGridROI
 
 
 try:
-    pass
+    from PROimgProcessor.features.crackDetection import labelCracks, evalCracks,\
+        detectLabelCrackParams
 except ImportError:
-    seriesResistanceMapping = None
+    labelCracks = None
 
 
 class CrackDetection(Tool):
