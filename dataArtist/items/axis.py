@@ -114,30 +114,31 @@ class Axis(pg.AxisItem):
             'name': 'unit',
             'type': 'str',
             'value': ''})
-        self.pPrefix = self.p.addChild({
-            'name': 'prefix',
-            'type': 'str',
-            'value': ''})
-        self.pRange = self.p.addChild({
-            'name': 'range',
-            'type': 'list',
-            'limits': ['linear', 'percent']
-        })
-        self.pRange.sigValueChanged.connect(self._pRangeChanged)
+#         self.pPrefix = self.p.addChild({
+#             'name': 'prefix',
+#             'type': 'str',
+#             'value': ''})
+#         self.pRange = self.p.addChild({
+#             'name': 'range',
+#             'type': 'list',
+#             'limits': ['linear', 'percent']
+#         })
+#         self.pRange.sigValueChanged.connect(self._pRangeChanged)
         # scale
-        self.pScale = self.pRange.addChild({
+        self.pScale = self.p.addChild({
             'name': 'scale',
             'type': 'float',
+            'min':1e-100,
             'value': 1})
         # offset
         # TODO
-        self.pOffset = self.pRange.addChild({
-            'name': 'offset',
-            'type': 'float',
-            'value': 0,
-            #'tip': "Doesn't work at the moment",
-            #'visible': False
-        })
+#         self.pOffset = self.pRange.addChild({
+#             'name': 'offset',
+#             'type': 'float',
+#             'value': 0,
+#             #'tip': "Doesn't work at the moment",
+#             #'visible': False
+#         })
         # TODO: need to know the orientation first
         # pOffset.sigValueChanged.connect(lambda x: dock.display.item.setPos (
         # qreal x, qreal y ))
@@ -149,8 +150,8 @@ class Axis(pg.AxisItem):
                                        self.setLabel(text=x))
         self.pUnit.sigValueChanged.connect(lambda param, x, self=self:
                                            self.setLabel(units=x))
-        self.pPrefix.sigValueChanged.connect(lambda param, x, self=self:
-                                             self.setLabel(unitPrefix=x))
+#         self.pPrefix.sigValueChanged.connect(lambda param, x, self=self:
+#                                              self.setLabel(unitPrefix=x))
         self.pScale.sigValueChanged.connect(lambda param, x, self=self:
                                             self.setScale(x))
         #self.pOffset.sigValueChanged.connect(lambda param, x, self=self: self.setOffset(x))
@@ -158,17 +159,17 @@ class Axis(pg.AxisItem):
     def __repr__(self):
         return "%s '%s'" % (self.__class__.__name__, self.p.name())
 
-    def _pRangeChanged(self, param, val):
-        [ch.show(val != 'percent') for ch in param.childs]
-        if val == 'percent':
-            # scale axis between 0 - 100
-            bounds = self._linkedView().childrenBoundingRect()
-            if self.orientation in ['right', 'left']:
-                self.pScale.setValue(100 / bounds.height())
-            else:
-                self.pScale.setValue(100 / bounds.width())
-        else:
-            self.pScale.setValue(1)
+#     def _pRangeChanged(self, param, val):
+#         [ch.show(val != 'percent') for ch in param.childs]
+#         if val == 'percent':
+#             # scale axis between 0 - 100
+#             bounds = self._linkedView().childrenBoundingRect()
+#             if self.orientation in ['right', 'left']:
+#                 self.pScale.setValue(100 / bounds.height())
+#             else:
+#                 self.pScale.setValue(100 / bounds.width())
+#         else:
+#             self.pScale.setValue(1)
 
     def linkToAxis(self, axis=None):
         '''
@@ -221,15 +222,30 @@ class StackAxis(Axis):
 
     def __init__(self, *args):
         Axis.__init__(self, *args)
+        self.pOffset = self.p.addChild({
+            'name': 'offset',
+            'type': 'float',
+            'value': 0,
+            #'tip': "Doesn't work at the moment",
+            #'visible': False
+        })
+
+        self.pIsFromName = self.p.addChild({
+            'name': 'Values from layer name',
+            'type': 'bool',
+            'value': False,
+            #'tip': "Doesn't work at the moment",
+            #'visible': False
+        })
 
     def registerStackParam(self, pStack):
         self.pStack = pStack
 
-        self.pRange.setOpts(limits=['linear',  'fromName'])  # 'individual',
+#         self.pRange.setOpts(limits=['linear',  'fromName'])  # 'individual',
 #         self.pRange.sigValueChanged.connect(lambda param, val:
 #                                             [ch.setOpts(readonly=val != 'individual') for ch in pStack.childs])
-        self.pRange.sigValueChanged.connect(lambda param, val:
-                                            [self.pFromName.show(val == 'fromName')])
+        self.pIsFromName.sigValueChanged.connect(lambda param, val:
+                                            [self.pFromName.show(val)])
 
         self.pScale.sigValueChanged.connect(self._setPStackValues)
         self.pOffset.sigValueChanged.connect(self._setPStackValues)
@@ -253,7 +269,7 @@ class StackAxis(Axis):
         scale = self.pScale.value()
         offset = self.pOffset.value()
         val = None
-        if self.pRange.value() == 'fromName':
+        if self.pIsFromName.value():# == 'fromName':
             try:
                 val = float(eval(self.pFromName.value(),
                                  # GLOBALS:
@@ -321,11 +337,28 @@ class StackAxis(Axis):
                 print(err)
 
     def _setPStackValues(self):
-        if self.pRange.value() == 'individual':
-            return
+#         if self.pIsFromName.value():# == 'individual':
+            #return
+        scale = self.pScale.value()
+        offset = self.pOffset.value()
         for i, ch in enumerate(self.pStack.childs):
-            self._setChildValue(ch, i)
+            if not self.pIsFromName.value():
+#                 self._setChildValue(ch, i)
 
+#                 if self.pRange.value() == 'linear':
+#         
+                ch.setValue(i * scale + offset)
+            else:
+                try:
+                    # evaluate value from expression:
+                    val = float(eval(self.pFromName.value(),
+                                     # GLOBALS:
+                                     {'name': ch.name()})
+                                ) * scale + offset
+    
+                    ch.setValue(val)
+                except Exception as err:
+                    print(err)
 
 class _List(list):
     # only needed to attach attributes to a list
