@@ -1,7 +1,4 @@
 # coding=utf-8
-from __future__ import division
-from __future__ import print_function
-from six import string_types
 
 import pyqtgraph_karl as pg
 
@@ -43,7 +40,7 @@ class AxesContainer(list):
         return '(%s)' % list.__len__(self)
 
     def append(self, axis, orientation='bottom'):
-        if isinstance(axis, string_types):
+        if isinstance(axis, str):
             # create axis if only a name is given:
             axis = Axis(self._getAxisName(), axis, orientation)
         self.p.addChild(axis.p)
