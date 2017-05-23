@@ -139,4 +139,5 @@ class _Parameters(ParameterTree):
         self.p = Parameter.create(
             name='',
             type='empty')
-        ParameterTree.__init__(self, self.p, showHeader=False)
+        ParameterTree.__init__(self, showHeader=False)
+        self.setParameters(self.p, showTop=False)

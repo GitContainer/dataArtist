@@ -744,7 +744,8 @@ class _PreferencesWidget(QtWidgets.QWidget):
         l = QtWidgets.QVBoxLayout()
         self.setLayout(l)
         # PAREMETERTREE
-        pref = ParameterTree(display.p, showHeader=False)
+        pref = ParameterTree(showHeader=False)
+        pref.setParameters(display.p, showTop=False)
         h = pref.header()
         try:
             h.setResizeMode(0, QtWidgets.QHeaderView.Stretch)
