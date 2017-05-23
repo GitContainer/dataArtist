@@ -1,4 +1,5 @@
 # coding=utf-8
+import os
 from qtpy import QtWidgets, QtCore
 
 from pyqtgraph_karl.parametertree import Parameter
@@ -33,15 +34,20 @@ class ParameterMenu(QtWidgets.QMenu):
 
         self._topWidgets = []
 
+
+        #seems to be WINDOWS-only bug
+        #TODO: check whether still needed on windows
+        if os.name == 'nt':
         #<<<<<
         # due to Qt5 bug:
         # uncomment following
         # and QActions inside QMenu inside this tool will not
         # fire trigger
-        self.setWindowFlags(QtCore.Qt.Dialog | QtCore.Qt.FramelessWindowHint)
-        self.installEventFilter(self)
+            self.setWindowFlags(QtCore.Qt.Dialog | QtCore.Qt.FramelessWindowHint)
+            self.eventFilter = self._eventFilter
+            self.installEventFilter(self)
 
-    def eventFilter(self, op, event):
+    def _eventFilter(self, op, event):
         if event.type() == QtCore.QEvent.WindowDeactivate:
             QtCore.QTimer.singleShot(10, self.close)
         return False
