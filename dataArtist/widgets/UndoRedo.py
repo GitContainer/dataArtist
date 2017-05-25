@@ -228,13 +228,20 @@ class _MenuOptions(QtWidgets.QWidget):
         self.lenHistory.setRange(1, 100)
         self.lenHistory.setValue(5)
 
+        lab_explain = QtWidgets.QLabel('At the moment this feature \nis only available after \n<script> execution and\n for several tools' )
+        f = QtGui.QFont("Courier New")
+        f.setItalic(True)
+        lab_explain.setFont(f)
+
         l_history = QtWidgets.QHBoxLayout()
         l_history.addWidget(self._label_lenHist)
         l_history.addWidget(self.lenHistory)
 
+
         l.addWidget(title)
         l.addWidget(self.activate)
         l.addLayout(l_history)
+        l.addWidget(lab_explain)
 
     def _enableLenHistory(self, active):
         self._label_lenHist.setEnabled(active)
