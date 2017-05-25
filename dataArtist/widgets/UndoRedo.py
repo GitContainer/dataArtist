@@ -237,7 +237,6 @@ class _MenuOptions(QtWidgets.QWidget):
         l_history.addWidget(self._label_lenHist)
         l_history.addWidget(self.lenHistory)
 
-
         l.addWidget(title)
         l.addWidget(self.activate)
         l.addLayout(l_history)
