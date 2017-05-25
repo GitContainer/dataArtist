@@ -228,7 +228,7 @@ class _MenuOptions(QtWidgets.QWidget):
         self.lenHistory.setRange(1, 100)
         self.lenHistory.setValue(5)
 
-        lab_explain = QtWidgets.QLabel('At the moment this feature \nis only available after \n<script> execution and\n for several tools' )
+        lab_explain = QtWidgets.QLabel('At the moment this feature \nis only available after \n<script> execution and \nfor several <tools>' )
         f = QtGui.QFont("Courier New")
         f.setItalic(True)
         lab_explain.setFont(f)
