@@ -4,9 +4,13 @@
 run dataArist from taskbar
 """
 
-import sys
-from dataArtist import gui
+DATARTIST_IS_INSTALLED = False
 
+import sys
 sys.argv.append('-s')
 
-gui.main()
+if DATARTIST_IS_INSTALLED:
+    import gui
+    gui.main()
+else:
+    import gui_noInstall
