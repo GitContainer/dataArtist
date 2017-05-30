@@ -254,7 +254,11 @@ class ImageWidget(DisplayWidget, ImageView, PyqtgraphgDisplayBase):
         viewBox that contain the image and the histogram accordingly
         '''
         vb = self.ui.histogram.vb
-        vb.setFixedWidth(vb.width() * (9.0 / ptSize))
+        if not hasattr(self, '_initHistWidth'):
+            w = self._initHistWidth = vb.width()
+        else:
+            w = self._initHistWidth
+        vb.setFixedWidth(w * (9.0 / ptSize))
         self.ui.histogram.axis.setFontSize(ptSize)
 
     def insertLayer(self, index, name=None, data=None):
