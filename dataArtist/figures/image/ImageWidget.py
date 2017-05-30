@@ -260,6 +260,7 @@ class ImageWidget(DisplayWidget, ImageView, PyqtgraphgDisplayBase):
             w = self._initHistWidth
         vb.setFixedWidth(w * (9.0 / ptSize))
         self.ui.histogram.axis.setFontSize(ptSize)
+        self.ui.histogram.axis.update()
 
     def insertLayer(self, index, name=None, data=None):
         '''
