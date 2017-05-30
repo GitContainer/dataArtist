@@ -219,21 +219,27 @@ class StackAxis(Axis):
 
     def __init__(self, *args):
         Axis.__init__(self, *args)
-        self.pOffset = self.p.addChild({
-            'name': 'offset',
-            'type': 'float',
-            'value': 0,
-            #'tip': "Doesn't work at the moment",
-            #'visible': False
-        })
 
-        self.pIsFromName = self.p.addChild({
+        try:
+            self.pOffset = self.p.addChild({
+                'name': 'offset',
+                'type': 'float',
+                'value': 0,
+                #'tip': "Doesn't work at the moment",
+                #'visible': False
+            })
+
+            self.pIsFromName = self.p.addChild({
             'name': 'Values from layer name',
             'type': 'bool',
             'value': False,
             #'tip': "Doesn't work at the moment",
             #'visible': False
         })
+        except Exception:
+            #TODO: unclean # this section runs when stackAxis is duplicated
+            self.pOffset = self.p.param('offset')
+            self.pIsFromName = self.p.param('Values from layer name')
 
     def registerStackParam(self, pStack):
         self.pStack = pStack
