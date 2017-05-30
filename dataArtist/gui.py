@@ -327,10 +327,16 @@ class Gui(MultiWorkspaceWindow):
                 # preference tab is popped out
                 return
             show = not isPrefVisible()
-            r = s.getRange(1)[1]
             if show:
-                r /= 3
+                #restore last size:
+                if hasattr(s, '_last_size'):
+                    r = s._last_size
+                else:
+                    #initial width:
+                    r = self.width()//2.5
             else:
+                #save current size:
+                s._last_size = s.sizes()[0]
                 r = 0
             return s.moveSplitter(r, 1)
 
@@ -369,15 +375,17 @@ class Gui(MultiWorkspaceWindow):
         m.insertMenuBefore(m.menu_workspace, t)
         # ADD DISPLAY
         mDisplay = t.addMenu('Add Display')
-        for i, name in (  # (1, 'Dot'),
-                (2, 'Graph'),
-                (3, 'Image/Video'),
+        for i, name, key in (  # (1, 'Dot'),
+                (2, 'Graph', QtCore.Qt.Key_F5),
+                (3, 'Image/Video', QtCore.Qt.Key_F6),
                 # TODO:
                 # (4, 'Surface')
                 # (5, 'TODO: Volume')
         ):
-            mDisplay.addAction('%sD - %s' % (i - 1, name)).triggered.connect(
-                lambda checked, i=i: self.currentWorkspace().addDisplay(axes=i))
+            a = mDisplay.addAction('%sD - %s' % (i - 1, name))
+            a.setShortcut(key)
+            a.triggered.connect(lambda checked, i=i: 
+                                self.currentWorkspace().addDisplay(axes=i))
         # ADD TABLE
         t.addAction('Add Table').triggered.connect(
             lambda: self.currentWorkspace().addTableDock())

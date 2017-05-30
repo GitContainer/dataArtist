@@ -747,10 +747,13 @@ class _PreferencesWidget(QtWidgets.QWidget):
         pref = ParameterTree(showHeader=False)
         pref.setParameters(display.p, showTop=False)
         h = pref.header()
-        try:
-            h.setResizeMode(0, QtWidgets.QHeaderView.Stretch)
-        except AttributeError:
-            h.setSectionResizeMode(0, QtWidgets.QHeaderView.Stretch)
+        
+        # setSectionResizeMode did not exist in Qt4 but setResizeMode did ...
+        #try:
+        h.setSectionResizeMode(0, QtWidgets.QHeaderView.Stretch)
+        #except AttributeError: 
+        #    h.setResizeMode(0, QtWidgets.QHeaderView.Stretch)
+        h.setSectionResizeMode(1,QtWidgets.QHeaderView.Fixed)
         h.setStretchLastSection(False)
         # TITLE
         l.addWidget(QtWidgets.QLabel('<b>Preferences</b'))
