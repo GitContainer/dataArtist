@@ -84,7 +84,7 @@ current layer: only the current image is taken - no average, no STE removal
             'suffix': 's',
             'siPrefix': True,
             'visible': False,
-            'limits': [0, 1e6]})
+            'min': 0})
 
         self.pBgFromDisplay = self.pBgMethod.addChild({
             'name': 'From display',

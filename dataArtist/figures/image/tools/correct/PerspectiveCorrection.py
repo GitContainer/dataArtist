@@ -57,7 +57,7 @@ class PerspectiveCorrection(Tool):
             'name': 'Border',
             'type': 'int',
             'value': 50,
-            'limits': (0, 1000)})
+            'min': 0})
         pro = GridDetection is not None
         self.pManual = self.pRef.addChild({
             'name': 'Manual object detection',
@@ -94,7 +94,7 @@ class PerspectiveCorrection(Tool):
             'name': 'Offset',
             'type': 'int',
             'value': 0,
-            'limits': (0, 1000),
+            'min': 0,
             'suffix': 'px'})
         self.pMaskDetect = self.pMask.addChild({
             'name': 'Detect parameters',
@@ -163,7 +163,7 @@ class PerspectiveCorrection(Tool):
             'name': 'max dev',
                     'value': 30,
                     'type': 'int',
-                    'limits': (1, 1000)})
+                    'min': 1})
 
         self.pSubPx.sigValueChanged.connect(lambda param, val:
                                             [ch.show(val) for ch in param.childs])

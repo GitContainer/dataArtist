@@ -30,7 +30,7 @@ class ChasePixel(Tool):
             'name': 'Max n plots',
             'type': 'int',
             'value': 100,
-            'limits': [1, 1e5]})
+            'min': 1})
 
         self.pDivideBG = pa.addChild({
             'name': 'Divide background',
@@ -41,7 +41,7 @@ class ChasePixel(Tool):
             'name': 'Background median kernel size',
             'type': 'int',
             'value': 3,
-            'limits': [1, 1e5]})
+            'min': 1})
 
         self._menu.aboutToShow.connect(self._setPixelMaskOptions)
 

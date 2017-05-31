@@ -39,7 +39,7 @@ class VideoStream(Tool):
             'name': 'Read frequency [Hz]',
             'type': 'float',
             'value': 20.0,
-            'limits': [0, 1000]})
+            'min': 0})
         pFrequency.sigValueChanged.connect(self._setInterval)
 
         self._setInterval(pFrequency, pFrequency.value())

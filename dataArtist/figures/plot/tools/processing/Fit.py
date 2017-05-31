@@ -52,7 +52,7 @@ class Fit(Tool):
             'name': 'Number',
             'type': 'int',
             'value': 100,
-            'limits': [2, 10000]})
+            'min': 2})
 
         self.pMethod = pa.addChild({
             'name': 'Method',

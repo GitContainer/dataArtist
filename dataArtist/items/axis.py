@@ -225,7 +225,6 @@ class StackAxis(Axis):
                 'name': 'offset',
                 'type': 'float',
                 'value': 0,
-                #'tip': "Doesn't work at the moment",
                 #'visible': False
             })
 

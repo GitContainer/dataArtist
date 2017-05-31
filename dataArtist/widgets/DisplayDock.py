@@ -148,7 +148,7 @@ class DisplayDock(Dock):
             'type':    'int',
             'value':   10,
             'visible': False,
-            'limits':  [1, 1e4]})
+            'min':  1})
 
         self.pMaxLayers.sigValueChanged.connect(self._limitLayers)
 

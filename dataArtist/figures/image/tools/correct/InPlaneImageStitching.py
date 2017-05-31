@@ -54,13 +54,13 @@ class InPlaneImageStitching(Tool):
             'name': 'Overlap',
                     'type': 'int',
                     'value': 250,
-                    'limits': [0, 2000]})
+                    'min': 0})
 
         self.pOverlapDev = self.pOverlap.addChild({
             'name': 'Deviation',
                     'type': 'int',
                     'value': 50,
-                    'limits': [0, 2000]})
+                    'min': 0})
 
         self.pRot = pa.addChild({
             'name': 'Rotation [DEG]',

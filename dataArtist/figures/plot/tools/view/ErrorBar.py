@@ -28,7 +28,7 @@ class ErrorBar(Tool):
             'name': 'Beam length [px]',
             'type': 'float',
             'value': 10,
-            'limits': [1, 300]})
+            'min': 1})
         self.pBLength.sigValueChanged.connect(self._bLengthChanged)
 
         self.pStype = pa.addChild({

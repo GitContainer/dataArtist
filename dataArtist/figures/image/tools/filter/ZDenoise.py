@@ -34,7 +34,7 @@ class ZDenoise(Tool):
             'name': 'New layer every every N images',
             'type': 'int',
             'value': 2,
-            'limits': [2, 1000],
+            'min': 2,
             'visible': False})
         self.pAverageAll.sigValueChanged.connect(lambda param, val:
                                                  self.pAverageN.show(not val))

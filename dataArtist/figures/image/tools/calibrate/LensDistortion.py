@@ -59,7 +59,7 @@ True: Images are taken every time the first layer is updated
             'name': 'Stop after n images',
             'type': 'int',
             'value': 20,
-            'limits': [0, 10000]})
+            'min': 0})
 
         self.pLiveActivateTrigger = self.pLive.addChild({
             'name': "Manual trigger",

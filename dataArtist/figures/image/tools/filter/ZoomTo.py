@@ -21,13 +21,13 @@ class ZoomTo(Tool):
             'name': 'X-size',
             'type': 'int',
             'value': 300,
-            'limits': [1, 1e6]})
+            'min': 1})
 
         self.pSizeY = pa.addChild({
             'name': 'Y-size',
             'type': 'int',
             'value': 300,
-            'limits': [1, 1e6]})
+            'min': 1})
 
         self.pObject = pa.addChild({
             'name': 'Object',

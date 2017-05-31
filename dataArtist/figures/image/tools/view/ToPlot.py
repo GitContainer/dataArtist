@@ -21,7 +21,7 @@ class ToPlot(Tool):
             'name': 'Max plots',
                     'value': 20,
                     'type': 'int',
-                    'limits': (0, 1e6)})
+                    'min': 0})
 
     def activate(self):
         d = self.display

@@ -46,7 +46,7 @@ class SimpleFilter(Tool):
             'name': 'size',
             'type': 'int',
             'value': 3,
-            'limits': [1, 1000]})
+            'min': 1})
 
         self.pMode = pa.addChild({
             'name': 'mode',

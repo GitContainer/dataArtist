@@ -31,7 +31,7 @@ class HistogramROI(ROITool):
             'name': 'number of bins',
             'type': 'int',
             'value': 100,
-            'limits': [1, 1e4],
+            'min': 1,
             'visible': False})
 
         self.pLimitRange = self._menu.p.addChild({

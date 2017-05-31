@@ -23,7 +23,7 @@ class PlotTrend(Tool):
             'name': 'Number of plots',
             'type': 'int',
             'value': 10,
-            'limits': [1, 10000]})
+            'min': 1})
 
         self.pVar = pa.addChild({
             'name': 'Show Variance',
@@ -46,7 +46,7 @@ class PlotTrend(Tool):
             'name': 'Minimum',
             'type': 'float',
             'value': 0,
-            'limits': [0, 1e10],
+            'min': 0,
             'visible': False})
 
         self.pMax = self.pLimitRange.addChild({

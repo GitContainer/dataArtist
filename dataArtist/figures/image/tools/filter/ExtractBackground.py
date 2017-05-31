@@ -24,7 +24,7 @@ class ExtractBackground(Tool):
             'name': 'Size',
             'type': 'int',
             'value': 30,
-            'limits': [5, 1000]})
+            'min': 5})
         self.pFilter = pa.addChild({
             'name': 'Filter Type',
             'type': 'list',

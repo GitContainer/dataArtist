@@ -49,7 +49,7 @@ class Arrow(Tool):
             'name': 'Width',
             'type': 'int',
             'value': 2,
-            'limits': [1, 1e6]})
+            'min': 1})
 
         fn = lambda p, v: self.arrows[-1].setStyle(
             pen={'color': self.pPen.value(),

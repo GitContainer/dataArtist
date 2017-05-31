@@ -31,7 +31,7 @@ class SwitchBetweenGridAndStackedView(Tool):
             'name': 'Space inbetween',
             'type': 'int',
             'value': 30,
-            'limits': [0, 1e5]})
+            'min': 0})
         self.pSpace.sigValueChanged.connect(self._gridParamChanged)
 
     def _gridParamChanged(self):

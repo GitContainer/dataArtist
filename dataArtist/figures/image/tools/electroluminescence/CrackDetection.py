@@ -69,7 +69,7 @@ class CrackDetection(Tool):
             'name': 'Threshold',
             'type': 'float',
             'value': 0.02,
-            'limits': (0, 1e5),
+            'min': 0,
             'tip': '...of the laplacian'})
 
         pProp = pa.addChild({

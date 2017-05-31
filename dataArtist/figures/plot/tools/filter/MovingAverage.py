@@ -23,7 +23,7 @@ class MovingAverage(Tool):
             'name': 'Fineness',  # 'Quantity',
             'type': 'int',
             'value': 10,
-            'limits': [2, 100000]})
+            'min': 2})
 
         self.pDim = pa.addChild({
             'name': 'Dimension',

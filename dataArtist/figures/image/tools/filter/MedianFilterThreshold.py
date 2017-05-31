@@ -18,7 +18,7 @@ class MedianFilterThreshold(Tool):
             'name': 'Size',
             'type': 'int',
             'value': 3,
-            'limits': [1, 1000]})
+            'min': 1})
 
         self.pThreshold = pa.addChild({
             'name': 'Threshold',

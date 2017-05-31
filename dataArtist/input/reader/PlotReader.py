@@ -276,7 +276,7 @@ class _CSVPreferences(pTypes.GroupParameter):
             'name': "Buffer[byte]",
             'type': 'int',
             'value': int(10e6),
-            'limits': [0, 1e10],
+            'min': 0,
             'tip': '''max. size(byte) loaded into RAM insert '0' to read the whole file'''})
 
 # TODO:
@@ -310,7 +310,7 @@ class _CSVPreferences(pTypes.GroupParameter):
         self.pReadEveryNLine = self.addChild({
             'name': "Read every n line",
             'type': 'int',
-            'limits': [1, 100000],
+            'min': 1,
             'value': 1})
 
         self.pHasXColumn = self.addChild({
@@ -324,7 +324,7 @@ class _CSVPreferences(pTypes.GroupParameter):
             'name': "Index",
             'type': 'int',
             'visible': False,
-            'limits': [0, 100000],
+            'min': 0,
             'value': 0})
 
         self.pFilterColumns = self.addChild({
