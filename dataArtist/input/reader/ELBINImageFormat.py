@@ -20,6 +20,6 @@ class ELBINImageFormat(ReaderBase):
 
     def open(self, filename):
         arr, labels = elbin(filename)
-        arr = self.toFloat(arr#.transpose(0, 2, 1)
+        arr = self.toFloat(arr  # .transpose(0, 2, 1)
                            )
         return arr, labels

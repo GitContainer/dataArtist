@@ -9,7 +9,6 @@ from collections import OrderedDict
 
 from fancytools.os.PathStr import PathStr
 from fancytools.utils.incrementName import incrementName
-from imgProcessor.transform.PerspectiveImageStitching import PerspectiveImageStitching as PerspectiveTransformation
 from imgProcessor.transformations import isColor, toColor, toGray, isRot90, rot90
 
 # OWN
@@ -17,8 +16,18 @@ from dataArtist.items.ColorLayerItem import ColorLayerItem
 from dataArtist.figures._PyqtgraphgDisplayBase import PyqtgraphgDisplayBase
 from dataArtist.figures.DisplayWidget import DisplayWidget
 from dataArtist.widgets.dialogs.DifferentShapeDialog import DifferentShapeDialog
-# from matplotlib.backends.qt_compat import QtWidgets
-from imgProcessor.imgSignal import scaleSignalCutParams
+
+
+# # save startup time:
+# def PerspectiveImageStitching(*args, **kwargs):
+#     from imgProcessor.transform.PerspectiveImageStitching import PerspectiveImageStitching as PP
+#     return PP(*args, **kwargs)
+#
+#
+# # save startup time:
+# def scaleSignalCutParams(*args, **kwargs):
+#     from imgProcessor.imgSignal import scaleSignalCutParams as sc
+#     return sc(*args, **kwargs)
 
 
 class ImageWidget(DisplayWidget, ImageView, PyqtgraphgDisplayBase):
@@ -319,7 +328,7 @@ class ImageWidget(DisplayWidget, ImageView, PyqtgraphgDisplayBase):
                                 data = cv2.resize(data, (s1[1], s1[0]))
 
                             elif r == d.optWarp:
-                                data = PerspectiveTransformation(
+                                data = PerspectiveImageStitching(
                                     self.image[-1]).fitImg(data)
 
                     self.image = np.insert(self.image, index, data, axis=0)

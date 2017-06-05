@@ -45,31 +45,45 @@ setup(
         "fancywidgets",
         "appbase",
         "imgProcessor",
-        # "interactiveTutorial"
         "pyqtgraph_karl",  # a fork of the original pyqtgraph
         # FOREIGN
-        "pika",  # a RabbitMQ client
+        "pkginfo",
+        "transforms3d",
+
+        # TO BE INSTALLED MANUALLY:
+        # opencv
+        # RabbitMQ
+
+        # provided by anaconda:
         "numpy",
         "scipy",
         "scikit-image",
-        "lxml",
-        "transforms3d",
-        "cssselect",
+        "qtpy",
+
+        # OPTIONAL
+        "rawpy"  # import *.cv2 images
+        "pyfits",  # import *.fit *.fits images
+        "pika",  # communicate across apps / needs:RabbitMQ+Erlang
+
+
+        # to create executable you need:
+        # pyinstaller
+        # pyminifier
+
+
+        # NOT NEEDED ANY MORE:
+        #"lxml",
+        #"cssselect",
         # "hachoir-core",
         # "hachoir-metadata",
         # "hachoir-parser",
-        "pyfits",
-        "exifread",
-        "pywin32",
-        "pygments",
+        #"exifread",
+        #"pywin32",
+        #"pygments",
         # TODO: still needed although we use py3 now?:
         #"enum34",
         # needed by numba(llvmlite) ... and for some reason not installed
-        "qtpy",
-        # TO BE INSTALLED MANUALLY:
-        # opencv
-        # OPTIONAL
-        "rawpy"
+
     ],
     classifiers=[
         'Intended Audience :: Developers',

@@ -328,14 +328,14 @@ class Gui(MultiWorkspaceWindow):
                 return
             show = not isPrefVisible()
             if show:
-                #restore last size:
+                # restore last size:
                 if hasattr(s, '_last_size'):
                     r = s._last_size
                 else:
-                    #initial width:
-                    r = self.width()//2.5
+                    # initial width:
+                    r = self.width() // 2.5
             else:
-                #save current size:
+                # save current size:
                 s._last_size = s.sizes()[0]
                 r = 0
             return s.moveSplitter(r, 1)
@@ -384,7 +384,7 @@ class Gui(MultiWorkspaceWindow):
         ):
             a = mDisplay.addAction('%sD - %s' % (i - 1, name))
             a.setShortcut(key)
-            a.triggered.connect(lambda checked, i=i: 
+            a.triggered.connect(lambda checked, i=i:
                                 self.currentWorkspace().addDisplay(axes=i))
         # ADD TABLE
         t.addAction('Add Table').triggered.connect(
@@ -570,7 +570,8 @@ def main(name='dataArtist',
                       icon=icon,
                       first_start_dialog=first_start_dialog)
     if os.name == 'posix':  # for linux-systems
-        app.setStyle("fusion") # native these under GTK looks bad - better replace
+        # native these under GTK looks bad - better replace
+        app.setStyle("fusion")
     win = Gui(title=name)
     s = app.session
     s.registerMainWindow(win)

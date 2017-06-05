@@ -1,7 +1,4 @@
 # coding=utf-8
-from __future__ import division
-from __future__ import print_function
-
 import numpy as np
 
 from imgProcessor.transform.equalizeImage import equalizeImage
@@ -28,7 +25,7 @@ class ScaleIntensity(Tool):
             'Reference image':
             (lambda x: scaleSignal(x, reference=self._refImg), None),
             '% CDF':
-            (lambda x: scaleSignalCut(x, self.pRatio.value()/100), [0, 1]),
+            (lambda x: scaleSignalCut(x, self.pRatio.value() / 100), [0, 1]),
             'Equalize histogram':
                 (equalizeImage, None),
             'Scale Hist. Background-Signal: 0-1':
@@ -36,12 +33,12 @@ class ScaleIntensity(Tool):
             'Scale Hist. signal +/-3std':
                 (scaleSignal, [0, 1]),
             'Maximum=1':
-                (lambda img: img/np.nanmax(img), [0, 1]),
+                (lambda img: img / np.nanmax(img), [0, 1]),
             'Average=1':
-                (lambda img: img/np.nanmean(img), [-1, 2]),
+                (lambda img: img / np.nanmean(img), [-1, 2]),
             'Minimum=0, Maximum=1':
-                (self._scaleMinMax, [0,1]),
-                }
+                (self._scaleMinMax, [0, 1]),
+        }
 
         self.pMethod = pa.addChild({
             'name': 'Method',
@@ -61,7 +58,7 @@ class ScaleIntensity(Tool):
             'readonly': True})
 
         self.pRefImgChoose.aboutToShow.connect(lambda menu:
-                    self.buildOtherDisplayLayersMenu(menu, self._setRefImg))
+                                               self.buildOtherDisplayLayersMenu(menu, self._setRefImg))
 
         self.pMethod.sigValueChanged.connect(
             lambda p, v: self.pRefImgChoose.show(v == 'Reference image'))
@@ -70,7 +67,7 @@ class ScaleIntensity(Tool):
             'name': 'Percentage',
             'value': 2,
             'type': 'float',
-            'limits':[0.05,100],
+            'limits': [0.05, 100],
             'visible': False})
 
         self.pMethod.sigValueChanged.connect(
@@ -87,9 +84,9 @@ class ScaleIntensity(Tool):
 
     @staticmethod
     def _scaleMinMax(img):
-        mn,mx = img.min(), img.max()
-        return (img-mn)/(mx-mn)
-    
+        mn, mx = img.min(), img.max()
+        return (img - mn) / (mx - mn)
+
     def activate(self):
         img = self.display.widget.image
 

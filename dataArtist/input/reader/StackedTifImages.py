@@ -1,13 +1,24 @@
 # coding=utf-8
-from __future__ import absolute_import
 
-# import tifffile as tff
-from skimage.external.tifffile import TiffFile
-from imgProcessor.transformations import transpose
 import cv2
 
 # OWN
 from .ImageWithOpenCV import ImageWithOpenCV
+
+
+# def init():
+#     # save startuptime:
+#     global TiffFile
+#     global transpose
+#     print("loading tiff library... (one-time action)")
+#     # TODO: find another library that can load multi page tiff and is faster
+#     from skimage.external.tifffile import TiffFile  # super slow...
+#     print('...done')
+
+
+# TODO: speed up
+from skimage.external.tifffile import TiffFile  # super slow...
+from imgProcessor.transformations import transpose
 
 
 class StackedTifImages(ImageWithOpenCV):
@@ -21,6 +32,7 @@ class StackedTifImages(ImageWithOpenCV):
 
     def __init__(self, *args, **kwargs):
         ImageWithOpenCV.__init__(self, *args, **kwargs)
+
         p = self.preferences
         p.pGrey.setValue(True)
         p.pGrey.setOpts(readonly=True)
@@ -28,6 +40,12 @@ class StackedTifImages(ImageWithOpenCV):
 
     @staticmethod
     def check(ftype, fname):
+
+        #         try:
+        #             TiffFile
+        #         except NameError:
+        #             init()
+
         if ftype in StackedTifImages.ftypes:
             try:
                 tif = TiffFile(str(fname))

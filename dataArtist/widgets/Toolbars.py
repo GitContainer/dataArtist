@@ -1,5 +1,4 @@
 # coding=utf-8
-from __future__ import print_function
 import traceback
 import importlib
 from qtpy import QtGui, QtWidgets, QtCore

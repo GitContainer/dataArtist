@@ -49,8 +49,11 @@ a = Analysis(['dataArtist\\gui_pyinstaller.py'],
              hiddenimports=[
                  #'scipy.linalg._decomp_u',#???for tool: createSpatialSensitivity Array
 
+   
                  #skimage:
                 'scipy.special._ufuncs_cxx',
+                
+                'pywt._extensions._cwt' # remove ImportError when 'from skimage.restoration.deconvolution import wiener'
                  ],
              
              excludes=[

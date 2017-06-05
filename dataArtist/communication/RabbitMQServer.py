@@ -1,9 +1,5 @@
 # coding=utf-8
-try:
-    import pika
-except ImportError:
-    print(
-        "couldn't import pika - you wont be able to use the RabbitMQ data server")
+
 from qtpy import QtCore
 
 
@@ -34,6 +30,13 @@ class RabbitMQServer(object):
         configure the server and check the
         message-inbox every self.opts['refeshrate']
         '''
+        try:
+            global pika
+            import pika  # import here to save startup time
+        except ImportError:
+            raise ImportError(
+                "couldn't import pika - you wont be able to use the RabbitMQ data server")
+
         self.configure()
         self.timer = QtCore.QTimer()
         self.timer.timeout.connect(self.connection.process_data_events)
