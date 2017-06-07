@@ -6,7 +6,7 @@ root folder but not globally installed
 import sys
 import os
 
-PROFILE_IMPORT_SPEED = False
+PROFILE_IMPORT_SPEED = True
 
 if PROFILE_IMPORT_SPEED:
     import cProfile

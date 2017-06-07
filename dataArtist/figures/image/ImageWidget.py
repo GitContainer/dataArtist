@@ -10,7 +10,8 @@ from collections import OrderedDict
 from fancytools.os.PathStr import PathStr
 from fancytools.utils.incrementName import incrementName
 from imgProcessor.transformations import isColor, toColor, toGray, isRot90, rot90
-
+from imgProcessor.imgSignal import scaleSignalCutParams
+from imgProcessor.transform.PerspectiveImageStitching import PerspectiveImageStitching
 # OWN
 from dataArtist.items.ColorLayerItem import ColorLayerItem
 from dataArtist.figures._PyqtgraphgDisplayBase import PyqtgraphgDisplayBase

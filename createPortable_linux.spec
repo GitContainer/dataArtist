@@ -3,10 +3,12 @@
 # This is the *.spec-file used by 'pyinstaller' to create a portable version
 # of 'datartist'.
 
+import runpy
 
 global pkg_dir
 pkg_dir = os.path.dirname(os.path.abspath(os.curdir))
 
+runpy.run_path(os.path.join(pkg_dir,'dataartist', 'dataArtist','updateVersion.py'))
 
 def addDataFiles():
     import os
