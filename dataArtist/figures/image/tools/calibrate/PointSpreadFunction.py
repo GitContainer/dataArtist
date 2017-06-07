@@ -1,14 +1,16 @@
 # coding=utf-8
-from __future__ import division
-from __future__ import print_function
 
 import numpy as np
 from pyqtgraph_karl import PolyLineROI
 
 # OWN
 from dataArtist.widgets.Tool import Tool
-from imgProcessor.measure.sharpness.SharpnessfromPoints import SharpnessfromPointSources
-from dataArtist.figures.image.tools.globals.CalibrationFile import CalibrationFile
+
+
+def _import():
+    global SharpnessfromPointSources, CalibrationFile
+    from imgProcessor.measure.sharpness.SharpnessfromPoints import SharpnessfromPointSources
+    from dataArtist.figures.image.tools.globals.CalibrationFile import CalibrationFile
 
 
 class PointSpreadFunction(Tool):
@@ -19,6 +21,7 @@ class PointSpreadFunction(Tool):
 
     def __init__(self, imageDisplay):
         Tool.__init__(self, imageDisplay)
+        _import()
 
         self.quadROI = None
         self.outDisplay = None

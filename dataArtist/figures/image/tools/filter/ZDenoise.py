@@ -1,11 +1,13 @@
 # coding=utf-8
-from builtins import range
 import numpy as np
-from imgProcessor.transform.imgAverage import imgAverage
-from imgProcessor.features.SingleTimeEffectDetection import SingleTimeEffectDetection
 
-# OWN
 from dataArtist.widgets.Tool import Tool
+
+
+def _import():
+    global imgAverage, SingleTimeEffectDetection
+    from imgProcessor.transform.imgAverage import imgAverage
+    from imgProcessor.features.SingleTimeEffectDetection import SingleTimeEffectDetection
 
 
 class ZDenoise(Tool):
@@ -16,6 +18,7 @@ class ZDenoise(Tool):
 
     def __init__(self, imageDisplay):
         Tool.__init__(self, imageDisplay)
+        _import()
 
         pa = self.setParameterMenu()
         self.createResultInDisplayParam(pa)

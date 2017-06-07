@@ -3,22 +3,26 @@ import numpy as np
 import pyqtgraph_karl as pg
 import cv2
 
-from dataArtist.items.PerspectiveGridROI import PerspectiveGridROI
-
-from imgProcessor.camera.PerspectiveCorrection \
-    import PerspectiveCorrection as PC
-
 from dataArtist.widgets.Tool import Tool
-from dataArtist.figures.image.tools.globals.CalibrationFile import CalibrationFile
 
 
-# PROPRIETARY
-try:
-    from PROimgProcessor.transform.subPixelAlignment import subPixelAlignment
-    from PROimgProcessor.features.GridDetection import GridDetection
-except ImportError:
-    subPixelAlignment = None
-    GridDetection = None
+def _import():
+    global PerspectiveGridROI, PC, CalibrationFile, subPixelAlignment, GridDetection
+
+    from dataArtist.items.PerspectiveGridROI import PerspectiveGridROI
+
+    from imgProcessor.camera.PerspectiveCorrection \
+        import PerspectiveCorrection as PC
+
+    from dataArtist.figures.image.tools.globals.CalibrationFile import CalibrationFile
+
+    # PROPRIETARY
+    try:
+        from PROimgProcessor.transform.subPixelAlignment import subPixelAlignment
+        from PROimgProcessor.features.GridDetection import GridDetection
+    except ImportError:
+        subPixelAlignment = None
+        GridDetection = None
 
 
 class PerspectiveCorrection(Tool):
@@ -31,6 +35,7 @@ class PerspectiveCorrection(Tool):
 
     def __init__(self, imageDisplay):
         Tool.__init__(self, imageDisplay)
+        _import()
 
         self.quadROI = None
         self.outDisplay = None

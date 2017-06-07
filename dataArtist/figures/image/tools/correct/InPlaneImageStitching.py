@@ -1,9 +1,12 @@
 # coding=utf-8
 import numpy as np
 
-from imgProcessor.transform.StitchImages import StitchImages
-
 from dataArtist.widgets.Tool import Tool
+
+
+def _import():
+    global StitchImages
+    from imgProcessor.transform.StitchImages import StitchImages
 
 
 class InPlaneImageStitching(Tool):
@@ -18,8 +21,8 @@ class InPlaneImageStitching(Tool):
 
     def __init__(self, imageDisplay):
         Tool.__init__(self, imageDisplay)
+        _import()
 
-#         self._refImg = None
         self._refTool = None
 
         pa = self.setParameterMenu()

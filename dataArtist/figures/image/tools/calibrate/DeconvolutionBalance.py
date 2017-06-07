@@ -3,7 +3,6 @@ from __future__ import print_function
 import numpy as np
 
 
-from skimage.restoration.deconvolution import wiener
 from math import radians
 
 # OWN
@@ -79,6 +78,9 @@ class DeconvolutionBalance(Tool):
         self.startThread(lambda: self._process(psf), self._done)
 
     def _process(self, psf):
+        # save startup time:
+        from skimage.restoration.deconvolution import wiener
+
         w = self.display.widget
         img = w.image
 

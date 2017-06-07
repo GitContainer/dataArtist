@@ -19,7 +19,6 @@ class SimpleFilter(Tool):
         # speed-up start
         from scipy.ndimage.filters import median_filter, gaussian_filter, \
             maximum_filter, minimum_filter
-
         from skimage.restoration import nl_means_denoising
 
         self.FILTER = {'median': median_filter,

@@ -1,12 +1,13 @@
 # coding=utf-8
-from __future__ import print_function
 import pyqtgraph_karl as pg
 
-from imgProcessor.camera import NoiseLevelFunction as NLF
-
-# OWN
 from dataArtist.widgets.Tool import Tool
-from dataArtist.figures.image.tools.globals.CalibrationFile import CalibrationFile
+
+
+def _import():
+    global NLF, CalibrationFile
+    from imgProcessor.camera import NoiseLevelFunction as NLF
+    from dataArtist.figures.image.tools.globals.CalibrationFile import CalibrationFile
 
 
 class NoiseLevelFunction(Tool):
@@ -18,6 +19,7 @@ class NoiseLevelFunction(Tool):
 
     def __init__(self, imageDisplay):
         Tool.__init__(self, imageDisplay)
+        _import()
 
         self.calFileTool = self.showGlobalTool(CalibrationFile)
 
@@ -44,7 +46,7 @@ class NoiseLevelFunction(Tool):
         self.pRefFromDisplay.aboutToShow.connect(self._buildRefFromDisplayMenu)
 
         self.pRef.sigValueChanged.connect(lambda param, val:
-                            self.pRefFromDisplay.show(val == 'From display'))
+                                          self.pRefFromDisplay.show(val == 'From display'))
 
         self.pPlotResult = pa.addChild({
             'name': 'Plot NLF',
@@ -68,7 +70,7 @@ class NoiseLevelFunction(Tool):
             'visible': False,
             'value': 65000})
         self.pRange.sigValueChanged.connect(lambda param, val:
-                            [ch.show(val) for ch in self.pRange.childs])
+                                            [ch.show(val) for ch in self.pRange.childs])
 
         self.pUpdate = pa.addChild({
             'name': 'Update calibration',

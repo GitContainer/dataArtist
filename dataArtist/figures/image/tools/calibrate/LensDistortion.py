@@ -1,24 +1,27 @@
 # coding=utf-8
 import numpy as np
 import os
-
 from qtpy import QtGui, QtWidgets, QtCore
-
-from imgProcessor.camera.LensDistortion import LensDistortion as LD
-from imgProcessor.camera.LensDistortion import EnoughImages, NothingFound
-
 from fancytools.os.PathStr import PathStr
 
-
 from dataArtist.widgets.Tool import Tool
-from dataArtist.figures.image.tools.globals.CalibrationFile import CalibrationFile
-from dataArtist.items.UnregGridROI import UnregGridROI
+
 
 import dataArtist
 PATTERN_FILE = PathStr(
     dataArtist.__file__).dirname().join(
         'media', 'camera_calibration_patterns.pdf')
 del dataArtist
+
+
+def _import():
+    global LD, EnoughImages, NothingFound, CalibrationFile, UnregGridROI
+
+    from imgProcessor.camera.LensDistortion import LensDistortion as LD
+    from imgProcessor.camera.LensDistortion import EnoughImages, NothingFound
+
+    from dataArtist.figures.image.tools.globals.CalibrationFile import CalibrationFile
+    from dataArtist.items.UnregGridROI import UnregGridROI
 
 
 class LensDistortion(Tool):
@@ -30,6 +33,7 @@ class LensDistortion(Tool):
 
     def __init__(self, imageDisplay):
         Tool.__init__(self, imageDisplay)
+        _import()
 
         self.calFileTool = self.showGlobalTool(CalibrationFile)
 

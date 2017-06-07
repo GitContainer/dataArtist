@@ -1,10 +1,10 @@
 # coding=utf-8
-from __future__ import division
-
-from imgProcessor.filters.fastFilter import fastFilter
-
-
 from dataArtist.widgets.Tool import Tool
+
+
+def _import():
+    global fastFilter
+    from imgProcessor.filters.fastFilter import fastFilter
 
 
 class ExtractBackground(Tool):
@@ -16,6 +16,7 @@ class ExtractBackground(Tool):
 
     def __init__(self, imageDisplay):
         Tool.__init__(self, imageDisplay)
+        _import()
 
         pa = self.setParameterMenu()
         self.createResultInDisplayParam(pa)
@@ -52,7 +53,7 @@ class ExtractBackground(Tool):
         else:
             every = int(size / 3.5)
         for img in self.display.widget.image:
-            out.append(fastFilter(img, ksize=size, every=every, 
-                                     fn=self.pFilter.value()))
+            out.append(fastFilter(img, ksize=size, every=every,
+                                  fn=self.pFilter.value()))
 
         self.handleOutput(out, title='Background')

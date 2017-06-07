@@ -1,10 +1,11 @@
 # coding=utf-8
-# import numpy as np
-
-from imgProcessor.transform.PerspectiveImageStitching import PerspectiveImageStitching as PerspectiveTransformation
-
 
 from dataArtist.widgets.Tool import Tool
+
+
+def _import():
+    global PerspectiveTransformation
+    from imgProcessor.transform.PerspectiveImageStitching import PerspectiveImageStitching as PerspectiveTransformation
 
 
 class PerspectiveImageStitching(Tool):
@@ -19,6 +20,7 @@ class PerspectiveImageStitching(Tool):
 
     def __init__(self, display):
         Tool.__init__(self, display)
+        _import()
 
         self._refImg = None
 

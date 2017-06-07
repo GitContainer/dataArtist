@@ -1,10 +1,15 @@
 # coding=utf-8
 import numpy as np
 
-from imgProcessor.transform.equalizeImage import equalizeImage
-from imgProcessor.imgSignal import scaleSignal, scaleSignalCut
 
 from dataArtist.widgets.Tool import Tool
+
+
+def equalizeImage(img):
+    # i am not sure whether i should keep that function in here...
+    # to speed up import keep this fn extra.
+    from imgProcessor.transform.equalizeImage import equalizeImage as E
+    return E(img)
 
 
 class ScaleIntensity(Tool):
@@ -14,6 +19,8 @@ class ScaleIntensity(Tool):
     icon = 'equalize.svg'
 
     def __init__(self, imageDisplay):
+        from imgProcessor.imgSignal import scaleSignal, scaleSignalCut
+
         Tool.__init__(self, imageDisplay)
 
         self._refImg = None

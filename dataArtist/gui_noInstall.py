@@ -30,6 +30,6 @@ from dataArtist import gui
 if PROFILE_IMPORT_SPEED:
     pr.disable()
     s = pstats.Stats(pr)
-    s.sort_stats('cumtime').print_stats(500)
+    s.sort_stats('tottime').print_stats(500)
 
 gui.main()

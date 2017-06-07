@@ -1,12 +1,14 @@
 # coding=utf-8
 import numpy as np
 
-# OWN
-from imgProcessor.camera.DarkCurrentMap \
-    import getDarkCurrentFunction, getDarkCurrentAverages
-
 from dataArtist.widgets.Tool import Tool
-from dataArtist.figures.image.tools.globals.CalibrationFile import CalibrationFile
+
+
+def _import():
+    global CalibrationFile, getDarkCurrentFunction, getDarkCurrentAverages, CalibrationFile
+    from imgProcessor.camera.DarkCurrentMap \
+        import getDarkCurrentFunction, getDarkCurrentAverages
+    from dataArtist.figures.image.tools.globals.CalibrationFile import CalibrationFile
 
 
 class DarkCurrent(Tool):
@@ -22,6 +24,7 @@ class DarkCurrent(Tool):
 
     def __init__(self, imageDisplay):
         Tool.__init__(self, imageDisplay)
+        _import()
 
         self.calFileTool = self.showGlobalTool(CalibrationFile)
         self.pa = self.setParameterMenu()

@@ -1,15 +1,17 @@
 import numpy as np
 from dataArtist.widgets.Tool import Tool
 
-from scipy.ndimage.filters import maximum_filter
-from dataArtist.items.PerspectiveGridROI import PerspectiveGridROI
 
+def _import():
+    global maximum_filter, PerspectiveGridROI, labelCracks, evalCracks, detectLabelCrackParams
+    from scipy.ndimage.filters import maximum_filter
+    from dataArtist.items.PerspectiveGridROI import PerspectiveGridROI
 
-try:
-    from PROimgProcessor.features.crackDetection import labelCracks, evalCracks,\
-        detectLabelCrackParams
-except ImportError:
-    labelCracks = None
+    try:
+        from PROimgProcessor.features.crackDetection import labelCracks, evalCracks,\
+            detectLabelCrackParams
+    except ImportError:
+        labelCracks = None
 
 
 class CrackDetection(Tool):
@@ -19,6 +21,7 @@ class CrackDetection(Tool):
 
     def __init__(self, display):
         Tool.__init__(self, display)
+        _import()
 
         pa = self.setParameterMenu()
         # TODO: [ALLWAYS NEW] is only because later self.handleOUtput

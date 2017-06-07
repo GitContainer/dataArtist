@@ -1,14 +1,16 @@
 # coding=utf-8
-from __future__ import print_function
-
-import numpy as np
-from qtpy import QtWidgets
-
-from imgProcessor.camera.CameraCalibration import CameraCalibration
-from fancywidgets.pyQtBased.ArgSetter import ArgSetter
-
 from dataArtist.widgets.GlobalTool import GlobalTool
-from fancytools.os.PathStr import PathStr
+
+
+def _import():
+    global np, QtWidgets, CameraCalibration, ArgSetter, PathStr
+    import numpy as np
+    from qtpy import QtWidgets
+
+    from imgProcessor.camera.CameraCalibration import CameraCalibration
+    from fancywidgets.pyQtBased.ArgSetter import ArgSetter
+
+    from fancytools.os.PathStr import PathStr
 
 
 class CalibrationFile(GlobalTool):
@@ -23,7 +25,8 @@ class CalibrationFile(GlobalTool):
     icon = 'camCalFile.svg'
 
     def __init__(self, display):
-        GlobalTool.__init__(self, display)
+        super().__init__(display)
+        _import()
 
         self.calibrations = []
 

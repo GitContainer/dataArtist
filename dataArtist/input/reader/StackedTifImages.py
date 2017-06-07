@@ -6,18 +6,10 @@ import cv2
 from .ImageWithOpenCV import ImageWithOpenCV
 
 
-# def init():
-#     # save startuptime:
-#     global TiffFile
-#     global transpose
-#     print("loading tiff library... (one-time action)")
-#     # TODO: find another library that can load multi page tiff and is faster
-#     from skimage.external.tifffile import TiffFile  # super slow...
-#     print('...done')
-
-
-# TODO: speed up
-from skimage.external.tifffile import TiffFile  # super slow...
+# tifffile is already included in skimage.external.tifffile
+# but loading it is too slow, therefore use tifffile from pip
+# from skimage.external.tifffile import TiffFile  # super slow...
+from tifffile import TiffFile  # super slow...
 from imgProcessor.transformations import transpose
 
 

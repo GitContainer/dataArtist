@@ -1,11 +1,14 @@
 # coding=utf-8
-from __future__ import division
 
-from scipy.ndimage.filters import median_filter
 import numpy as np
 import cv2
 
 from dataArtist.widgets.Tool import Tool
+
+
+def _import():
+    global median_filter
+    from scipy.ndimage.filters import median_filter
 
 
 class Denoise(Tool):
@@ -21,6 +24,7 @@ class Denoise(Tool):
 
     def __init__(self, imageDisplay):
         Tool.__init__(self, imageDisplay)
+        _import()
 
         self.function = None
 

@@ -49,6 +49,7 @@ setup(
         # FOREIGN
         "pkginfo",
         "transforms3d",
+        "tifffile",
 
         # TO BE INSTALLED MANUALLY:
         # opencv
