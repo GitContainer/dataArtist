@@ -4,7 +4,8 @@ set __version__ in __init__.py to current date
 import os
 import datetime
 
-pkg_dir = os.path.abspath(os.curdir)
+
+pkg_dir = os.path.dirname(__file__)  # os.path.abspath(os.curdir)
 ff = os.path.join(pkg_dir, '__init__.py')
 with open(ff, 'r') as f:
     l = f.readlines()

@@ -101,7 +101,31 @@ a.binaries = a.binaries - TOC([
 # os.path.dirname(x[1]).startswith("C:\\Python27\\Lib\\site-packages\\matplotlib")]
 
 
-
+#remove dlls that were added in win10 but not in win7:
+import platform
+if platform.platform().startswith("Windows-10"):
+    def keep(x):
+        for dll in (
+        "mkl_avx.dll",
+        "mkl_avx512.dll", 
+        "mkl_avx512_mic.dll",
+        "mkl_mc.dll",
+        "mkl_mc3.dll",
+        "mkl_msg.dll",
+        "mkl_rt.dll"
+        "mkl_sequential.dll",
+        "mkl_tbb_thread.dll",
+        "mkl_vml_avx.dll",
+        "mkl_vml_avx512.dll",
+        "mkl_vml_avx512_mic.dll",
+        "mkl_vml_cmpt.dll",
+        "mkl_vml_mc.dll",
+        "mkl_vml_mc2.dll",
+        "mkl_vml_mc3.dll"):
+            if dll in x[0]:
+                return False
+        return True
+    a.binaries = [x for x in a.binaries if keep(x)]
 
 pyz = PYZ(a.pure)
 

@@ -5,8 +5,8 @@
 def mandelbrot(LowX, HighX, LowY, HighY, stepx, stepy, maxiter):
     "creates a numeric array of the mandelbrot function"
     # if maxiter > 11: maxiter = 11  #for your own protection
-    xx = np.arange(LowX, HighX, old_div((HighX - LowX), stepx))
-    yy = np.arange(HighY, LowY, old_div((LowY - HighY), stepy)) * 1.0j
+    xx = np.arange(LowX, HighX, (HighX - LowX) / stepx)
+    yy = np.arange(HighY, LowY, (LowY - HighY) / stepy) * 1.0j
     # somtimes these arrays are too big by one element???
     xx = xx[:stepx]
     yy = yy[:stepy]
@@ -19,6 +19,7 @@ def mandelbrot(LowX, HighX, LowY, HighY, stepx, stepy, maxiter):
         np.add(output, np.greater(abs(z), 2.0), output)
     output.shape = (stepy, stepx)
     return np.transpose(output)
+
 
 # let's define some variables:
 l_val, r_val = -2.12, 0.1247627
