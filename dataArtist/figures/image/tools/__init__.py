@@ -1,11 +1,11 @@
 # coding=utf-8
-from __future__ import absolute_import
+# from __future__ import absolute_import
 
 from . import correct
 from . import calibrate
 from . import draw
 from . import filter
-from . import general
+from . import data
 #import inDevelopment
 from . import input
 from . import measurement

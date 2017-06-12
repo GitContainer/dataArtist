@@ -69,7 +69,7 @@ class Gui(MultiWorkspaceWindow):
         # are high dpi screens around, therefore rescale relative:
         PX_FACTOR = QtWidgets.QApplication.instance().PX_FACTOR = QtGui.QPaintDevice.logicalDpiY(
             self) / 96
-        self.resize(605 * PX_FACTOR, 550 * PX_FACTOR)
+        self.resize(620 * PX_FACTOR, 550 * PX_FACTOR)
 
         # ALLOW DRAGnDROP
         self.setAcceptDrops(True)

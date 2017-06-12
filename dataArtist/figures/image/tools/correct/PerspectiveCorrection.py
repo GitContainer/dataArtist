@@ -381,7 +381,8 @@ class PerspectiveCorrection(Tool):
         # HOMOGRAPHY THROUGH REFERENCE IMAGE
         if v == 'Reference image':
             # INIT:
-            self.pc = PC(img.shape, **self._pc_args)
+            self.pc = PC(img.shape, border=self.pBorder.value(),
+                         **self._pc_args)
             self.pc.setReference(self._refImg)
         else:
             # HOMOGRAPHY THROUGH QUAD

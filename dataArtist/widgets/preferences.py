@@ -279,7 +279,7 @@ class PreferencesView(QtWidgets.QWidget):
         self.combo_colorTheme.addItems(('dark', 'bright'))
         self.combo_colorTheme.currentIndexChanged.connect(
             self._colorThemeChanged)
-        # by default pyqtgraph is dark ... mk bright:
+        # by default pyqtgraph is dark ... make bright:
         self.combo_colorTheme.setCurrentIndex(1)
 
         self.check_antialiasting = QtWidgets.QCheckBox('Antialiasting')

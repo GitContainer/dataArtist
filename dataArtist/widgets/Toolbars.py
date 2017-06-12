@@ -83,7 +83,6 @@ class _ToolBar(QtWidgets.QToolBar):
         self.setAllowedAreas(QtCore.Qt.TopToolBarArea)
 
         # measure toolbar width in order to find best place when added
-        self.width = 9 * PX_FACTOR  # 9=handle width
 
         # whether position of toolbar should be
         # found depending on available space:
@@ -94,10 +93,17 @@ class _ToolBar(QtWidgets.QToolBar):
         if f.islower():
             name = f.upper() + name[1:]
         self.name = name
+        # show name:
+#         self._nameLab = QtWidgets.QLabel(self.name + " ")
+#         self.addWidget(self._nameLab)  # .setEnabled(False)
+        # TODO": measure handle width!
+        self.width = self._nameLab().sizeHint().width() + 6 * \
+            PX_FACTOR  # 6=handle width
 
         self.widget = widget
         self.toolClasses = toolClasses
         self._toolsCreated = False
+        self._firstTime = True
 
         # there is a central setup for the visibility of all
         # toolbars that have the same display widget:
@@ -124,10 +130,11 @@ class _ToolBar(QtWidgets.QToolBar):
 #             s = ToolBarIcon(self, icon)
 
             tip = getattr(pkg, '__doc__', None)
-            ttname = name
+#             ttname = name
             if tip:
-                ttname += '\n\t%s' % tip
-            self.setToolTip(ttname)
+                #                 ttname += '\n\t%s' % tip
+                #                 self.setToolTip(ttname)
+                self.setToolTip(tip)
 
         # BACKGROUND COLOR:
         c = getattr(pkg, 'color', None)
@@ -184,15 +191,18 @@ class _ToolBar(QtWidgets.QToolBar):
     def _openContextMenu(self, pos):
         # show toolbar name and action[remove] on right click
         m = QtWidgets.QMenu()
+
+        ######
         # title:
-        a = QtWidgets.QAction('Toolbar:   %s' % self.name, self)
-        # removed in Qt5:
-#         a.setSoftKeyRole(QtWidgets.QAction.NoSoftKey)
-        f = a.font()
-        f.setBold(True)
-        a.setFont(f)
-        m.addAction(a)
-        m.addSeparator()
+#         a = QtWidgets.QAction('Toolbar:   %s' % self.name, self)
+#         # removed in Qt5:
+# #         a.setSoftKeyRole(QtWidgets.QAction.NoSoftKey)
+#         f = a.font()
+#         f.setBold(True)
+#         a.setFont(f)
+#         m.addAction(a)
+#         m.addSeparator()
+        ######
 
         m.addAction("Remove").triggered.connect(self.actionSelect.trigger)
         m.exec_(self.mapToGlobal(pos))
@@ -208,14 +218,17 @@ class _ToolBar(QtWidgets.QToolBar):
                     self.widget.tools[cls.__name__] = tool
                     # ADD TOOL
                     self.addWidget(tool)
-                    if tool.popupMode() == QtWidgets.QToolButton.MenuButtonPopup:
-                        # [px] - tool is wider if drop down button is shown
-                        self.width += 39 * PX_FACTOR
-                    else:
-                        self.width += 27 * PX_FACTOR  # px
+                    if self._firstTime:
+                        self.width += tool.sizeHint().width()
+#                         if tool.popupMode() == QtWidgets.QToolButton.MenuButtonPopup:
+#                             # [px] - tool is wider if drop down button is shown
+#                             self.width += 39 * PX_FACTOR
+#                         else:
+#                             self.width += 27 * PX_FACTOR  # px
                 except Exception:
                     print("ERROR loading toolbutton: ", traceback.print_exc())
             self._toolsCreated = True
+            self._firstTime = False
 
 
 #     def width(self):
@@ -243,13 +256,20 @@ class _ToolBar(QtWidgets.QToolBar):
             del toolAction
 
         self._toolsCreated = False
-        self.width = 9 * QtWidgets.QApplication.instance().PX_FACTOR
+# self.width = self._initWidth #9 *
+# QtWidgets.QApplication.instance().PX_FACTOR
+
+    def _nameLab(self):
+        return QtWidgets.QLabel(self.name + " ")
 
     def show(self):
+        self.addWidget(self._nameLab())
+
         # ensure that all tools are loaded:
         self.addTools()
         QtWidgets.QToolBar.show(self)
-
+        # self._nameLab.show()
+#         print(self._nameLab.isVisible())
 
 #     def hide(self):
 #         if not self.isSelected():
@@ -276,9 +296,9 @@ class _ToolBar(QtWidgets.QToolBar):
             # self.addTools()
             #             if not self._toolsCreated:
             #             self.needPositioning = True
-            self.addTools()
-            self.widget.display.workspace.addNewToolbar(self)
             self.show()
+            self.widget.display.workspace.addNewToolbar(self)
+#             self.show()
 
         else:
             #             self.hide()

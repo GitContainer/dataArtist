@@ -9,7 +9,7 @@ from .PlotStyle import PlotStyle
 # from Symbols import Symbols
 from dataArtist.figures.image.tools.view.Axes import Axes
 from dataArtist.figures.image.tools.view.LockView import LockView
-from dataArtist.figures.image.tools.general.Reload import Reload
+from dataArtist.figures.image.tools.data.Reload import Reload
 from .ToImage import ToImage
 
 # from LinkView import LinkView

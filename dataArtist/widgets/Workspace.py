@@ -358,7 +358,8 @@ class Workspace(QtWidgets.QWidget):
 
         avail_space = []
         for row in toolbars:
-            avail_space.append(w - sum([bar.width for bar in row]))
+            avail_space.append(
+                w - sum([bar.width for bar in row if bar != newbar]))
 
         # assign position for new toolbar:
         for row, space in enumerate(avail_space):
