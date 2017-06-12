@@ -245,8 +245,12 @@ class Gui(MultiWorkspaceWindow):
     def _appendMenubarAndPreferences(self):
         m = self.menuBar()
         m.aboutWidget.setModule(dataArtist)
-        m.aboutWidget.setInstitutionLogo(
-            MEDIA_FOLDER.join('institution_logo.svg'))
+        m.aboutWidget.setInstitutionLogo((
+            (MEDIA_FOLDER.join('institution_logo_crest.svg'),
+                "http://www.lboro.ac.uk/research/crest/"),
+            (MEDIA_FOLDER.join('institution_logo_seris.svg'),
+                "http://www.seris.nus.edu.sg/"))
+        )
 
         # hide the menu so toolbars can only be show/hidden via
         # gui->view->toolbars:
