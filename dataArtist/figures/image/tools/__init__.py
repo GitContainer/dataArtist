@@ -9,6 +9,8 @@ from . import data
 #import inDevelopment
 from . import input
 from . import measurement
+from . import measurement2
+
 from . import stack
 from . import view
 from . import electroluminescence

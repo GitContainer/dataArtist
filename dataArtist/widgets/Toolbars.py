@@ -263,7 +263,8 @@ class _ToolBar(QtWidgets.QToolBar):
         return QtWidgets.QLabel(self.name + " ")
 
     def show(self):
-        self.addWidget(self._nameLab())
+        if not self._toolsCreated:
+            self.addWidget(self._nameLab())
 
         # ensure that all tools are loaded:
         self.addTools()
