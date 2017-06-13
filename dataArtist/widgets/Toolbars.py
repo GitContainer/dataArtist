@@ -260,7 +260,12 @@ class _ToolBar(QtWidgets.QToolBar):
 # QtWidgets.QApplication.instance().PX_FACTOR
 
     def _nameLab(self):
-        return QtWidgets.QLabel(self.name + " ")
+        lab = QtWidgets.QLabel(self.name + " ")
+        # gray txt:
+        p = lab.palette()
+        p.setColor(lab.foregroundRole(), QtCore.Qt.darkGray)
+        lab.setPalette(p)
+        return lab
 
     def show(self):
         if not self._toolsCreated:
