@@ -86,8 +86,8 @@ class Crosshair(Tool):
 
                 img = w.image[w.currentIndex]
                 s0, s1 = img.shape[:2]
-                ix = np.clip(int(x), 0, s0 - 1)
-                iy = np.clip(int(y), 0, s1 - 1)
+                ix = np.clip(int(x), 0, s1 - 1)
+                iy = np.clip(int(y), 0, s0 - 1)
                 z = img[iy, ix]
 
                 # set anchor of crosshair
@@ -108,7 +108,6 @@ class Crosshair(Tool):
                 # move crosshair-lines to mousepos.
                 self.vLine.setPos(x)
                 self.hLine.setPos(y)
-
                 self.poiText = self._getPOItext(x, y, z)
                 self.crosshair.setText(self.poiText)
                 # except IndexError:

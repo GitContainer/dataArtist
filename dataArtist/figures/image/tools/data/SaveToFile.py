@@ -7,10 +7,10 @@ from fancywidgets.pyQtBased.Dialogs import Dialogs
 from imgProcessor.transformations import toUIntArray, isColor
 from imgProcessor.imgIO import imwrite
 from imgProcessor.reader.qImageToArray import qImageToArray
-from pyqtgraph_karl.functions import makeARGB, makeRGBA
-from imgProcessor.interpolate.LinearInterpolateImageStack \
-    import LinearInterpolateImageStack
-
+# from pyqtgraph_karl.functions import makeARGB, makeRGBA
+# from imgProcessor.interpolate.LinearInterpolateImageStack \
+#     import LinearInterpolateImageStack
+from imgProcessor.interpolate.videoWrite import videoWrite
 from dataArtist.widgets.Tool import Tool
 
 
@@ -145,6 +145,11 @@ cut values higher than maximum image intensity'''})
             'value': 15,
             'limits': (1, 100),
             'visible': False})
+        self.pAnnotate = self.pEngine.addChild({
+            'name': 'Annotate',
+            'type': 'bool',
+            'value': True,
+            'visible': False})
 
         self.pPath = pa.addChild({
             'name': 'path',
@@ -178,6 +183,7 @@ cut values higher than maximum image intensity'''})
         self.pRange.show(val == 'normal image')
         self.pDType.show(val == 'normal image')
         self.pFrames.show(val == 'Video')
+        self.pAnnotate.show(val == 'Video')
 
     def _updateOutputSize(self):
         if self.pEngine.value() == 'rendered':
@@ -335,48 +341,60 @@ cut values higher than maximum image intensity'''})
         self.startThread(self._exportVideoThread)
 
     def _exportVideoThread(self):
-        fourcc = cv2.VideoWriter_fourcc(*'XVID')
         ww = self.display.widget
-        im = ww.image
-        if self.pResize.value():
-            w, h = (self.pWidth.value(), self.pHeight.value())
-            im = [cv2.resize(i, (w, h)) for i in im]
-        else:
-            h, w = im.shape[1:3]
-        fr = self.pFrames.value()
-        pa = self.pPath.value()
-        assert pa[-3:] in ('avi',
-                           'png'), 'video export only supports *.avi or *.png'
-        isVideo = pa[-3:] == 'avi'
-        if isVideo:
-            cap = cv2.VideoCapture(0)
-            # im.ndim==4)
-            out = cv2.VideoWriter(pa, fourcc, fr, (w, h), isColor=1)
+        n = None
+        if self.pAnnotate.value():
+            n = self.display.layerNames()
 
-        times = np.linspace(0, len(im), len(im) * fr)
-        interpolator = LinearInterpolateImageStack(im)
-
-        lut = ww.item.lut
-        if lut is not None:
-            lut = lut(im[0])
-
-        for n, time in enumerate(times):
-            # update progress:
-            self._thread.sigUpdate.emit(100 * n / len(times))
-            image = interpolator(time)
-
-            argb = makeRGBA(image, lut=lut,
-                            levels=ww.item.levels)[0]
-            cimg = cv2.cvtColor(argb, cv2.COLOR_RGBA2BGR)
-
-            if isVideo:
-                out.write(cimg)
-            else:
-                cv2.imwrite('%s_%i_%.3f.png' % (pa[:-4], n, time), cimg)
-
-        if isVideo:
-            cap.release()
-            out.release()
+        videoWrite(self.pPath.value(), ww.image,
+                   levels=ww.item.levels,
+                   shape=(self.pHeight.value(), self.pWidth.value()),
+                   frames=self.pFrames.value(),
+                   annotate_names=n,
+                   lut=ww.item.lut, updateFn=self._thread.sigUpdate)
+#
+#         fourcc = cv2.VideoWriter_fourcc(*'XVID')
+#         ww = self.display.widget
+#         im = ww.image
+#         if self.pResize.value():
+#             w, h = (self.pWidth.value(), self.pHeight.value())
+#             im = [cv2.resize(i, (w, h)) for i in im]
+#         else:
+#             h, w = im.shape[1:3]
+#         fr = self.pFrames.value()
+#         pa = self.pPath.value()
+#         assert pa[-3:] in ('avi',
+#                            'png'), 'video export only supports *.avi or *.png'
+#         isVideo = pa[-3:] == 'avi'
+#         if isVideo:
+#             cap = cv2.VideoCapture(0)
+#             # im.ndim==4)
+#             out = cv2.VideoWriter(pa, fourcc, fr, (w, h), isColor=1)
+#
+#         times = np.linspace(0, len(im), len(im) * fr)
+#         interpolator = LinearInterpolateImageStack(im)
+#
+#         lut = ww.item.lut
+#         if lut is not None:
+#             lut = lut(im[0])
+#
+#         for n, time in enumerate(times):
+#             # update progress:
+#             self._thread.sigUpdate.emit(100 * n / len(times))
+#             image = interpolator(time)
+#
+#             argb = makeRGBA(image, lut=lut,
+#                             levels=ww.item.levels)[0]
+#             cimg = cv2.cvtColor(argb, cv2.COLOR_RGBA2BGR)
+#
+#             if isVideo:
+#                 out.write(cimg)
+#             else:
+#                 cv2.imwrite('%s_%i_%.3f.png' % (pa[:-4], n, time), cimg)
+#
+#         if isVideo:
+#             cap.release()
+#             out.release()
 
     def exportCV2(self):
         '''

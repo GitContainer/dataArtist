@@ -96,8 +96,10 @@ class SimpleFilter(Tool):
 
         if self.pSeparate.value():
             # APPLY ON EACH IMAGE SEPARATELY:
+            def fn(img, **kwargs):
+                return [filt(i, **kwargs) for i in image]
             self.startThread(lambda image=image, kwargs=kwargs:
-                             [filt(i, **kwargs) for i in image], self.processDone)
+                             fn, self.processDone)
         else:
             # APPLY ON STACK:
             self.startThread(lambda image=image, kwargs=kwargs:
