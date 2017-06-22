@@ -13,11 +13,11 @@ countLines([
     d.join('fancyWidgets'),
     d.join('appBase'),
     d.join('imgprocessor'),
-     d.join('PROimgprocessor'),
+    #     d.join('PROimgprocessor'),
     d.join('interactiveTutorial'),
     d.join('headerSetter')
-    
-], exclude_folders_containing=("DUMP", 'dist', 'dev', 'build', 'fancytools3'),
+
+], exclude_folders_containing=("DUMP", 'dist', 'dev', 'build'),
     exclude_blank_lines=True,
     exclude_commented_lines=True,
     count_only_py_files=True)

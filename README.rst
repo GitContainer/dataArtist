@@ -171,4 +171,4 @@ a reference image.
 .. _fancyTools: https://github.com/radjkarl/fancyTools
 
 .. |youtube| image:: https://cloud.githubusercontent.com/assets/350050/15802145/a8eaac4c-2a66-11e6-865d-4c77c306acc9.png
-   :target: https://www.youtube.com/playlist?list=PLKyzYL-Q8Rcl6tHN1PjB3FiIfI24pdLLb
+   :target: https://https://www.youtube.com/playlist?list=PLKyzYL-Q8RckIHJuR0godQA0eQpkABBbb
