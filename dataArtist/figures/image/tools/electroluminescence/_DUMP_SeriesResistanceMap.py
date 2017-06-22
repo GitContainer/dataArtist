@@ -1,13 +1,13 @@
 from dataArtist.widgets.Tool import Tool
 from dataArtist.items.PerspectiveGridROI import PerspectiveGridROI
 
-try:
-    from PROimgProcessor.electroluminescence.paramFromFilename \
-        import paramFromFilename
-    from PROimgProcessor.electroluminescence.seriesResistanceMapping \
-        import seriesResistanceMapping
-except ImportError:
-    seriesResistanceMapping = None
+# try:
+from imgProcessor.electroluminescence.paramFromFilename \
+    import paramFromFilename
+from imgProcessor.electroluminescence.seriesResistanceMapping \
+    import seriesResistanceMapping
+# except ImportError:
+#     seriesResistanceMapping = None
 
 
 class SeriesResistanceMap(Tool):

@@ -12,7 +12,7 @@ echo %PARENT_DIR%
 
 REM mkdir _backup
 REM COPY C:\Users\elkb4\Desktop\Programming\git\PROimgprocessor _backup
-python obfuscateDir.py %PARENT_DIR%\PROimgprocessor\PROimgProcessor
+REM python obfuscateDir.py %PARENT_DIR%\PROimgprocessor\PROimgProcessor
 
 
 
@@ -21,7 +21,7 @@ pyinstaller createPortable_windows.spec
 COPY packaging dist
 
 
-python obfuscateDir.py %PARENT_DIR%\PROimgProcessor\PROimgProcessor done
+REM python obfuscateDir.py %PARENT_DIR%\PROimgProcessor\PROimgProcessor done
 
 REM would be cool to create azip file from all...
 REM - this doesnt work: for /d %%a in (dist) do (ECHO zip -r -p "%%~na.zip" ".\%%a\*")

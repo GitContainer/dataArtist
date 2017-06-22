@@ -33,7 +33,7 @@ a = Analysis(['dataArtist\\gui_pyinstaller.py'],
              pathex=[
 
                  #proprietary:
-                 os.path.join(pkg_dir,'PROimgprocessor_obfuscated'), 
+                 #os.path.join(pkg_dir,'PROimgprocessor_obfuscated'), 
                  
                  #open source:
                  os.path.join(pkg_dir,'pyqtgraph_karl'), 

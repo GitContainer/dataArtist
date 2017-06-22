@@ -7,22 +7,24 @@ from dataArtist.widgets.Tool import Tool
 
 
 def _import():
-    global PerspectiveGridROI, PC, CalibrationFile, subPixelAlignment, GridDetection
+    # , GridDetection  # ,subPixelAlignment
+    global PerspectiveGridROI, PC, CalibrationFile  # , QuadDetection
 
     from dataArtist.items.PerspectiveGridROI import PerspectiveGridROI
 
     from imgProcessor.camera.PerspectiveCorrection \
         import PerspectiveCorrection as PC
+#     from imgProcessor.features.QuadDetection import QuadDetection
 
     from dataArtist.figures.image.tools.globals.CalibrationFile import CalibrationFile
 
     # PROPRIETARY
-    try:
-        from PROimgProcessor.transform.subPixelAlignment import subPixelAlignment
-        from PROimgProcessor.features.GridDetection import GridDetection
-    except ImportError:
-        subPixelAlignment = None
-        GridDetection = None
+#     try:
+#         #         from PROimgProcessor.transform.subPixelAlignment import subPixelAlignment
+#         from PROimgProcessor.features.GridDetection import GridDetection
+#     except ImportError:
+#         #         subPixelAlignment = None
+#         GridDetection = None
 
 
 class PerspectiveCorrection(Tool):
@@ -63,69 +65,69 @@ class PerspectiveCorrection(Tool):
             'type': 'int',
             'value': 50,
             'min': 0})
-        pro = GridDetection is not None
+#         pro = GridDetection is not None
         self.pManual = self.pRef.addChild({
             'name': 'Manual object detection',
             'type': 'bool',
-            'value': not pro,
-            'readonly': not pro
+            'value': True,
+            'readonly': True
         })
-        self.pCells = self.pRef.addChild({
-            'name': 'Rectify cells',
-            'type': 'bool',
-            'value': False,
-            'readonly': not pro})
-        self.pCellsX = self.pCells.addChild({
-            'name': 'X',
-            'type': 'int',
-            'value': 0,
-            'limits': (0, 100)})
-        self.pCellsY = self.pCells.addChild({
-            'name': 'Y',
-            'type': 'int',
-            'value': 0,
-            'limits': (0, 100)})
+#         self.pCells = self.pRef.addChild({
+#             'name': 'Rectify cells',
+#             'type': 'bool',
+#             'value': False,
+#             'readonly': not pro})
+#         self.pCellsX = self.pCells.addChild({
+#             'name': 'X',
+#             'type': 'int',
+#             'value': 0,
+#             'limits': (0, 100)})
+#         self.pCellsY = self.pCells.addChild({
+#             'name': 'Y',
+#             'type': 'int',
+#             'value': 0,
+#             'limits': (0, 100)})
 
-        def fn(_p, _v):
-            return self._updateROI()
-        self.pCellsX.sigValueChanged.connect(fn)
-        self.pCellsY.sigValueChanged.connect(fn)
+#         def fn(_p, _v):
+#             return self._updateROI()
+#         self.pCellsX.sigValueChanged.connect(fn)
+#         self.pCellsY.sigValueChanged.connect(fn)
 
-        self.pMask = self.pRef.addChild({
-            'name': 'Create Mask',
-            'type': 'bool',
-            'value': True})
-        self.pMaskOffset = self.pMask.addChild({
-            'name': 'Offset',
-            'type': 'int',
-            'value': 0,
-            'min': 0,
-            'suffix': 'px'})
-        self.pMaskDetect = self.pMask.addChild({
-            'name': 'Detect parameters',
-            'type': 'bool',
-            'value': False})
-        self.pSubcells = self.pMaskDetect.addChild({
-            'name': 'Number busbars',
-            'type': 'int',
-            'value': 3,
-            'limits': (0, 109)})
-        self.pCellOrient = self.pMaskDetect.addChild({
-            'name': 'Busbar Orientation',
-            'type': 'list',
-            'value': 'horiz',
-            'values': ['horiz', 'vert']})
-        self.pCellShape = self.pMaskDetect.addChild({
-            'name': 'Cell shape',
-            'type': 'list',
-            'value': 'square',
-            'values': ['square', 'pseudo square']})
-        self.pMask.sigValueChanged.connect(lambda param, val:
-                                           [ch.show(val) for ch in param.childs])
-        self.pMask.setValue(False)
-        self.pMaskDetect.sigValueChanged.connect(lambda param, val:
-                                                 [ch.show(not val) for ch in param.childs])
-        self.pMaskDetect.setValue(True)
+#         self.pMask = self.pRef.addChild({
+#             'name': 'Create Mask',
+#             'type': 'bool',
+#             'value': True})
+#         self.pMaskOffset = self.pMask.addChild({
+#             'name': 'Offset',
+#             'type': 'int',
+#             'value': 0,
+#             'min': 0,
+#             'suffix': 'px'})
+#         self.pMaskDetect = self.pMask.addChild({
+#             'name': 'Detect parameters',
+#             'type': 'bool',
+#             'value': False})
+#         self.pSubcells = self.pMaskDetect.addChild({
+#             'name': 'Number busbars',
+#             'type': 'int',
+#             'value': 3,
+#             'limits': (0, 109)})
+#         self.pCellOrient = self.pMaskDetect.addChild({
+#             'name': 'Busbar Orientation',
+#             'type': 'list',
+#             'value': 'horiz',
+#             'values': ['horiz', 'vert']})
+#         self.pCellShape = self.pMaskDetect.addChild({
+#             'name': 'Cell shape',
+#             'type': 'list',
+#             'value': 'square',
+#             'values': ['square', 'pseudo square']})
+#         self.pMask.sigValueChanged.connect(lambda param, val:
+#                                            [ch.show(val) for ch in param.childs])
+#         self.pMask.setValue(False)
+#         self.pMaskDetect.sigValueChanged.connect(lambda param, val:
+#                                                  [ch.show(not val) for ch in param.childs])
+#         self.pMaskDetect.setValue(True)
 
         # HOMOGRAPHY THROUGH REF IMAGE
         self.pRefImgChoose = self.pRef.addChild({
@@ -143,36 +145,36 @@ class PerspectiveCorrection(Tool):
                                                    menu, self._setRefImg,
                                                    includeThisDisplay=True))
 
-        self.pSubPx = self.pRef.addChild({
-            'name': 'Sub-pixel alignment',
-                    'value': True,
-                    'type': 'bool',
-                    'visible': False,
-                    'enabled': pro})
-        self.pSubPx_x = self.pSubPx.addChild({
-            'name': 'cells x',
-                    'value': 12,
-                    'type': 'int',
-                    'limits': (1, 100)})
-        self.pSubPx_y = self.pSubPx.addChild({
-            'name': 'cells y',
-                    'value': 9,
-                    'type': 'int',
-                    'limits': (1, 100)})
-        self.pSubPx_neigh = self.pSubPx.addChild({
-            'name': 'n neighbors',
-                    'value': 2,
-                    'type': 'int',
-                    'limits': (1, 100)})
-        self.pSubPx_maxDev = self.pSubPx.addChild({
-            'name': 'max dev',
-                    'value': 30,
-                    'type': 'int',
-                    'min': 1})
-
-        self.pSubPx.sigValueChanged.connect(lambda param, val:
-                                            [ch.show(val) for ch in param.childs])
-        self.pSubPx.setValue(False)
+#         self.pSubPx = self.pRef.addChild({
+#             'name': 'Sub-pixel alignment',
+#                     'value': True,
+#                     'type': 'bool',
+#                     'visible': False,
+#                     'enabled': pro})
+#         self.pSubPx_x = self.pSubPx.addChild({
+#             'name': 'cells x',
+#                     'value': 12,
+#                     'type': 'int',
+#                     'limits': (1, 100)})
+#         self.pSubPx_y = self.pSubPx.addChild({
+#             'name': 'cells y',
+#                     'value': 9,
+#                     'type': 'int',
+#                     'limits': (1, 100)})
+#         self.pSubPx_neigh = self.pSubPx.addChild({
+#             'name': 'n neighbors',
+#                     'value': 2,
+#                     'type': 'int',
+#                     'limits': (1, 100)})
+#         self.pSubPx_maxDev = self.pSubPx.addChild({
+#             'name': 'max dev',
+#                     'value': 30,
+#                     'type': 'int',
+#                     'min': 1})
+#
+#         self.pSubPx.sigValueChanged.connect(lambda param, val:
+#                                             [ch.show(val) for ch in param.childs])
+#         self.pSubPx.setValue(False)
         self.pRef.sigValueChanged.connect(self._pRefChanged)
         self.pManual.sigValueChanged.connect(self._setupQuadManually)
 
@@ -201,26 +203,26 @@ class PerspectiveCorrection(Tool):
         })
         self.pCalcOutSize.sigValueChanged.connect(self._pCalcOutSizeChanged)
 
-        self.pCalcAR = pa.addChild({
-            'name': 'Calculate aspect ratio',
-            'type': 'bool',
-            'value': True,
-            'tip': ''})
-
-        self.pObjWidth = self.pCalcAR.addChild({
-            'name': 'Object width [mm]',
-            'type': 'float',
-            'value': 0,
-            'visible': False})
-
-        self.pObjHeight = self.pCalcAR.addChild({
-            'name': 'Object height [mm]',
-            'type': 'float',
-            'value': 0,
-            'visible': False
-        })
-        self.pCalcAR.sigValueChanged.connect(lambda param, val:
-                                             [ch.show(not val) for ch in param.childs])
+#         self.pCalcAR = pa.addChild({
+#             'name': 'Calculate aspect ratio',
+#             'type': 'bool',
+#             'value': True,
+#             'tip': ''})
+#
+#         self.pObjWidth = self.pCalcAR.addChild({
+#             'name': 'Object width [mm]',
+#             'type': 'float',
+#             'value': 0,
+#             'visible': False})
+#
+#         self.pObjHeight = self.pCalcAR.addChild({
+#             'name': 'Object height [mm]',
+#             'type': 'float',
+#             'value': 0,
+#             'visible': False
+#         })
+#         self.pCalcAR.sigValueChanged.connect(lambda param, val:
+#                                              [ch.show(not val) for ch in param.childs])
 
         self.pCorrViewFactor = pa.addChild({
             'name': 'Correct Intensity',
@@ -246,7 +248,7 @@ class PerspectiveCorrection(Tool):
             'value': True})
 
     def _pCalcOutSizeChanged(self, _p, v):
-        self.pCalcAR.show(v == 'Calculate')
+        #         self.pCalcAR.show(v == 'Calculate')
         self.pOutWidth.show(v == 'Manual')
         self.pOutHeight.show(v == 'Manual')
 
@@ -295,7 +297,7 @@ class PerspectiveCorrection(Tool):
     def _pRefChanged(self, _p, val):
         x = val == 'Reference image'
         self.pRefImgChoose.show(x)
-        self.pSubPx.show(x)
+#         self.pSubPx.show(x)
 
         x = val == 'Object profile'
         self.pManual.show(x)
@@ -312,12 +314,12 @@ class PerspectiveCorrection(Tool):
             [r.hide() for r in self._refPn]
         self.pCorrViewFactor.show(not vv)
 
-    def _updateROI(self, roi=None):
-        if roi is None:
-            roi = self.quadROI
-        if roi is not None:
-            roi.p.param('X').setValue(self.pCellsX.value())
-            roi.p.param('Y').setValue(self.pCellsY.value())
+#     def _updateROI(self, roi=None):
+#         if roi is None:
+#             roi = self.quadROI
+#         if roi is not None:
+#             roi.p.param('X').setValue(self.pCellsX.value())
+#             roi.p.param('Y').setValue(self.pCellsY.value())
 
     def _createROI(self, display=None):
         if display is None:
@@ -331,7 +333,7 @@ class PerspectiveCorrection(Tool):
             t.pType.setValue('PerspectiveGrid')
             quadROI = t.new()  # pNew.sigActivated.emit(t.pNew)
         quadROI.sigRegionChanged.connect(lambda: self.pManual.setValue(True))
-        self._updateROI(quadROI)
+#         self._updateROI(quadROI)
         return quadROI
 
     def activate(self):
@@ -355,73 +357,78 @@ class PerspectiveCorrection(Tool):
         except AttributeError:
             c = None
         # height/width:
-        if self.pCalcAR.value():
-            w, h = None, None
-        else:
-            if self.pCalcOutSize.value() == 'Current Size':
-                w, h = img.shape[:2]
-            else:
-                w = self.pObjWidth.value()
-                if w == 0:
-                    w = None
-                h = self.pObjHeight.value()
-                if h == 0:
-                    h = None
+#         if self.pCalcAR.value():
+#             w, h = None, None
+#         else:
+#             if self.pCalcOutSize.value() == 'Current Size':
+#                 w, h = img.shape[:2]
+#             else:
+#                 w = self.pObjWidth.value()
+#                 if w == 0:
+#                     w = None
+#                 h = self.pObjHeight.value()
+#                 if h == 0:
+#                     h = None
         # output size:
         size = (None, None)
         if not self.pCalcOutSize.value():
-            size = (self.pOutHeight.value(), self.pOutWidth.value())
+            size = (self.pOutWidth.value(), self.pOutHeight.value())
 
-        self._pc_args = dict(obj_width_mm=h,
-                             obj_height_mm=w,
-                             cameraMatrix=c,
-                             do_correctIntensity=self.pCorrViewFactor.value(),
-                             new_size=size)
+        self._pc_args = dict(  # obj_width_mm=h,
+            # obj_height_mm=w,
+            cameraMatrix=c,
+            do_correctIntensity=self.pCorrViewFactor.value(),
+            new_size=size)
 
         # HOMOGRAPHY THROUGH REFERENCE IMAGE
+        self.pc = PC(img.shape, border=self.pBorder.value(),
+                     **self._pc_args)
         if v == 'Reference image':
             # INIT:
-            self.pc = PC(img.shape, border=self.pBorder.value(),
-                         **self._pc_args)
+
             self.pc.setReference(self._refImg)
         else:
             # HOMOGRAPHY THROUGH QUAD
-            vertices = None
-            if self.pManual.value():
-                if not self.quadROI:
-                    self.quadROI = self._createROI()
-                    raise Exception('need to fit quad first.')
-                vertices = self.quadROI.vertices()
+            #             vertices = None
+            #             if self.pManual.value():
+            if not self.quadROI:
+                self.quadROI = self._createROI()
+                raise Exception('need to fit quad first.')
+            vertices = self.quadROI.vertices()
+#             else:
+#                 vertices = QuadDetection(img).vertices
+#                 print(vertices, 8888888888888888)
 
-            if GridDetection is None:
-                self.pc = PC(img.shape, **self._pc_args)
-                self.pc.setReference(self._refImg)
-            else:
-                if self.pMaskDetect.value():
-                    nSublines = None
-                    cellshape = None
-                else:
-                    ns = self.pSubcells.value()
-                    if self.pCellOrient.value() == 'horiz':
-                        nSublines = ([ns], [0])
-                    else:
-                        nSublines = ([0], [ns])
-                    cellshape = self.pCellShape.value()
 
-                gy = self.pCellsY.value()
-                gx = self.pCellsX.value()
-                if 0 in (gx, gy):
-                    grid = None
-                else:
-                    grid = gy, gx
-                self.pc = GridDetection(img=img,
-                                        border=self.pBorder.value(),
-                                        vertices=vertices,
-                                        shape=cellshape,
-                                        grid=grid,
-                                        nSublines=nSublines,
-                                        refine_cells=self.pCells.value(),
-                                        refine_sublines=self.pMask.value())
+#             if GridDetection is None:
+#             self.pc = PC(img.shape, **self._pc_args)
+            self.pc.setReference(vertices)
+#             else:
+#                 if self.pMaskDetect.value():
+#                     nSublines = None
+#                     cellshape = None
+#                 else:
+#                     ns = self.pSubcells.value()
+#                     if self.pCellOrient.value() == 'horiz':
+#                         nSublines = ([ns], [0])
+#                     else:
+#                         nSublines = ([0], [ns])
+#                     cellshape = self.pCellShape.value()
+#
+#                 gy = self.pCellsY.value()
+#                 gx = self.pCellsX.value()
+#                 if 0 in (gx, gy):
+#                     grid = None
+#                 else:
+#                     grid = gy, gx
+#                 self.pc = GridDetection(img=img,
+#                                         border=self.pBorder.value(),
+#                                         vertices=vertices,
+#                                         shape=cellshape,
+#                                         grid=grid,
+#                                         nSublines=nSublines,
+#                                         refine_cells=self.pCells.value(),
+#                                         refine_sublines=self.pMask.value())
 
     def _process(self):
         w = self.display.widget
@@ -456,16 +463,16 @@ class PerspectiveCorrection(Tool):
                     if not (r and n == self._refImg_from_own_display):
                         corr = self.pc.correct(i)
 
-                        if r and self.pSubPx.value():
-                            corr = subPixelAlignment(
-                                corr, self._refImg,
-                                niter=20,
-                                grid=(self.pSubPx_y.value(),
-                                      self.pSubPx_x.value()),
-                                method='smooth',
-                                # maxGrad=2,
-                                concentrateNNeighbours=self.pSubPx_neigh.value(),
-                                maxDev=self.pSubPx_maxDev.value())[0]
+#                         if r and self.pSubPx.value():
+#                             corr = subPixelAlignment(
+#                                 corr, self._refImg,
+#                                 niter=20,
+#                                 grid=(self.pSubPx_y.value(),
+#                                       self.pSubPx_x.value()),
+#                                 method='smooth',
+#                                 # maxGrad=2,
+#                                 concentrateNNeighbours=self.pSubPx_neigh.value(),
+#                                 maxDev=self.pSubPx_maxDev.value())[0]
 
                         out.append(corr)
         return out
@@ -489,13 +496,14 @@ class PerspectiveCorrection(Tool):
                     self.quadROI = self._createROI()
                 # TODO: unclean having perspectiveCorrection in GridDetection
                 pc = self.pc
-                if isinstance(pc, GridDetection):
-                    # if GridDetection is not None:
-                    gx, gy = pc.opts['grid']
-                    self.pCellsX.setValue(gx)
-                    self.pCellsY.setValue(gy)
-                    pc = self.pc._pc
+#                 if isinstance(pc, GridDetection):
+#                     # if GridDetection is not None:
+#                     gx, gy = pc.opts['grid']
+#                     self.pCellsX.setValue(gx)
+#                     self.pCellsY.setValue(gy)
+#                     pc = self.pc._pc
                 self.quadROI.setVertices(pc.quad)
+                print(pc.quad)
                 self.quadROI.show()
 
             # inherit corrected grid to output display:
@@ -517,10 +525,10 @@ class PerspectiveCorrection(Tool):
 #             if not self.outDisplayViewFactor:
 
         # TODO: mask generation in extra tool
-        if self.pMask.value() and self.pMask.isVisible():
-            self.outDisplay.widget.addColorLayer(
-                layer=self.pc.mask(offs=self.pMaskOffset.value()),
-                name='Grid mask')
+#         if self.pMask.value() and self.pMask.isVisible():
+#             self.outDisplay.widget.addColorLayer(
+#                 layer=self.pc.mask(offs=self.pMaskOffset.value()),
+#                 name='Grid mask')
 
         if not self.pOverrideOutput.value():
             self.outDisplay = None
